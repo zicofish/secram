@@ -5,7 +5,7 @@ import com.sg.secram.records.SECRAMPosCigar;
 import com.sg.secram.records.SECRAMRecordCodec;
 import com.sg.secram.records.SECRAMRecordHeader;
 
-public class SECRAMRecordCodecImpl implements SECRAMRecordCodec {
+public class SecramRecordCodecImpl implements SECRAMRecordCodec {
 
 	@Override
 	public SECRAMRecordHeader getHeader() {

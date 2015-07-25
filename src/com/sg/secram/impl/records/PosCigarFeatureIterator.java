@@ -3,27 +3,27 @@ package com.sg.secram.impl.records;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class PosCigarIterator implements Iterator<PosCigarElement> {
-	private Iterator<PosCigarElement> mElements;
+public class PosCigarFeatureIterator implements Iterator<PosCigarFeature> {
+	private Iterator<PosCigarFeature> mElements;
 	private boolean nextOrderSame = false;
 	
-	private PosCigarElement nextElement = null;
+	private PosCigarFeature nextElement = null;
 	
 	
-	public PosCigarIterator(Iterator<PosCigarElement> elements) {
+	public PosCigarFeatureIterator(Iterator<PosCigarFeature> elements) {
 		mElements = elements;
 		fetch();
 	}
 	
 	private void fetch() {
-		PosCigarElement tmp = nextElement;
-		nextElement = mElements.hasNext()?mElements.next():null;
+		PosCigarFeature tmp = nextElement;
+		nextElement = mElements.hasNext() ? mElements.next():null;
 		
 		if (tmp==null || nextElement==null) {
 			nextOrderSame = false;
 		}
 		else {
-			nextOrderSame = tmp.getOrder()==nextElement.getOrder();
+			nextOrderSame = tmp.mOrder == nextElement.mOrder;
 		}
 		
 	}
@@ -34,11 +34,11 @@ public class PosCigarIterator implements Iterator<PosCigarElement> {
 	}
 
 	@Override
-	public PosCigarElement next() throws NoSuchElementException {
+	public PosCigarFeature next() throws NoSuchElementException {
 		if (nextElement == null) {
 			throw new NoSuchElementException();
 		}
-		PosCigarElement r = nextElement;
+		PosCigarFeature r = nextElement;
 		fetch();
 		return r;
 	}

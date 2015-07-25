@@ -7,7 +7,7 @@ import org.bouncycastle.crypto.params.HKDFParameters;
 import com.sg.secram.SECRAMEncryptionMethod;
 
 public class SECRAMEncryptionFactory {
-	public static SECRAMEncryptionMethod<byte[]> createPosCigarEM(byte[] key){
+	public static SECRAMEncryptionMethod<byte[]> createContainerEM(byte[] key){
 		return new BouncyCastle_AES_CTR(key);
 	}
 	
@@ -19,7 +19,7 @@ public class SECRAMEncryptionFactory {
 		return new DummyCipher<Long>();
 	}
 	
-	public static SECRAMEncryptionMethod<byte[]> createDummyPosCigarEM(){
+	public static SECRAMEncryptionMethod<byte[]> createDummyContainerEM(){
 		return new DummyCipher<byte[]>();
 	}
 	

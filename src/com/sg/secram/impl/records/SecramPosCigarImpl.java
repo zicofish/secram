@@ -6,7 +6,7 @@ import com.sg.secram.SECRAMEncryptionFilter;
 import com.sg.secram.records.SECRAMOperator;
 import com.sg.secram.records.SECRAMPosCigar;
 
-public class SECRAMPosCigarImpl implements SECRAMPosCigar {
+public class SecramPosCigarImpl implements SECRAMPosCigar {
 
 	@Override
 	public void addOperator(SECRAMOperator arg0) {

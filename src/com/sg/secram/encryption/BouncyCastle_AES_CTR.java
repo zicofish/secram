@@ -75,8 +75,6 @@ public class BouncyCastle_AES_CTR implements SECRAMEncryptionMethod<byte[]>{
         if(decryptCipher!=null)
             decryptCipher.reset();
     }
-    
-    
 
 	public byte[] CTREncrypt(byte[] in){
 	    // Bytes written to out will be encrypted
@@ -99,10 +97,12 @@ public class BouncyCastle_AES_CTR implements SECRAMEncryptionMethod<byte[]>{
 	
 	    return out;
     }
+    
 	@Override
 	public byte[] encrypt(byte[] objectToEncrypt, String key) {
 		return CTREncrypt(objectToEncrypt);
 	}
+	
 	@Override
 	public byte[] decrypt(byte[] objectToDecrypt, String key) {
 		return CTRDecrypt(objectToDecrypt);

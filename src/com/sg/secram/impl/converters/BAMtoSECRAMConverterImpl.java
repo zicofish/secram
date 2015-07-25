@@ -27,7 +27,7 @@ import com.sg.secram.converters.BAMtoSECRAMConverter;
 import com.sg.secram.header.SECRAMFileHeader;
 import com.sg.secram.impl.SECRAMFileWriter;
 import com.sg.secram.impl.SECRAMSecurityFilter;
-import com.sg.secram.impl.records.SECRAMRecord;
+import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.records.SECRAMRecordCodec;
 import com.sg.secram.util.ReferenceUtils;
 import com.sg.secram.util.SECRAMUtils;
@@ -75,18 +75,18 @@ public class BAMtoSECRAMConverterImpl implements BAMtoSECRAMConverter {
 	}
 	
 	/**
-	 * Returns the {@link SECRAMRecord} instance corresponding to this position. A new instance is created if the position
+	 * Returns the {@link SecramRecordOld} instance corresponding to this position. A new instance is created if the position
 	 * is accessed for the first time.
 	 * @param position The position we want to access
 	 * @param secramRecords The map to search for the position
-	 * @return the instance of {@link SECRAMRecord} corresponding to this position
+	 * @return the instance of {@link SecramRecordOld} corresponding to this position
 	 * @throws IOException
 	 */
-	private SECRAMRecord getRecord(long position, Map<Long, SECRAMRecord> secramRecords) throws IOException{
-		SECRAMRecord result;
+	private SecramRecordOld getRecord(long position, Map<Long, SecramRecordOld> secramRecords) throws IOException{
+		SecramRecordOld result;
 		if (!secramRecords.containsKey(position)) {
 			
-			result = new SECRAMRecord(position, getReferenceBase(position));
+			result = new SecramRecordOld(position, getReferenceBase(position));
 			secramRecords.put(position,result);
 		}
 		else {
@@ -201,18 +201,18 @@ public class BAMtoSECRAMConverterImpl implements BAMtoSECRAMConverter {
 		BAMtoSECRAMConverterImpl converter = new BAMtoSECRAMConverterImpl(bamHeader);
 		
 		//a map that returns the record corresponding to this position
-		TreeMap<Long, SECRAMRecord> secramRecords = new TreeMap<Long, SECRAMRecord>();
+		TreeMap<Long, SecramRecordOld> secramRecords = new TreeMap<Long, SecramRecordOld>();
 		try {
 			for (final SAMRecord samRecord : reader) {
 				
 				BAMRecord bamRecord = (BAMRecord)samRecord;
 				converter.addBAMRecordToSECRAMRecords(bamRecord, secramRecords);
-				long startPosition = SECRAMUtils.getPosition(bamRecord.getAlignmentStart()-1, bamRecord.getReferenceIndex());
+				long startPosition = SECRAMUtils.getAbsolutePosition(bamRecord.getAlignmentStart()-1, bamRecord.getReferenceIndex());
 				long pos;
 				//Check for any position smaller than the start of this read. Having this loop is to make sure
 				//we will write complete secram records out to disk, and thus will not run out of memory.
 				while (!secramRecords.isEmpty() && (pos = secramRecords.firstKey()) < startPosition) {
-					SECRAMRecord completedRecord = secramRecords.remove(pos);
+					SecramRecordOld completedRecord = secramRecords.remove(pos);
 					completedRecord.close(); //removes the position from the list, and saves it
 					secramWriter.appendRecord(completedRecord);
 				}
@@ -221,7 +221,7 @@ public class BAMtoSECRAMConverterImpl implements BAMtoSECRAMConverter {
 		finally {
 			//Save the remaining SECRAM records
 			while (!secramRecords.isEmpty()) {
-				SECRAMRecord remainingRecord = secramRecords.remove(secramRecords.firstKey());
+				SecramRecordOld remainingRecord = secramRecords.remove(secramRecords.firstKey());
 				remainingRecord.close();
 				secramWriter.appendRecord(remainingRecord);
 			}
@@ -233,22 +233,22 @@ public class BAMtoSECRAMConverterImpl implements BAMtoSECRAMConverter {
 		
 	}
 	
-	public Map<Long, SECRAMRecord> createSECRAMRecords(BAMRecord... records) throws IOException{
-		TreeMap<Long, SECRAMRecord> secramRecords = new TreeMap<Long, SECRAMRecord>();
+	public Map<Long, SecramRecordOld> createSECRAMRecords(BAMRecord... records) throws IOException{
+		TreeMap<Long, SecramRecordOld> secramRecords = new TreeMap<Long, SecramRecordOld>();
 		for (int i = 0; i < records.length; i++)
 			addBAMRecordToSECRAMRecords(records[i], secramRecords);
 		return secramRecords;
 	}
 	
-	public void addBAMRecordToSECRAMRecords(BAMRecord bamRecord, Map<Long, SECRAMRecord> secramRecords) throws IOException{
+	public void addBAMRecordToSECRAMRecords(BAMRecord bamRecord, Map<Long, SecramRecordOld> secramRecords) throws IOException{
 		
-		long startPosition = SECRAMUtils.getPosition(bamRecord.getAlignmentStart()-1, bamRecord.getReferenceIndex());
+		long startPosition = SECRAMUtils.getAbsolutePosition(bamRecord.getAlignmentStart()-1, bamRecord.getReferenceIndex());
 		
 		long lastPosition = startPosition + (bamRecord.getCigar().getReferenceLength() - 1);
 		
 		long pos = startPosition;
 		
-		SECRAMRecord currentRecord  = getRecord(pos, secramRecords);
+		SecramRecordOld currentRecord  = getRecord(pos, secramRecords);
 		
 		currentRecord.addReadHeader(bamRecord);
 		

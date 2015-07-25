@@ -3,6 +3,8 @@ package com.sg.secram.impl;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
@@ -12,81 +14,66 @@ import org.bouncycastle.crypto.params.HKDFParameters;
 import com.sg.secram.SECRAMEncryptionMethod;
 import com.sg.secram.avro.SecramRecordAvro;
 import com.sg.secram.encryption.SECRAMEncryptionFactory;
-import com.sg.secram.impl.records.SECRAMRecord;
+import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.util.SECRAMUtils;
 
 public class SECRAMSecurityFilter {
 	
 	private byte[] masterKey = null;
+	
 	public static int BLOCK_CIPHER_KEY_LEN = 24;
-	private SECRAMEncryptionMethod<byte[]> posCigarEM = null;
+	private Map<Integer, SECRAMEncryptionMethod<byte[]> > containerEMs = new HashMap<Integer, SECRAMEncryptionMethod<byte[]> >();
 	public static int OPE_KEY_LEN = 24;
 	private SECRAMEncryptionMethod<Long> positionEM = null;
 	
-	/**
-	 * Dummy filter. No encryption.
+	/*
+	 * TODO: We can also initialize this filter with accces control rights, e.g., permitted query range [lower_bound, upper_bound]
 	 */
-	public SECRAMSecurityFilter(){
-		posCigarEM = SECRAMEncryptionFactory.createDummyPosCigarEM();
-		positionEM = SECRAMEncryptionFactory.createDummyPositionEM();
-	}
 	
 	public SECRAMSecurityFilter(byte[] mk){
+		if(null == mk)
+			return; //create a dummy filter without encryption
+		
 		masterKey = new byte[mk.length];
 		System.arraycopy(mk, 0, masterKey, 0, mk.length);
-		posCigarEM = SECRAMEncryptionFactory.createDummyPosCigarEM();
-		positionEM = SECRAMEncryptionFactory.createDummyPositionEM();
 	}
 	
-	public void initPosCigarEncryptionMethod(long salt) throws NoSuchAlgorithmException{
+	public void initContainerEM(long salt, int containerID) throws NoSuchAlgorithmException{
 		if(null == masterKey)
-			return;
-		byte[] newKey = SECRAMEncryptionFactory.deriveKey(masterKey, SECRAMUtils.longToBytes(salt), null, BLOCK_CIPHER_KEY_LEN);
-		posCigarEM = SECRAMEncryptionFactory.createPosCigarEM(newKey);
+			containerEMs.put(containerID, SECRAMEncryptionFactory.createDummyContainerEM());
+		else{
+			byte[] newKey = SECRAMEncryptionFactory.deriveKey(masterKey, SECRAMUtils.longToBytes(salt), null, BLOCK_CIPHER_KEY_LEN);
+			containerEMs.put(containerID, SECRAMEncryptionFactory.createContainerEM(newKey));
+		}
 	}
 	
-	public void initPosCigarEncryptionMethod(byte[] key){
-		posCigarEM = SECRAMEncryptionFactory.createPosCigarEM(key);
+	public void initContainerEM(byte[] key, int containerID){
+		containerEMs.put(containerID, SECRAMEncryptionFactory.createContainerEM(key));
 	}
 	
-	public void initPositionEncryptionMethod(long salt){
+	public void initPositionEM(long salt){
 		if(null == masterKey)
-			return;
-		byte[] newKey = SECRAMEncryptionFactory.deriveKey(masterKey, SECRAMUtils.longToBytes(salt), null, BLOCK_CIPHER_KEY_LEN);
-		positionEM = SECRAMEncryptionFactory.createPositionEM(newKey);
+			positionEM = SECRAMEncryptionFactory.createDummyPositionEM();
+		else{
+			byte[] newKey = SECRAMEncryptionFactory.deriveKey(masterKey, SECRAMUtils.longToBytes(salt), null, BLOCK_CIPHER_KEY_LEN);
+			positionEM = SECRAMEncryptionFactory.createPositionEM(newKey);
+		}
 	}
 	
-	public void initPositionEncryptionMethod(byte[] key){
+	public void initPositionEM(byte[] key){
 		positionEM = SECRAMEncryptionFactory.createPositionEM(key);
 	}
 	
-	public void encryptRecord(SECRAMRecord record){
-		SecramRecordAvro avroRecord = record.getAvroRecord();
-		
-		byte[] posCigarBytes = avroRecord.getPosCigar().array();
-		Long position = avroRecord.getPOS();
-		
-		byte[] encPosCigar = posCigarEM.encrypt(posCigarBytes, null);
-		Long encPos = positionEM.encrypt(position, null);
-		
-		avroRecord.setPOS(encPos);
-//		avroRecord.setPOS(0L);
-//		avroRecord.setPosCigar(ByteBuffer.wrap(encPosCigar));
-		avroRecord.setPosCigar(ByteBuffer.wrap(new byte[0]));
+	public byte[] encryptBlock(byte[] block, int containerID){
+		SECRAMEncryptionMethod<byte[]> cypher = containerEMs.get(containerID);
+		byte[] encBlock = cypher.encrypt(block, null);
+		return encBlock;
 	}
 	
-	public void decryptRecord(SECRAMRecord encRecord){
-		SecramRecordAvro avroRecord = encRecord.getAvroRecord();
-		
-		byte[] encPosCigarBytes = avroRecord.getPosCigar().array();
-		Long encPosition = avroRecord.getPOS();
-		
-		byte[] posCigar = posCigarEM.decrypt(encPosCigarBytes, null);
-		Long pos = positionEM.decrypt(encPosition, null);
-		
-		avroRecord.setPOS(pos);
-//		avroRecord.setPOS(0L);
-		avroRecord.setPosCigar(ByteBuffer.wrap(posCigar));
+	public byte[] decryptBlock(byte[] encBlock, int containerID){
+		SECRAMEncryptionMethod<byte[]> decypher = containerEMs.get(containerID);
+		byte[] block = decypher.decrypt(encBlock, null);
+		return block;
 	}
 	
 	public long encryptPosition(long pos){

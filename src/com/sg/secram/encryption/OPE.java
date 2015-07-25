@@ -1,5 +1,7 @@
 package com.sg.secram.encryption;
 
+import htsjdk.samtools.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -7,8 +9,6 @@ import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.digests.SHA1Digest;
@@ -46,7 +46,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	public Hashtable<Long, Long> cache;
 	int maxCacheSize = 4000000;
 	
-	private Logger logger = Logger.getLogger(OPE.class.getName());
+	private Log log = Log.getInstance(OPE.class);
 	
 	/**
 	 * This OPE implementation works for 64-bit integer
@@ -83,6 +83,15 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	public long encrypt(long plainNum) throws IOException, HGDException, NoSuchAlgorithmException{
 		long lowD = 0, highD = (1l << plainTextSpace) - 1;
 		long lowR = 0, highR = (1l << cipherTextSpace) - 10;
+		if(plainNum < lowD || plainNum > highD) {
+			if(plainNum < lowR || plainNum > highR){ //try to skip the exception if the number is also out of the ciphertext range, so that no one would misuse it for decryption
+				log.debug("OPE cannot encrypt number " + plainNum 
+						+ " because it is out of the plaintext range. It has been returned without any change.");
+				return plainNum;
+			}
+			throw new IllegalArgumentException("OPE encryption failed: the given plaintext number " + plainNum
+			+ " is out of plaintet range [" + lowD + ", " + highD + "]");
+		}
 		long result = EncK(lowD, highD, lowR, highR, plainNum);
 		
 		return result;
@@ -137,6 +146,11 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	public long decrypt(long cipherNum) throws IOException, HGDException, NoSuchAlgorithmException{
 		long lowD = 0, highD = (1l << plainTextSpace) - 1;
 		long lowR = 0, highR = (1l << cipherTextSpace) - 10;
+		if (cipherNum < lowR || cipherNum > highR) {
+			log.debug("OPE cannot decrypt number " + cipherNum 
+					+ " because it is out of the ciphertext range. It has been returned without any change.");
+			return cipherNum;
+		}
 		long result = DecK(lowD, highD, lowR, highR, cipherNum);
 		
 		return result;
@@ -163,7 +177,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 			if(w == c)
 				return m;
 			else{
-				logger.log(Level.SEVERE, "This value was not encrypted correctly");
+				log.error("This value was not encrypted correctly");
 				throw new IllegalArgumentException();
 			}
 		}
@@ -244,7 +258,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 		//check for validity
 		
 		if(NN1 < 0 || NN2 < 0 || KK < 0|| (long)KK > (((long)NN1)+((long)NN2))){
-			logger.log(Level.SEVERE, "Invalid parameters for HGD NN1: " + NN1 + ", NN2: "+NN2 + ", KK: "+KK);
+			log.error("Invalid parameters for HGD NN1: " + NN1 + ", NN2: "+NN2 + ", KK: "+KK);
 			throw new IllegalArgumentException();
 		}
 		
@@ -299,7 +313,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 				countFlagTen++;
 				if(countFlagTen % 500 == 0){
 					if(DEBUG){
-						logger.log(Level.INFO, "passed through label ten "+countFlagTen+" times");
+						log.debug("passed through label ten "+countFlagTen+" times");
 					}
 				}
 				flagTen = false;
@@ -310,7 +324,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 				while(flagTwenty && !flagTen){
 					countFlagTwenty ++;
 					if(countFlagTwenty > 1000){
-						logger.log(Level.SEVERE, "Time out in Inverse Transfromation");
+						log.error("Time out in Inverse Transfromation");
 						throw new HGDException();
 					}
 					flagTwenty = false;
@@ -327,7 +341,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 				}
 			}
 			if(DEBUG)
-				logger.log(Level.INFO, "Inverse Transfromation: MINJX: "+ MINJX+", MAXJX: "+ MAXJX+", IX: " + IX);
+				log.debug("Inverse Transfromation: MINJX: "+ MINJX+", MAXJX: "+ MAXJX+", IX: " + IX);
 		}
 		else{
 			// H2PE
@@ -350,7 +364,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	        	countThirtyB++;
 	        	if(countThirtyB % 500 == 0){
 	        		if(DEBUG){
-	        			logger.log(Level.INFO, "In H2PE, count is " + countThirtyB);
+	        			log.debug("In H2PE, count is " + countThirtyB);
 	        		}
 	        	}
 	        	U = sr.nextDouble() * P3;
@@ -364,7 +378,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	        		IX = XL + Math.log(V) / LAMDL;
 	        		if(IX < MINJX){
 	        			if(DEBUG)
-	        				logger.log(Level.INFO, "left. \n");
+	        				log.debug("left. \n");
 	        			continue;
 	        		}
 	        		V = V * (U - P1) * LAMDL;
@@ -374,7 +388,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	        		IX = XR - Math.log(V) / LAMDR;
 	        		if(IX > MAXJX){
 	        			if(DEBUG)
-	        				logger.log(Level.INFO, "right. \n");
+	        				log.debug("right. \n");
 	        			continue;
 	        		}
 	        		V = V * (U - P2) * LAMDR;
@@ -480,7 +494,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	    }
 	    JX = IX;
 	    if (DEBUG) 
-	    	logger.log(Level.INFO, "KK: " + KK + ", NN1: " + NN1 + ", NN2: " + NN2 + "HGD Sample value: " + JX);
+	    	log.debug("KK: " + KK + ", NN1: " + NN1 + ", NN2: " + NN2 + "HGD Sample value: " + JX);
 	    return (long)(JX+0.5);
 	}
 	
@@ -528,7 +542,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 		try {
 			return encrypt(objectToEncrypt);
 		} catch (NoSuchAlgorithmException | IOException | HGDException e) {
-			logger.log(Level.SEVERE, "Order preserving encryption failed");
+			log.error("Order preserving encryption failed");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -541,7 +555,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 		try {
 			return decrypt(objectToDecrypt);
 		} catch (NoSuchAlgorithmException | IOException | HGDException e) {
-			logger.log(Level.SEVERE, "Order preserving decrption failed");
+			log.error("Order preserving decrption failed");
 			e.printStackTrace();
 			System.exit(1);
 		}

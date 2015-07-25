@@ -4,14 +4,14 @@ package com.sg.secram.impl.records;
 
 
 /**
- * Represents a single element of a {@link PosCigar}.
+ * Represents a single element of a {@link PosCigarOld}.
  * @author Fabien Jolidon
  *
  */
-public class PosCigarElement {
+public class PosCigarFeatureOld {
 
 	private int mOrder;
-	private PosCigarOperator mOP;
+	private PosCigarFeatureCode mOP;
 	private int mLength;
 	private String mBases = null;
 	private boolean mSpecialEnding = false;
@@ -26,9 +26,9 @@ public class PosCigarElement {
 	 * @param bases A string containing one or more bases  (this field is only necessary for some operators)
 	 * @param encode Whether or not we should encode this operator in the file (false for almost all M operators)
 	 */
-	public PosCigarElement(int order, char op, int length, String bases, boolean specialEnding) {
+	public PosCigarFeatureOld(int order, char op, int length, String bases, boolean specialEnding) {
 		mOrder = order;
-		mOP = PosCigarOperator.getOperator(op);
+		mOP = PosCigarFeatureCode.getOperator(op);
 		mLength = length;
 		mBases = bases;
 		mSpecialEnding = specialEnding;
@@ -42,7 +42,7 @@ public class PosCigarElement {
 	 * @param length Length (this field is only necessary for some operators)
 	 * @param bases A string containing one or more bases  (this field is only necessary for some operators)
 	 */
-	public PosCigarElement(int order, String op, int length, String bases, boolean encode) {
+	public PosCigarFeatureOld(int order, String op, int length, String bases, boolean encode) {
 		this(order,op.charAt(0),length,bases,encode);
 	}
 	
@@ -52,7 +52,7 @@ public class PosCigarElement {
 		return mOrder;
 	}
 
-	public PosCigarOperator getOperator() {
+	public PosCigarFeatureCode getOperator() {
 		return mOP;
 	}
 
@@ -70,14 +70,14 @@ public class PosCigarElement {
 		String result = mOrder+""+mOP.getCharacter();
 		
 		if (mOP.hasLength()) result+=mLength;
-		if (mOP.hasBases() && mOP != PosCigarOperator.M) result+=mBases;
+		if (mOP.hasBases() && mOP != PosCigarFeatureCode.M) result+=mBases;
 		
 		
 		return result;
 	}
 	
 	public String getFileRepresentation() {
-		if (mOP == PosCigarOperator.M) return "";
+		if (mOP == PosCigarFeatureCode.M) return "";
 		
 		String result = mOrder+""+mOP.getCharacter();
 		
@@ -85,7 +85,7 @@ public class PosCigarElement {
 		if (mOP.hasBases()) result+=mBases;
 		
 		if (specialEndingFlag()) {
-			result+=PosCigar.SPECIAL_ENDING_CHAR;
+			result+=PosCigarOld.SPECIAL_ENDING_CHAR;
 		}
 		
 		
@@ -117,8 +117,8 @@ public class PosCigarElement {
 	
 	
 	public boolean equals(Object o) {
-		if (o instanceof PosCigarElement) {
-			PosCigarElement that = (PosCigarElement)o;
+		if (o instanceof PosCigarFeatureOld) {
+			PosCigarFeatureOld that = (PosCigarFeatureOld)o;
 			if (
 					that.mOrder == mOrder && 
 					that.mLength == mLength &&

@@ -5,12 +5,13 @@ import htsjdk.samtools.BAMRecord;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 
-import com.sg.secram.impl.records.PosCigarElement;
+import com.sg.secram.impl.records.PosCigarFeature;
+import com.sg.secram.impl.records.PosCigarFeatureOld;
 
-public class IncompleteBAMRecord {
+public class BAMRecordBuilder {
 	private BAMRecord record;
 	private int alignmentEnd;
-	private LinkedList<PosCigarElement> cigar = new LinkedList<PosCigarElement>();
+	private LinkedList<PosCigarFeature> cigar = new LinkedList<PosCigarFeature>();
 	
 	private ByteArrayOutputStream qualityScores = new ByteArrayOutputStream(100);
 	
@@ -20,7 +21,7 @@ public class IncompleteBAMRecord {
 	private int expectedNext = -1;
 	
 	
-	public IncompleteBAMRecord(BAMRecord record,
+	public BAMRecordBuilder(BAMRecord record,
 			int alignmentStart, int alignmentEnd) {
 		this.record = record;
 		record.setAlignmentStart(alignmentStart);
@@ -63,17 +64,17 @@ public class IncompleteBAMRecord {
 		}
 	}
 	
-	public void addElement(PosCigarElement element, int position) {
+	public void addElement(PosCigarFeature element, int position) {
 		check(position);
 		cigar.add(element);
 	}
 	
 	public void addReadElement(String readStr, int position) {
 		check(position);
-		readString+=readStr;
+		readString += readStr;
 	}
 	
-	public BAMRecord getRecord() {
+	public BAMRecord close() {
 		record.setBaseQualities(qualityScores.toByteArray());
 		record.setReadString(readString);
 		
@@ -84,29 +85,32 @@ public class IncompleteBAMRecord {
 			char lastChar = 'M';
 			int currentLen = 0;
 			String finalString = "";
-			for (PosCigarElement cigarElement: cigar) {
-				char currentChar = cigarElement.getOperator().getBAMCharacter();
+			for (PosCigarFeature feature: cigar) {
+				char currentChar = feature.mOP.getBAMCharacter();
 				if (lastChar != currentChar) {
 					if (currentLen > 0) {
-						finalString+=currentLen+String.valueOf(lastChar);
+						finalString += currentLen + String.valueOf(lastChar);
 						currentLen=0;
 					}
-					lastChar = cigarElement.getOperator().getBAMCharacter();
-					
+					lastChar = feature.mOP.getBAMCharacter();
 				}
 				
-				switch(cigarElement.getOperator()) {
-				case I:
-				case S:
-				case H:
-				case P:
-					currentLen+=cigarElement.getLength();
-					break;
-				default:
-					++currentLen;
+				switch(feature.mOP) {
+					case F:
+					case R:
+					case G:
+					case O:
+					case I:
+					case S:
+					case H:
+					case P:
+						currentLen += feature.mLength;
+						break;
+					default:
+						++currentLen;
 				}
 			}
-			finalString+=currentLen+String.valueOf(lastChar);
+			finalString += currentLen + String.valueOf(lastChar);
 			record.setCigarString(finalString);
 		}
 		return record;

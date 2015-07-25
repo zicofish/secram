@@ -5,6 +5,7 @@ import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.samtools.SAMTextHeaderCodec;
 import htsjdk.samtools.SamReader;
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
 import org.apache.avro.file.DataFileReader;
 
 import com.sg.secram.avro.SecramRecordAvro;
-import com.sg.secram.impl.records.SECRAMRecord;
+import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.util.SECRAMUtils;
 
 
@@ -59,78 +60,79 @@ public class Test {
 		//testSECRAMMatch();
 		
 //		createSmallBamfromBigBam();
+//		checkCoverage();
 		
 		System.out.println("Total time elapsed: "+SECRAMUtils.timeString(System.currentTimeMillis()-startTime));
 		
 	}
 	
-	public static void readFile(String input) throws IOException {
-		SECRAMFileReader file = new SECRAMFileReader(input);
-		
-		System.out.println("Reading SECRAM file...");
-		
-		
-		
-		
-		
-		
-		int i=0;
-		
-		for (SECRAMRecord r : file) {
-			if (r.getPosCigar().toString().contains("I") || r.getPosCigar().toString().contains("S")) {
-				System.out.println(r);
-				/*for (PosCigarElement el: r.getPosCigar()) {
-					System.out.print(el+" ");
-				}*/
-				System.out.println("\n-----------------------------------------");
-				++i;
-				
-				if (i>100) break;
-			}
-			
-			
-		}
-		
-		file.close();
-	}
+//	public static void readFile(String input) throws IOException {
+//		SECRAMFileReader file = new SECRAMFileReader(input);
+//		
+//		System.out.println("Reading SECRAM file...");
+//		
+//		
+//		
+//		
+//		
+//		
+//		int i=0;
+//		
+//		for (SecramRecordOld r : file) {
+//			if (r.getPosCigar().toString().contains("I") || r.getPosCigar().toString().contains("S")) {
+//				System.out.println(r);
+//				/*for (PosCigarElement el: r.getPosCigar()) {
+//					System.out.print(el+" ");
+//				}*/
+//				System.out.println("\n-----------------------------------------");
+//				++i;
+//				
+//				if (i>100) break;
+//			}
+//			
+//			
+//		}
+//		
+//		file.close();
+//	}
 	
-	public static void readFile2(String input, String input2) throws IOException {
-		SECRAMFileReader file = new SECRAMFileReader(input);
-		SECRAMFileReader file2 = new SECRAMFileReader(input2);
-		
-		System.out.println("Reading SECRAM file...");
-		
-		
-		
-		
-		
-		Iterator<SECRAMRecord> iter = file2.iterator();
-		
-		
-		int i=0;
-		
-		for (SECRAMRecord r : file) {
-			SECRAMRecord r2 = iter.next();
-			if (r.getPosCigar().toString().contains("I")) {
-				System.out.println(r);
-				/*for (PosCigarElement el: r.getPosCigar()) {
-					System.out.print(el+" ");
-				}*/
-				System.out.println();
-				System.out.println(r2);
-				
-				
-				System.out.println("\n-----------------------------------------");
-				++i;
-				
-				if (i>100) break;
-			}
-			
-			
-		}
-		
-		file.close();
-	}
+//	public static void readFile2(String input, String input2) throws IOException {
+//		SECRAMFileReader file = new SECRAMFileReader(input);
+//		SECRAMFileReader file2 = new SECRAMFileReader(input2);
+//		
+//		System.out.println("Reading SECRAM file...");
+//		
+//		
+//		
+//		
+//		
+//		Iterator<SecramRecordOld> iter = file2.iterator();
+//		
+//		
+//		int i=0;
+//		
+//		for (SecramRecordOld r : file) {
+//			SecramRecordOld r2 = iter.next();
+//			if (r.getPosCigar().toString().contains("I")) {
+//				System.out.println(r);
+//				/*for (PosCigarElement el: r.getPosCigar()) {
+//					System.out.print(el+" ");
+//				}*/
+//				System.out.println();
+//				System.out.println(r2);
+//				
+//				
+//				System.out.println("\n-----------------------------------------");
+//				++i;
+//				
+//				if (i>100) break;
+//			}
+//			
+//			
+//		}
+//		
+//		file.close();
+//	}
 	
 	public static void checkBlocks(DataFileReader<SecramRecordAvro> reader) throws IOException {
 		long index=115012860;
@@ -139,7 +141,7 @@ public class Test {
 			reader.sync(index);
 			index = reader.tell();
 			record = reader.next();
-			SECRAMRecord secramRecord = new SECRAMRecord(record, 'N');
+			SecramRecordOld secramRecord = new SecramRecordOld(record, 'N');
 			
 			System.out.println("Index="+index+" Position="+secramRecord.getPosition());
 			
@@ -149,18 +151,18 @@ public class Test {
 	}
 	
 	
-	public static void randomAccess(String input) throws IOException {
-		SECRAMFileReader file = new SECRAMFileReader(input);
-		
-	
-		
-		
-		System.out.println(file.get(81604452657L));
-		System.out.println(file.get(81614452657L));
-		System.out.println(file.get(81654452657L));
-		System.out.println(file.get(81604452658L));
-	}
-	
+//	public static void randomAccess(String input) throws IOException {
+//		SECRAMFileReader file = new SECRAMFileReader(input);
+//		
+//	
+//		
+//		
+//		System.out.println(file.get(81604452657L));
+//		System.out.println(file.get(81614452657L));
+//		System.out.println(file.get(81654452657L));
+//		System.out.println(file.get(81604452658L));
+//	}
+//	
 	public static void testRegex() {
 		String input = "4D";
 		
@@ -260,12 +262,12 @@ public class Test {
 	public static void testBAMMatch() throws IOException {
 		
 		
-//		SamReader file = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.bam"));
-//		SamReader file2 = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415_output.bam"));
+		SamReader file = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.bam"));
+		SamReader file2 = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415_output.bam"));
 		
 		//small test
-		SamReader file = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/chrom11_small_test.bam"));
-		SamReader file2 = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/chrom11_small_test_output.bam"));
+//		SamReader file = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/chrom11_small_test.bam"));
+//		SamReader file2 = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/chrom11_small_test_output.bam"));
 		
 		Iterator<SAMRecord> iter = file2.iterator();
 		
@@ -276,8 +278,10 @@ public class Test {
 		boolean start = false;
 		
 		for (SAMRecord r : file) {
+			if(r.getReadUnmappedFlag()) continue;
 			SAMRecord r2 = iter.next();
-			if (!r.getReadUnmappedFlag() && !r.equals(r2)) {
+			if (!r.equals(r2)) {
+				r.equals(r2);
 				System.out.println(r);
 				System.out.println("-----------------------------");
 				System.out.println(r2);
@@ -294,36 +298,36 @@ public class Test {
 		System.out.println(j);
 		
 	}
-	public static void testSECRAMMatch() throws IOException {
-		
-		SECRAMFileReader file = new SECRAMFileReader("./data/HG00115.chrom20.ILLUMINA.bwa.GBR.low_coverage.20130415.secram");
-		SECRAMFileReader file2 = new SECRAMFileReader("./data/HG00115.chrom20.ILLUMINA.bwa.GBR.low_coverage.20130415_output.secram");
-		
-		
-		
-		
-		Iterator<SECRAMRecord> iter = file2.iterator();
-		
-		
-		int i=0;
-		
-		boolean start = false;
-		
-		for (SECRAMRecord r : file) {
-			SECRAMRecord r2 = iter.next();
-			if (!r.equals(r2)) {
-				System.out.println(r);
-				System.out.println("-----------------------------");
-				System.out.println(r2);
-				System.out.println("-----------------------------");
-				System.out.println("-----------------------------");
-				start=true;
-			}
-			if (start && i++ > 100) return;
-		}
-		
-		
-	}
+//	public static void testSECRAMMatch() throws IOException {
+//		
+//		SECRAMFileReader file = new SECRAMFileReader("./data/HG00115.chrom20.ILLUMINA.bwa.GBR.low_coverage.20130415.secram");
+//		SECRAMFileReader file2 = new SECRAMFileReader("./data/HG00115.chrom20.ILLUMINA.bwa.GBR.low_coverage.20130415_output.secram");
+//		
+//		
+//		
+//		
+//		Iterator<SecramRecordOld> iter = file2.iterator();
+//		
+//		
+//		int i=0;
+//		
+//		boolean start = false;
+//		
+//		for (SecramRecordOld r : file) {
+//			SecramRecordOld r2 = iter.next();
+//			if (!r.equals(r2)) {
+//				System.out.println(r);
+//				System.out.println("-----------------------------");
+//				System.out.println(r2);
+//				System.out.println("-----------------------------");
+//				System.out.println("-----------------------------");
+//				start=true;
+//			}
+//			if (start && i++ > 100) return;
+//		}
+//		
+//		
+//	}
 	
 	public static void createSmallBamfromBigBam() throws IOException{
 		SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.bam"));
@@ -337,5 +341,17 @@ public class Test {
 		}
 		bamWriter.close();
 		reader.close();
+	}
+	
+	public static void checkCoverage(){
+		SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.bam"));
+		SAMRecordIterator it = reader.query("11", 180204, 180204, false);
+		int i = 0;
+		while(it.hasNext()){
+			it.next();
+			i++;
+		}
+		
+		System.out.println(i);
 	}
 }

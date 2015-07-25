@@ -18,7 +18,7 @@ public class SECRAMUtils {
 		return formatTime(hours)+":"+formatTime(min)+":"+formatTime(sec);
 	}
 	
-	public static long getPosition(int position, int refSequence) {
+	public static long getAbsolutePosition(int position, int refSequence) {
 		long result = refSequence;
 		result <<= 32;
 		result |= position;

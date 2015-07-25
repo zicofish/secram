@@ -16,20 +16,20 @@ import com.sg.secram.avro.SecramRecordAvro;
 /*
  * SECRAM record
  */
-public class SECRAMRecord {
+public class SecramRecordOld {
 
 	//set to true to parse the M operator values with the reference sequence (when false, all M will be considered matches)
 	private final static boolean USE_REF_SEQUENCE = true;
 	
 	//these fields are only used during conversion from BAM and should not be used when reading from a SECRAM file
-	private LinkedList<ReadHeader> mReadHeaders = new LinkedList<ReadHeader>();
+	private LinkedList<ReadHeaderOld> mReadHeaders = new LinkedList<ReadHeaderOld>();
 	private LinkedList<byte[]> mTmpScores = new LinkedList<byte[]>();
 	private int mTmpScoreLen = 0;
 	
 	//the value in the reference sequence at this position (not stored in the file)
 	private char mReferenceBase;
 	
-	private PosCigar mPosCigar = null;
+	private PosCigarOld mPosCigar = null;
 	
 	//when this is set to true, it means we are currently converting data from a bam file,
 	//and the data in this record is corrently incomplete (because we haven't read all the read
@@ -41,8 +41,8 @@ public class SECRAMRecord {
 	
 	
 	//when converting from BAM
-	public SECRAMRecord(long pos, char referenceBase) throws IOException {
-		mPosCigar = new PosCigar();
+	public SecramRecordOld(long pos, char referenceBase) throws IOException {
+		mPosCigar = new PosCigarOld();
 		mAvroRecord = new SecramRecordAvro();
 		reading = true;
 		
@@ -63,7 +63,7 @@ public class SECRAMRecord {
 //		mReference = file.getReferencePosition(getPOS());
 //	}
 	
-	public SECRAMRecord(SecramRecordAvro avroRecord, char referenceBase) throws IOException{
+	public SecramRecordOld(SecramRecordAvro avroRecord, char referenceBase) throws IOException{
 		mAvroRecord = avroRecord;
 		mReferenceBase = referenceBase;
 	}
@@ -82,7 +82,7 @@ public class SECRAMRecord {
 	public void addReadHeader(BAMRecord bamRecord) {
 		if (!reading) return;
 		
-		ReadHeader header = new ReadHeader(bamRecord, mReadHeaders.size());
+		ReadHeaderOld header = new ReadHeaderOld(bamRecord, mReadHeaders.size());
 		mReadHeaders.add(header);
 	}
 	public void updateScores(byte[] score, int offset, int len) {
@@ -114,7 +114,7 @@ public class SECRAMRecord {
 //		mAvroRecord.setQual(ByteBuffer.wrap(new byte[0]));
 		
 		List<ReadHeaderAvro> tmpHeaders = new LinkedList<ReadHeaderAvro>();
-		for (ReadHeader header : mReadHeaders) {
+		for (ReadHeaderOld header : mReadHeaders) {
 			tmpHeaders.add(header.getAvroRecord());
 		}
 		
@@ -128,7 +128,7 @@ public class SECRAMRecord {
 		size += mAvroRecord.getQual().array().length;
 		size += mAvroRecord.getPosCigar().array().length;
 		
-		for (ReadHeader header : getReadHeaders()) {
+		for (ReadHeaderOld header : getReadHeaders()) {
 			size+=header.getHLen();
 		}
 		
@@ -144,13 +144,13 @@ public class SECRAMRecord {
 		return mAvroRecord.getReadHeaders().size();
 	}
 	
-	public Iterable<ReadHeader> getReadHeaders() {
+	public Iterable<ReadHeaderOld> getReadHeaders() {
 		
-		return new Iterable<ReadHeader>() {
+		return new Iterable<ReadHeaderOld>() {
 			
 			@Override
-			public Iterator<ReadHeader> iterator() {
-				return new Iterator<ReadHeader>() {
+			public Iterator<ReadHeaderOld> iterator() {
+				return new Iterator<ReadHeaderOld>() {
 					private Iterator<ReadHeaderAvro> i = mAvroRecord.getReadHeaders().iterator();
 					
 					@Override
@@ -158,8 +158,8 @@ public class SECRAMRecord {
 						return i.hasNext();
 					}
 					@Override
-					public ReadHeader next() throws NoSuchElementException {
-						return new ReadHeader(i.next());
+					public ReadHeaderOld next() throws NoSuchElementException {
+						return new ReadHeaderOld(i.next());
 					}
 					@Override
 					public void remove() throws UnsupportedOperationException {
@@ -170,9 +170,9 @@ public class SECRAMRecord {
 		};
 	}
 	
-	public PosCigar getPosCigar() {
+	public PosCigarOld getPosCigar() {
 		if (mPosCigar == null) {
-			mPosCigar = new PosCigar(getPosCigarAsBytes(), mAvroRecord.getQual().array().length, mReferenceBase);
+			mPosCigar = new PosCigarOld(getPosCigarAsBytes(), mAvroRecord.getQual().array().length, mReferenceBase);
 		}
 		return mPosCigar;
 	}
@@ -196,7 +196,7 @@ public class SECRAMRecord {
 		result+="POS: "+getPOS()+"\n";
 		result+="# read headers: "+getNbReadHeaders()+"\n";
 		
-		for (ReadHeader header : getReadHeaders()) {
+		for (ReadHeaderOld header : getReadHeaders()) {
 			result += "   "+header.toString().replace("\n", "\n   ")+"\n";
 			result+="   ----------------------------------------\n";
 		}
@@ -221,8 +221,8 @@ public class SECRAMRecord {
 	}
 	
 	public boolean equals(Object obj) {
-		if (obj instanceof SECRAMRecord) {
-			SECRAMRecord that = (SECRAMRecord)obj;
+		if (obj instanceof SecramRecordOld) {
+			SecramRecordOld that = (SecramRecordOld)obj;
 			
 			if (mAvroRecord.getReadHeaders().size()==0)
 				return that.mAvroRecord.equals(mAvroRecord);
@@ -232,10 +232,10 @@ public class SECRAMRecord {
 			if (!mAvroRecord.getQual().equals(that.mAvroRecord.getQual())) return false;
 			if (mAvroRecord.getReadHeaders().size() != that.mAvroRecord.getReadHeaders().size()) return false;
 			
-			Iterator<ReadHeader> iter = that.getReadHeaders().iterator();
+			Iterator<ReadHeaderOld> iter = that.getReadHeaders().iterator();
 			
-			for (ReadHeader header : getReadHeaders()) {
-				ReadHeader thatHeader = iter.next();
+			for (ReadHeaderOld header : getReadHeaders()) {
+				ReadHeaderOld thatHeader = iter.next();
 
 				if (header.getHLen() != thatHeader.getHLen()) return false;
 				if (header.getOrder() != thatHeader.getOrder()) return false;

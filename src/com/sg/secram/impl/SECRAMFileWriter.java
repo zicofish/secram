@@ -2,263 +2,154 @@ package com.sg.secram.impl;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.avro.file.CodecFactory;
-import org.apache.avro.file.DataFileWriter;
-import org.apache.avro.io.DatumWriter;
-import org.apache.avro.specific.SpecificDatumWriter;
-
 import com.sg.secram.SECRAMEncryptionFilter;
-import com.sg.secram.avro.SecramHeaderAvro;
-import com.sg.secram.avro.SecramRecordAvro;
-import com.sg.secram.impl.records.SECRAMRecord;
+import com.sg.secram.impl.records.ReadHeader;
+import com.sg.secram.impl.records.SecramRecord;
+import com.sg.secram.structure.SecramBlock;
+import com.sg.secram.structure.SecramCompressionHeaderFactory;
+import com.sg.secram.structure.SecramContainer;
+import com.sg.secram.structure.SecramContainerFactory;
+import com.sg.secram.structure.SecramContainerIO;
+import com.sg.secram.structure.SecramHeader;
+import com.sg.secram.structure.SecramIO;
 
 
 public class SECRAMFileWriter {
-
-	private byte[] mHeader;
-	private byte[] mUnalignedRecords;
+	private Log log = Log.getInstance(SECRAMFileWriter.class);
 	
-	private SAMFileHeader mSAMFileHeader;
+	private String fileName;
+	private int recordsPerContainer = SecramContainer.DEFATUL_RECORDS_PER_CONTAINER;
+	private SecramContainerFactory containerFactory;
+	private SAMFileHeader samFileHeader;
+	private SECRAMSecurityFilter filter;
+	private SecramHeader secramHeader;
 	
-	private File mFile;
-
-	private final static int MIN_BLOCK_SIZE = 1000;
-	private final static int MAX_BLOCK_SIZE = 500000;
+	private final OutputStream outputStream;
+	private long offset;
 	
-	//when we have more than this value in the queue, the producer thread will block
-	private final static int MAX_QUEUE_SIZE = 20;
+	private List<SecramRecord> secramRecords = new ArrayList<SecramRecord>();
 	
-	//private long writtenBytes = 0;
-	private long startPosition = -1;
-	private long lastPosition = 0;
-	
-	//when converting from BAM, the program uses 2 threads:
-	//-one that will read from the bam file, and do the actual conversion to a SECRAM record
-	//-one that will compress and write data to disk
-	//as the compression clearly appears to be the bottleneck I tried to use 1 thread dedicated to this task
-	
-	//the 2 threads use a producer-consumer model, with a queue
-	private LinkedBlockingQueue<SECRAMRecord> queue = new LinkedBlockingQueue<SECRAMRecord>(MAX_QUEUE_SIZE);
-	
-	//if something wrong happens on the consumer thread, we store the exception here to display it on the producer thread (the "main" thread)
-	private volatile Exception error = null;
-	
-	//Runnable instance for the consumer thread
-	private SECRAMWriter secramWriter;
-	
-	private SECRAMSecurityFilter mFilter;
-	
-	public SECRAMFileWriter(File outputFile, SAMFileHeader header, byte[] unalignedRecords, int compressionLevel, int positionsPerBlock, SECRAMSecurityFilter filter) throws IOException {
+	public SECRAMFileWriter(final OutputStream outputStream, final SAMFileHeader header, String fileName, byte[] masterKey) throws IOException {
+		this.outputStream = outputStream;
+		this.samFileHeader = header;
+		this.filter = new SECRAMSecurityFilter(masterKey);
+		this.fileName = fileName;
+		this.containerFactory = new SecramContainerFactory(header, recordsPerContainer);
 		
-		mSAMFileHeader = header;
-		mHeader = convertHeaderToByteArray(header);
-		mUnalignedRecords = unalignedRecords;
-		mFile = outputFile;
-		mFilter = filter;
-		
-		if (positionsPerBlock > MAX_BLOCK_SIZE)
-			positionsPerBlock = MAX_BLOCK_SIZE;
-		else if (positionsPerBlock < MIN_BLOCK_SIZE)
-			positionsPerBlock = MIN_BLOCK_SIZE;
-		
-		if (compressionLevel<0) compressionLevel = 0;
-		else if (compressionLevel>9) compressionLevel = 9;
-		
-		//System.out.println("[DEBUG] Creating new SECRAM file "+file+".");
-		
-		DatumWriter<SecramRecordAvro> datumWriter = new SpecificDatumWriter<SecramRecordAvro>(SecramRecordAvro.class);
-		DataFileWriter<SecramRecordAvro> writer = new DataFileWriter<SecramRecordAvro>(datumWriter);
-		if (compressionLevel>0)
-			writer.setCodec(CodecFactory.deflateCodec(compressionLevel));
-		writer.create(SecramRecordAvro.SCHEMA$, mFile);
-		
-		secramWriter = new SECRAMWriter(positionsPerBlock, writer);
-		
-		new Thread(secramWriter).start();
-		
+		writeHeader();
 	}
 	
 	public SAMFileHeader getBAMHeader() {
-		return mSAMFileHeader;
+		return samFileHeader;
 	}
 	
-	public byte[] getUnalignedRecords() {
-		return mUnalignedRecords;
-	}
-	public long getFirstPOS() {
-		return startPosition;
-	}
-	public long getLastPOS() {
-		return lastPosition;
+	public long getNumberOfWrittenRecords(){
+		return this.containerFactory.getGlobalRecordCounter();
 	}
 	
-	public void close() throws IOException, InterruptedException {
-		while(!queue.isEmpty()){
-			Thread.sleep(1000);
-		}
-		secramWriter.close();
-	}
-	
-	public void appendRecord(SECRAMRecord record) throws Exception {
-		try {
-			queue.put(record);
-		}
-		catch(InterruptedException ex) {
-			ex.printStackTrace(); //should never happen, unless we kill the process from the OS
-		}
-		if (error != null) {
-			throw error;
-		}
-	}
-	
-	//class for the "consumer" thread.
-	//this thread will basically work on the Compression and Writing to Disk parts of the conversion
-	private class SECRAMWriter implements Runnable {
-
-		private int blockSize = 0;
-
-		private List<Long> positions = new LinkedList<Long>();
-		private List<Long> index = new LinkedList<Long>();
-		private Long opeSalt = 0L;
-		private List<Long> blockSalts = new LinkedList<Long>();
-		private SecureRandom sr = null;
-
-		private int mPositionsPerBlock;
-
-		private DataFileWriter<SecramRecordAvro> mWriter;
-		
-		private volatile boolean closeFlag = false;
-		
-		private SECRAMWriter(int positionsPerBlock, DataFileWriter<SecramRecordAvro> writer) {
-			mPositionsPerBlock = positionsPerBlock;
-			mWriter = writer;
-			try {
-				sr = SecureRandom.getInstance("SHA1PRNG");
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
-			opeSalt = sr.nextLong();
-			mFilter.initPositionEncryptionMethod(opeSalt);
-		}
-		
-		@Override
-		public void run() {
-			
-			try {
-				SECRAMRecord record;
-				while(!closeFlag) {
-					record = null;
-					try {
-						record = queue.poll(1000, TimeUnit.MILLISECONDS);
-					}
-					catch(InterruptedException ex) {}
-					
-					if (record != null) {
-						writeRecord(record);
-					}
-				}
-				unsyncClose();
-			}
-			catch(IOException | NoSuchAlgorithmException ex) {
-				error = ex;
-			}
-			finally {
-				queue.clear(); //empty the queue so the producer thread does not wait forever in the put method
-			}
-		}
-		
-		private void writeRecord(SECRAMRecord record) throws IOException, NoSuchAlgorithmException {
-			if (startPosition == -1) {
-				startPosition = record.getPOS();
-				
-				positions.add(mFilter.encryptPosition(record.getPOS()));
-				index.add(0L);
-				long r = sr.nextLong();
-				mFilter.initPosCigarEncryptionMethod(r);
-				blockSalts.add(r);
-			}
-			
-			if (blockSize>=mPositionsPerBlock) {
-				index.add(mWriter.sync()); //end of block
-				positions.add(mFilter.encryptPosition(record.getPOS()));
-				long r = sr.nextLong();
-				mFilter.initPosCigarEncryptionMethod(r);
-				blockSalts.add(r);
-				
-				blockSize = 0;
-			}
-			
-			lastPosition = record.getPOS();
-			
-			++blockSize;
-
-			mFilter.encryptRecord(record);
-			mWriter.append(record.getAvroRecord());
-		}
-		
-		private void unsyncClose() throws IOException {
-			mWriter.close();
-			
-			SecramHeaderAvro header = new SecramHeaderAvro();
-			header.setBAMHeader(ByteBuffer.wrap(mHeader));
-			header.setUnalignedRecords(ByteBuffer.wrap(mUnalignedRecords));
-			header.setPositions(positions);
-			header.setIndex(index);
-			header.setOpeSalt(opeSalt);
-			header.setBlockSalts(blockSalts);
-			
-			DatumWriter<SecramHeaderAvro> datumWriter = new SpecificDatumWriter<SecramHeaderAvro>(SecramHeaderAvro.class);
-			DataFileWriter<SecramHeaderAvro> hWriter = new DataFileWriter<SecramHeaderAvro>(datumWriter);
-			hWriter.create(SecramHeaderAvro.SCHEMA$, new File(mFile+"h"));
-			hWriter.append(header);
-			hWriter.close();
-		}
-		
-		private void close() {
-			closeFlag = true;
-		}
-	}
-	
-	private static byte[] convertHeaderToByteArray(SAMFileHeader samFileHeader) {
-		
-		String headerText = samFileHeader.getTextHeader();
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		//Please be aware that DataOutputStream is big-endian, which is different from BAM specification
-		DataOutputStream dos = new DataOutputStream(baos);
-		
+	public void close() {
 		try{
-			dos.write(SECRAMFileConstants.SECRAM_MAGIC, 0, SECRAMFileConstants.SECRAM_MAGIC.length);
-	
-	        // calculate and write the length of the SAM file header text and the header text
-			dos.writeInt(headerText.length());
-	        dos.writeBytes(headerText);
-	
-	        // write the sequences binarily.  This is redundant with the text header
-	        dos.writeInt(samFileHeader.getSequenceDictionary().size());
-	        for (final SAMSequenceRecord sequenceRecord: samFileHeader.getSequenceDictionary().getSequences()) {
-	        	dos.writeInt(sequenceRecord.getSequenceName().length() + 1);
-	            dos.writeBytes(sequenceRecord.getSequenceName() + '\0');
-	            dos.writeInt(sequenceRecord.getSequenceLength());
-	        }
+			if(!secramRecords.isEmpty())
+				flushContainer();
+			outputStream.flush();
+			outputStream.close();
+		} catch(Exception e){
+			throw new RuntimeException(e);
 		}
-		catch (IOException e)
-		{
-			System.err.println("DataOutputStream write error in getBAMHeader");
+		System.out.println("opeSalt: " + secramHeader.getOpeSalt());
+	}
+	
+	public boolean shouldFlushContainer(final SecramRecord nextRecord){
+		return secramRecords.size() >= recordsPerContainer;
+	}
+	
+	public void appendRecord(SecramRecord record) throws Exception {
+		if(shouldFlushContainer(record)){
+			flushContainer();
 		}
-        return baos.toByteArray();
+		secramRecords.add(record);
+	}
+	
+	public void flushContainer() throws IllegalArgumentException, IllegalAccessException, IOException{
+		//encrypt the positions
+		for(SecramRecord record : secramRecords){
+			if(record.mPosition == 68701)
+				System.out.println("trap");
+			long encPos = filter.encryptPosition(record.getAbsolutePosition());
+			record.setAbsolutionPosition(encPos);
+			for(ReadHeader rh : record.mReadHeaders){
+				long encNextPos = filter.encryptPosition(rh.getNextAbsolutePosition());
+				rh.setNextAbsolutionPosition(encNextPos);
+			}
+		}
+		
+		//process all delta information for relative integer/long encoding
+		long prevAbsolutePosition = secramRecords.get(0).getAbsolutePosition();
+		int prevCoverage = secramRecords.get(0).mPosCigar.mCoverage;
+		int prevQualLen = secramRecords.get(0).mQualityScores.length;
+		for(SecramRecord record : secramRecords){
+			record.absolutePositionDelta = record.getAbsolutePosition() - prevAbsolutePosition;
+			prevAbsolutePosition = record.getAbsolutePosition();
+			record.coverageDelta = record.mPosCigar.mCoverage - prevCoverage;
+			prevCoverage = record.mPosCigar.mCoverage;
+			record.qualityLenDelta = record.mQualityScores.length - prevQualLen;
+			prevQualLen = record.mQualityScores.length;
+		}
+		
+		//initialize the block encryption for this container
+		int containerID = containerFactory.getGlobalContainerCounter();
+		long containerSalt = 0;
+		try {
+			SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
+			containerSalt = sr.nextLong();
+			filter.initContainerEM(containerSalt, containerID);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		
+		SecramContainer container = containerFactory.buildContainer(secramRecords, containerSalt);
+		
+		//encrypt the sensitive block (the first external block)
+		SecramBlock sensitiveBlock = container.external.get(SecramCompressionHeaderFactory.SENSITIVE_FIELD_EXTERNAL_ID);
+		byte[] encBlock = filter.encryptBlock(sensitiveBlock.getRawContent(), containerID);
+		sensitiveBlock.setContent(encBlock, encBlock);
+		
+		//write out the container
+		container.offset = offset;
+		offset += SecramContainerIO.writeContainer(container, outputStream);
+		
+		secramRecords.clear();
+	}
+
+	private void writeHeader() throws IOException{
+		//initialize the order-preserving encryption (ope) for the whole file
+		long opeSalt = 0;
+		try {
+			SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
+//			opeSalt = sr.nextLong();
+			opeSalt = 3638361922393486999L;
+			filter.initPositionEM(opeSalt);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		
+		secramHeader = new SecramHeader(fileName, samFileHeader, opeSalt);
+		offset = SecramIO.writeSecramHeader(secramHeader, outputStream);
 	}
 }
