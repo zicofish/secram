@@ -96,8 +96,6 @@ public class SecramRecordCodec {
 	}
 		
 	public void write(SecramRecord record) throws IOException{
-		if(record.mPosition == -47508351)
-			System.out.println("trap");
 		absolutePositionCodec.writeField(record.absolutePositionDelta);
 		numberOfReadHeadersCodec.writeField(record.mReadHeaders.size());
 		for(ReadHeader rh : record.mReadHeaders){
@@ -107,8 +105,6 @@ public class SecramRecordCodec {
 			flagCodec.writeField(rh.mFlags);
 			templateLengthCodec.writeField(rh.mTemplateLength);
 			long tmp = rh.getNextAbsolutePosition() - record.getAbsolutePosition();
-			if(tmp == -10996190161618L)
-				System.out.println("trap");
 			nextAbsolutePositionCodec.writeField(tmp);
 			tagsCodec.writeField(rh.mTags);
 		}
@@ -170,8 +166,6 @@ public class SecramRecordCodec {
 		record.absolutePositionDelta = absolutePositionCodec.readField();
 		long absPos = prevRecord.getAbsolutePosition() + record.absolutePositionDelta;
 		record.setAbsolutionPosition(absPos);
-		if(absPos == -1004116979)
-			System.out.println("trap");
 		int numberOfReadHeaders = numberOfReadHeadersCodec.readField();
 		for(int i = 0; i < numberOfReadHeaders; i++){
 			ReadHeader rh = new ReadHeader();
@@ -182,8 +176,6 @@ public class SecramRecordCodec {
 			rh.mTemplateLength = templateLengthCodec.readField();
 			long tmp = nextAbsolutePositionCodec.readField();
 			rh.setNextAbsolutionPosition(tmp + record.getAbsolutePosition());
-			if(rh.getNextAbsolutePosition() == -1004116979)
-				System.out.println("trap");
 			rh.mTags = tagsCodec.readField();
 			
 			record.mReadHeaders.add(rh);

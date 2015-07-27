@@ -77,7 +77,7 @@ public class ReadHeader {
 	public long getNextAbsolutePosition(){
 		long result = mNextReferenceIndex;
 		result <<= 32;
-		result |= mNextPosition;
+		result |= (0x00000000FFFFFFFFL & mNextPosition);
 		return result;
 	}
 	

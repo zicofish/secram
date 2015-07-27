@@ -30,6 +30,9 @@ public class SECRAMIterator implements Iterator<SecramRecord>{
 	private byte[] cachedRefSequence = null;
 	private int cachedRefID = -1;
 	
+	private long prevEncPosition = -1;
+	private long prevOrgPosition = -1;
+	
 	public SECRAMIterator(SecramHeader header, InputStream inputStream, ReferenceSequenceFile referenceFile, SECRAMSecurityFilter filter){
 		this.secramHeader = header;
 		this.mRsf = referenceFile;
@@ -47,6 +50,8 @@ public class SECRAMIterator implements Iterator<SecramRecord>{
 		container = containerIterator.next();
 		secramRecords = parser.getRecords(container, filter);
 		iterator = secramRecords.iterator();
+		prevEncPosition = -1;
+		prevOrgPosition = -1;
 	}
 
 	@Override
@@ -66,13 +71,20 @@ public class SECRAMIterator implements Iterator<SecramRecord>{
 		if(hasNext()){
 			SecramRecord record = iterator.next();
 			{//decrypt the positions
-				long originalPos = filter.decryptPosition(record.getAbsolutePosition());
-				record.setAbsolutionPosition(originalPos);
+				long originalPos;
+				if(prevEncPosition == -1 || record.getAbsolutePosition() != prevEncPosition){
+					originalPos = filter.decryptPosition(record.getAbsolutePosition());
+					prevEncPosition = record.getAbsolutePosition();
+					record.setAbsolutionPosition(originalPos);
+					prevOrgPosition = originalPos;
+				}
+				else{
+					record.setAbsolutionPosition(prevOrgPosition + 1);
+					prevOrgPosition += 1;
+				}
 				for(ReadHeader rh : record.mReadHeaders){
-					if(rh.getNextAbsolutePosition() == -1004116979)
-						System.out.println("trap");
-					originalPos = filter.decryptPosition(rh.getNextAbsolutePosition());
-					rh.setNextAbsolutionPosition(originalPos);
+					long nextPos = filter.decryptPosition(rh.getNextAbsolutePosition());
+					rh.setNextAbsolutionPosition(nextPos);
 				}
 			}
 			try {

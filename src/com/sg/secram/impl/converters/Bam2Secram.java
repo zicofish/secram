@@ -119,12 +119,14 @@ public class Bam2Secram {
 	
 	
 	public static void main(String[] args) throws Exception {
-		File input = new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.bam");
-		File output = new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.debugencsecram");
+		File input = new File("./data/HG00125.chrom11.ILLUMINA.bwa.GBR.exome.20120522.bam");
+		File output = new File("./data/HG00125.chrom11.ILLUMINA.bwa.GBR.exome.20120522.secram");
+//		File sec_output = new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.newencsecram");
 		System.out.println("Start processsing file  \""+ input +"\"");
 		long startTime = System.currentTimeMillis();
 		
 		convertFile(input, output, "SECRET_1SECRET_2SECRET_3".getBytes());
+//		convertFile(input, sec_output, "SECRET_1SECRET_2SECRET_3".getBytes());
 		
 		long totalTime = System.currentTimeMillis()-startTime;
 		
@@ -229,8 +231,6 @@ public class Bam2Secram {
 		Iterator<CigarElement> iter = bamRecord.getCigar().getCigarElements().iterator();
 		CigarElement element;
 		
-		if((int)startPosition == 160133)
-			System.out.println("trap");
 		while(iter.hasNext()) {
 			element = iter.next();
 			CigarOperator op = element.getOperator();

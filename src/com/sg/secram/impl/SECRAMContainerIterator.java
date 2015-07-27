@@ -28,18 +28,23 @@ public class SECRAMContainerIterator implements Iterator<SecramContainer> {
 	void readNextContainer(){
 		try {
             nextContainer = SecramContainerIO.readContainer(inputStream);
-            
-            //initialize the block encryption for this container, and decrypt the sensitive block
-            filter.initContainerEM(nextContainer.containerSalt, nextContainer.containerID);
-            SecramBlock sensitiveBlock = nextContainer.external.get(SecramCompressionHeaderFactory.SENSITIVE_FIELD_EXTERNAL_ID);
-            byte[] orginalBlock = filter.decryptBlock(sensitiveBlock.getRawContent(), nextContainer.containerID);
-            sensitiveBlock.setContent(orginalBlock, orginalBlock);
             		
-        } catch (final IOException | NoSuchAlgorithmException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
 
         if (null == nextContainer) eof = true;
+        else{
+        	//initialize the block encryption for this container, and decrypt the sensitive block
+            try {
+				filter.initContainerEM(nextContainer.containerSalt, nextContainer.containerID);
+			} catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+            SecramBlock sensitiveBlock = nextContainer.external.get(SecramCompressionHeaderFactory.SENSITIVE_FIELD_EXTERNAL_ID);
+            byte[] orginalBlock = filter.decryptBlock(sensitiveBlock.getRawContent(), nextContainer.containerID);
+            sensitiveBlock.setContent(orginalBlock, orginalBlock);
+        }
 	}
 	
 	@Override

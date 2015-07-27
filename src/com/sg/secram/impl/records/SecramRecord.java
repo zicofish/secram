@@ -57,7 +57,7 @@ public class SecramRecord {
 	public long getAbsolutePosition() {
 		long result = mReferenceIndex;
 		result <<= 32;
-		result |= mPosition;
+		result |= (0x00000000FFFFFFFFL & mPosition);
 		
 		return result;
 	}

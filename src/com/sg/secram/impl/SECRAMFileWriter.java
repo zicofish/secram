@@ -88,11 +88,19 @@ public class SECRAMFileWriter {
 	
 	public void flushContainer() throws IllegalArgumentException, IllegalAccessException, IOException{
 		//encrypt the positions
+		long prevOrgPosition = secramRecords.get(0).getAbsolutePosition();
+		long prevEncPosition = -1;
 		for(SecramRecord record : secramRecords){
-			if(record.mPosition == 68701)
-				System.out.println("trap");
-			long encPos = filter.encryptPosition(record.getAbsolutePosition());
-			record.setAbsolutionPosition(encPos);
+			if(record.getAbsolutePosition() - prevOrgPosition != 1){
+				long encPos = filter.encryptPosition(record.getAbsolutePosition());
+				prevOrgPosition = record.getAbsolutePosition();
+				record.setAbsolutionPosition(encPos);
+				prevEncPosition = encPos;
+			}
+			else{
+				record.setAbsolutionPosition(prevEncPosition);
+				prevOrgPosition += 1;
+			}
 			for(ReadHeader rh : record.mReadHeaders){
 				long encNextPos = filter.encryptPosition(rh.getNextAbsolutePosition());
 				rh.setNextAbsolutionPosition(encNextPos);
@@ -142,8 +150,7 @@ public class SECRAMFileWriter {
 		long opeSalt = 0;
 		try {
 			SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-//			opeSalt = sr.nextLong();
-			opeSalt = 3638361922393486999L;
+			opeSalt = sr.nextLong();
 			filter.initPositionEM(opeSalt);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();

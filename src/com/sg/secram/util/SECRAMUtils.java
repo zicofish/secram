@@ -21,7 +21,7 @@ public class SECRAMUtils {
 	public static long getAbsolutePosition(int position, int refSequence) {
 		long result = refSequence;
 		result <<= 32;
-		result |= position;
+		result |= (0x00000000FFFFFFFFL & position);
 		
 		return result;
 	}

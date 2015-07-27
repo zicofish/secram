@@ -47,6 +47,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	int maxCacheSize = 4000000;
 	
 	private Log log = Log.getInstance(OPE.class);
+	private boolean DEBUG = false;
 	
 	/**
 	 * This OPE implementation works for 64-bit integer
@@ -85,8 +86,9 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 		long lowR = 0, highR = (1l << cipherTextSpace) - 10;
 		if(plainNum < lowD || plainNum > highD) {
 			if(plainNum < lowR || plainNum > highR){ //try to skip the exception if the number is also out of the ciphertext range, so that no one would misuse it for decryption
-				log.debug("OPE cannot encrypt number " + plainNum 
-						+ " because it is out of the plaintext range. It has been returned without any change.");
+				if(DEBUG)
+					log.debug("OPE cannot encrypt number " + plainNum 
+							+ " because it is out of the plaintext range. It has been returned without any change.");
 				return plainNum;
 			}
 			throw new IllegalArgumentException("OPE encryption failed: the given plaintext number " + plainNum
@@ -147,8 +149,9 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 		long lowD = 0, highD = (1l << plainTextSpace) - 1;
 		long lowR = 0, highR = (1l << cipherTextSpace) - 10;
 		if (cipherNum < lowR || cipherNum > highR) {
-			log.debug("OPE cannot decrypt number " + cipherNum 
-					+ " because it is out of the ciphertext range. It has been returned without any change.");
+			if(DEBUG)
+				log.debug("OPE cannot decrypt number " + cipherNum 
+						+ " because it is out of the ciphertext range. It has been returned without any change.");
 			return cipherNum;
 		}
 		long result = DecK(lowD, highD, lowR, highR, cipherNum);
@@ -253,7 +256,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 		double DELTAU = 0.0034;
 		double SCALE = 1.0e25;
 		
-		boolean DEBUG = false;
+		
 		
 		//check for validity
 		

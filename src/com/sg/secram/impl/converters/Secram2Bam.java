@@ -73,7 +73,7 @@ public class Secram2Bam {
 	
 	public static void main(String[] args) throws Exception {
 		
-		String input = "./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.encsecram";
+		String input = "./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.newencsecram";
 		String output  = "./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415_output.bam";
 		
 		//small test
@@ -81,6 +81,7 @@ public class Secram2Bam {
 //		String output  = "./data/chrom11_small_test_output.bam";
 		
 		convertFile(input, output, "SECRET_1SECRET_2SECRET_3".getBytes());
+//		convertFile(input, output, null);
 	}
 	
 	/**
