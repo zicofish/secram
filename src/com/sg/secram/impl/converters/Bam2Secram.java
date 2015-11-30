@@ -119,14 +119,12 @@ public class Bam2Secram {
 	
 	
 	public static void main(String[] args) throws Exception {
-		File input = new File("./data/HG00125.chrom11.ILLUMINA.bwa.GBR.exome.20120522.bam");
-		File output = new File("./data/HG00125.chrom11.ILLUMINA.bwa.GBR.exome.20120522.secram");
-//		File sec_output = new File("./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.newencsecram");
+		File input = new File("./data/SG10000001_S1_L001_R1_001.bam");
+		File output = new File("./data/SG10000001_S1_L001_R1_001.secram");
 		System.out.println("Start processsing file  \""+ input +"\"");
 		long startTime = System.currentTimeMillis();
 		
 		convertFile(input, output, "SECRET_1SECRET_2SECRET_3".getBytes());
-//		convertFile(input, sec_output, "SECRET_1SECRET_2SECRET_3".getBytes());
 		
 		long totalTime = System.currentTimeMillis()-startTime;
 		
