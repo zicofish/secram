@@ -1,6 +1,7 @@
 package com.sg.secram.structure;
 
 import htsjdk.samtools.cram.io.DefaultBitInputStream;
+import htsjdk.samtools.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,14 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mortbay.log.Log;
-
 import com.sg.secram.compression.SecramRecordCodec;
 import com.sg.secram.compression.SecramRecordCodecFactory;
 import com.sg.secram.impl.SECRAMSecurityFilter;
 import com.sg.secram.impl.records.SecramRecord;
 
 public class SecramContainerParser {
+	private static final Log log = Log.getInstance(SecramContainerIO.class);
+	
 	public SecramContainerParser(){
 		
 	}
@@ -26,7 +27,7 @@ public class SecramContainerParser {
 		SecramRecordCodecFactory codecFactory = new SecramRecordCodecFactory();
 		Map<Integer, InputStream> inputMap = new HashMap<Integer, InputStream>();
 		for(Integer exID : container.external.keySet()){
-			Log.debug("Adding external data: " + exID);
+			log.debug("Adding external data: " + exID);
 			inputMap.put(exID, new ByteArrayInputStream(container.external.get(exID).getRawContent()));
 		}
 		SecramRecordCodec recordCodec = codecFactory.buildCodec(container.compressionHeader,
@@ -46,7 +47,7 @@ public class SecramContainerParser {
 			recordCodec.read(record);
 			records.add(record);
 		}
-		Log.debug("Container records read time: " + (System.currentTimeMillis() - start) / 1000);
+		log.debug("Container records read time: " + (System.currentTimeMillis() - start) / 1000);
 		
 		return records;
 	}

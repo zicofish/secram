@@ -28,7 +28,7 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
+*cramtools-2.1.jar
 *.war
 *.ear
 

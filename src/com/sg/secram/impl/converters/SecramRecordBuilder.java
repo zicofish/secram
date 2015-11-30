@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.sg.secram.SECRAMEncryptionFilter;
-import com.sg.secram.avro.ReadHeaderAvro;
-import com.sg.secram.avro.SecramRecordAvro;
 import com.sg.secram.impl.records.PosCigar;
 import com.sg.secram.impl.records.PosCigarFeature;
 import com.sg.secram.impl.records.ReadHeader;

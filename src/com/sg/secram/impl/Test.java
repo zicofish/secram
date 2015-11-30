@@ -22,9 +22,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.avro.file.DataFileReader;
-
-import com.sg.secram.avro.SecramRecordAvro;
 import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.util.SECRAMUtils;
 
@@ -134,21 +131,6 @@ public class Test {
 //		file.close();
 //	}
 	
-	public static void checkBlocks(DataFileReader<SecramRecordAvro> reader) throws IOException {
-		long index=115012860;
-		SecramRecordAvro record = null;
-		while(true) {
-			reader.sync(index);
-			index = reader.tell();
-			record = reader.next();
-			SecramRecordOld secramRecord = new SecramRecordOld(record, 'N');
-			
-			System.out.println("Index="+index+" Position="+secramRecord.getPosition());
-			
-			index-=100000;
-			
-		}
-	}
 	
 	
 //	public static void randomAccess(String input) throws IOException {

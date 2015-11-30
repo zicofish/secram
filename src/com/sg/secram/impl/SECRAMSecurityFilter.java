@@ -12,7 +12,6 @@ import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.HKDFParameters;
 
 import com.sg.secram.SECRAMEncryptionMethod;
-import com.sg.secram.avro.SecramRecordAvro;
 import com.sg.secram.encryption.SECRAMEncryptionFactory;
 import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.util.SECRAMUtils;

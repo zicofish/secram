@@ -21,12 +21,6 @@ import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import org.apache.avro.file.DataFileReader;
-import org.apache.avro.io.DatumReader;
-import org.apache.avro.specific.SpecificDatumReader;
-
-import com.sg.secram.avro.SecramHeaderAvro;
-import com.sg.secram.avro.SecramRecordAvro;
 import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.structure.SecramHeader;
 import com.sg.secram.structure.SecramIO;
