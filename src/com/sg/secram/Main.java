@@ -17,9 +17,9 @@ public class Main {
 						+ "Main secram2bam -r example.fa -i example.secram -o example.bam\n"
 						+ "Main bam2secramDir -r example.fa -i exampleFolder");
 		parser.addArgument("executable").choices("bam2secram", "secram2bam", "bam2secramdDir")
-		.help("bam2secram: convert a BAM file to a CERAM file;\n"
-				+ "secram2bam: convert a CERAM file to a BAM file;\n"
-				+ "bam2secramDir: convert all BAM files in a directory to CERAM files.");
+		.help("bam2secram: convert a BAM file to a SECRAM file;\n"
+				+ "secram2bam: convert a SECRAM file to a BAM file;\n"
+				+ "bam2secramDir: convert all BAM files in a directory to SECRAM files.");
 		
 		parser.addArgument("-r", "--reference").required(true)
 		.help("Path to the reference sequence file (.fa)");
