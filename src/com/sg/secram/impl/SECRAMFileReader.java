@@ -6,6 +6,8 @@ import htsjdk.samtools.SAMTextHeaderCodec;
 import htsjdk.samtools.ValidationStringency;
 import htsjdk.samtools.reference.ReferenceSequence;
 import htsjdk.samtools.reference.ReferenceSequenceFile;
+import htsjdk.samtools.seekablestream.SeekableFileStream;
+import htsjdk.samtools.seekablestream.SeekableStream;
 import htsjdk.samtools.util.BufferedLineReader;
 
 import java.io.ByteArrayInputStream;
@@ -21,48 +23,67 @@ import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.structure.SecramHeader;
 import com.sg.secram.structure.SecramIO;
 import com.sg.secram.util.ReferenceUtils;
+import com.sg.secram.util.SECRAMUtils;
+import com.sg.secram.util.Timings;
 
 public class SECRAMFileReader{
-	private InputStream inputStream;
+	private SeekableStream inputStream;
 	private File secramFile;
-	private SECRAMIterator secramIterator;
 	private SecramHeader secramHeader;
-	
 	private ReferenceSequenceFile  mRsf;
+	private SecramIndex secramIndex;
 	
-	private SECRAMSecurityFilter mFilter = null;
-
-	//For my local invocation
-//	public SECRAMFileReader(String input) throws IOException{
-//		this(input, "./data/hs37d5.fa");
-//	}
-	
-	public SECRAMFileReader(String input, String referenceInput, byte[] masterKey) throws IOException{
+	public SECRAMFileReader(String input, String referenceInput) throws IOException{
 		secramFile = new File(input);
-		inputStream = new FileInputStream(secramFile);
+		inputStream = new SeekableFileStream(secramFile);
 		mRsf = ReferenceUtils.findReferenceFile(referenceInput);
-		mFilter = new SECRAMSecurityFilter(masterKey);
+		secramIndex = new SecramIndex(new File(secramFile.getAbsolutePath() + ".secrai"));
 		
-		readHeader(inputStream);
-		secramIterator = new SECRAMIterator(secramHeader, inputStream, mRsf, mFilter);
+		readHeader();
 	}
 	
-	public void readHeader(InputStream inputStream) throws IOException{
+	public void readHeader() throws IOException{
 		secramHeader =  SecramIO.readSecramHeader(inputStream);
-		mFilter.initPositionEM(secramHeader.getOpeSalt());
 	}
 	
 	public SAMFileHeader getSAMFileHeader() {
 		return secramHeader.getSamFileHeader();
 	}
 	
-	public SECRAMIterator getIterator(){
+	public SECRAMIterator getCompleteIterator(){
+		SECRAMSecurityFilter filter = new SECRAMSecurityFilter();
+		filter.initPositionEM(secramHeader.getOpeSalt());
+		SECRAMIterator secramIterator = new SECRAMIterator(secramHeader, inputStream, mRsf, filter);
 		return secramIterator;
 	}
+	
+	/*
+	 * This method is only used for non-encrypted secram file.
+	 */
+	public SECRAMIterator query(String ref, int start, int end) throws IOException{
+		int refID = secramHeader.getSamFileHeader().getSequenceIndex(ref);
+		long absoluteStart = SECRAMUtils.getAbsolutePosition(start, refID),
+				absoluteEnd = SECRAMUtils.getAbsolutePosition(end, refID);
+		return query(absoluteStart, absoluteEnd);
+	}
+	
+	public SECRAMIterator query(long start, long end) throws IOException{
+		long nanoStart = System.nanoTime();
+		long offset = secramIndex.getContainerOffset(start);
+		if(offset < 0)
+			return null;
+		inputStream.seek(offset);
+		Timings.locateQueryPosition += System.nanoTime() - nanoStart;
+		SECRAMSecurityFilter filter = new SECRAMSecurityFilter();
+		filter.initPositionEM(secramHeader.getOpeSalt());
+		filter.setBounds(start, end);
+		SECRAMIterator secramIterator = new SECRAMIterator(secramHeader, inputStream, mRsf, filter);
+		return secramIterator;
+	}
+	
 	
 //	//for random access
 //	public SecramRecordOld get(long position) throws IOException {

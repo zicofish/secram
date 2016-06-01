@@ -4,9 +4,12 @@ import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.samtools.util.Log;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -28,29 +31,32 @@ import com.sg.secram.structure.SecramContainerFactory;
 import com.sg.secram.structure.SecramContainerIO;
 import com.sg.secram.structure.SecramHeader;
 import com.sg.secram.structure.SecramIO;
+import com.sg.secram.util.Timings;
 
 
 public class SECRAMFileWriter {
 	private Log log = Log.getInstance(SECRAMFileWriter.class);
 	
-	private String fileName;
+	private File secramFile;
 	private int recordsPerContainer = SecramContainer.DEFATUL_RECORDS_PER_CONTAINER;
 	private SecramContainerFactory containerFactory;
 	private SAMFileHeader samFileHeader;
 	private SECRAMSecurityFilter filter;
 	private SecramHeader secramHeader;
+	private SecramIndex secramIndex;
 	
 	private final OutputStream outputStream;
 	private long offset;
 	
 	private List<SecramRecord> secramRecords = new ArrayList<SecramRecord>();
 	
-	public SECRAMFileWriter(final OutputStream outputStream, final SAMFileHeader header, String fileName, byte[] masterKey) throws IOException {
-		this.outputStream = outputStream;
+	public SECRAMFileWriter(final File output, final SAMFileHeader header) throws IOException {
+		this.secramFile = output;
+		this.outputStream = new BufferedOutputStream(new FileOutputStream(output));
 		this.samFileHeader = header;
-		this.filter = new SECRAMSecurityFilter(masterKey);
-		this.fileName = fileName;
+		this.filter = new SECRAMSecurityFilter();
 		this.containerFactory = new SecramContainerFactory(header, recordsPerContainer);
+		this.secramIndex = new SecramIndex();
 		
 		writeHeader();
 	}
@@ -69,10 +75,13 @@ public class SECRAMFileWriter {
 				flushContainer();
 			outputStream.flush();
 			outputStream.close();
+			
+			//Write the index file
+			File indexFile = new File(secramFile.getAbsolutePath() + ".secrai");
+			secramIndex.writeIndexToFile(indexFile);
 		} catch(Exception e){
 			throw new RuntimeException(e);
 		}
-		System.out.println("opeSalt: " + secramHeader.getOpeSalt());
 	}
 	
 	public boolean shouldFlushContainer(final SecramRecord nextRecord){
@@ -90,6 +99,7 @@ public class SECRAMFileWriter {
 		//encrypt the positions
 		long prevOrgPosition = secramRecords.get(0).getAbsolutePosition();
 		long prevEncPosition = -1;
+		long nanoStart = System.nanoTime();
 		for(SecramRecord record : secramRecords){
 			if(record.getAbsolutePosition() - prevOrgPosition != 1){
 				long encPos = filter.encryptPosition(record.getAbsolutePosition());
@@ -106,6 +116,7 @@ public class SECRAMFileWriter {
 				rh.setNextAbsolutionPosition(encNextPos);
 			}
 		}
+		Timings.encryption += System.nanoTime() - nanoStart;
 		
 		//process all delta information for relative integer/long encoding
 		long prevAbsolutePosition = secramRecords.get(0).getAbsolutePosition();
@@ -131,15 +142,20 @@ public class SECRAMFileWriter {
 			e.printStackTrace();
 		}
 		
+		nanoStart = System.nanoTime();
 		SecramContainer container = containerFactory.buildContainer(secramRecords, containerSalt);
+		Timings.compression += System.nanoTime() - nanoStart;
 		
 		//encrypt the sensitive block (the first external block)
 		SecramBlock sensitiveBlock = container.external.get(SecramCompressionHeaderFactory.SENSITIVE_FIELD_EXTERNAL_ID);
+		nanoStart = System.nanoTime();
 		byte[] encBlock = filter.encryptBlock(sensitiveBlock.getRawContent(), containerID);
+		Timings.encryption += System.nanoTime() - nanoStart;
 		sensitiveBlock.setContent(encBlock, encBlock);
 		
-		//write out the container
+		//write out the container, and log the index
 		container.offset = offset;
+		secramIndex.addTuple(container.absolutePosStart, container.offset);
 		offset += SecramContainerIO.writeContainer(container, outputStream);
 		
 		secramRecords.clear();
@@ -151,12 +167,13 @@ public class SECRAMFileWriter {
 		try {
 			SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
 			opeSalt = sr.nextLong();
+			opeSalt = -275065164286408096L;
 			filter.initPositionEM(opeSalt);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		
-		secramHeader = new SecramHeader(fileName, samFileHeader, opeSalt);
+		secramHeader = new SecramHeader(secramFile.getName(), samFileHeader, opeSalt);
 		offset = SecramIO.writeSecramHeader(secramHeader, outputStream);
 	}
 }

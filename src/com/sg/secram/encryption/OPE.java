@@ -29,22 +29,26 @@ import com.sg.secram.SECRAMEncryptionMethod;
  */
 
 public class OPE implements SECRAMEncryptionMethod<Long>{
-	private int BitsForRCoins = 64;
-	private int BitsForHGDCoins = 128;
+	private static final int BitsForRCoins = 64;
+	private static final int BitsForHGDCoins = 128;
 	
 	//secretkey used for OPE algorithm
 	private byte[] key = null;
 	
 	//We constrain the plaintextspace to be 40 bits
-	private int plainTextSpace = 40;
+	private static final int plainTextSpace = 40;
+	public static final long MIN_PLAINTEXT = 0;
+	public static final long MAX_PLAINTEXT = (1l << plainTextSpace) - 1;
 	
 	//ciphertextspace is 48 bits
-	private int cipherTextSpace = 48;
+	private static final int cipherTextSpace = 48;
+	public static final long MIN_CIPHERTEXT = 0;
+	public static final long MAX_CIPHERTEXT = (1l << cipherTextSpace) - 10;
 	
 	private Mac VIL_PRF;
 	
 	public Hashtable<Long, Long> cache;
-	int maxCacheSize = 4000000;
+	private static final int maxCacheSize = 4000000;
 	
 	private Log log = Log.getInstance(OPE.class);
 	private boolean DEBUG = false;
@@ -82,19 +86,17 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	 * When you want to encrypt a number, call this function
 	 */
 	public long encrypt(long plainNum) throws IOException, HGDException, NoSuchAlgorithmException{
-		long lowD = 0, highD = (1l << plainTextSpace) - 1;
-		long lowR = 0, highR = (1l << cipherTextSpace) - 10;
-		if(plainNum < lowD || plainNum > highD) {
-			if(plainNum < lowR || plainNum > highR){ //try to skip the exception if the number is also out of the ciphertext range, so that no one would misuse it for decryption
+		if(plainNum < MIN_PLAINTEXT || plainNum > MAX_PLAINTEXT) {
+			if(plainNum < MIN_CIPHERTEXT || plainNum > MAX_CIPHERTEXT){ //try to skip the exception if the number is also out of the ciphertext range, so that no one would misuse it for decryption
 				if(DEBUG)
 					log.debug("OPE cannot encrypt number " + plainNum 
 							+ " because it is out of the plaintext range. It has been returned without any change.");
 				return plainNum;
 			}
 			throw new IllegalArgumentException("OPE encryption failed: the given plaintext number " + plainNum
-			+ " is out of plaintet range [" + lowD + ", " + highD + "]");
+			+ " is out of plaintet range [" + MIN_PLAINTEXT + ", " + MAX_PLAINTEXT + "]");
 		}
-		long result = EncK(lowD, highD, lowR, highR, plainNum);
+		long result = EncK(MIN_PLAINTEXT, MAX_PLAINTEXT, MIN_CIPHERTEXT, MAX_CIPHERTEXT, plainNum);
 		
 		return result;
 	}
@@ -146,15 +148,13 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 	 * When you want to decrypt a number, call this function
 	 */
 	public long decrypt(long cipherNum) throws IOException, HGDException, NoSuchAlgorithmException{
-		long lowD = 0, highD = (1l << plainTextSpace) - 1;
-		long lowR = 0, highR = (1l << cipherTextSpace) - 10;
-		if (cipherNum < lowR || cipherNum > highR) {
+		if (cipherNum < MIN_CIPHERTEXT || cipherNum > MAX_CIPHERTEXT) {
 			if(DEBUG)
 				log.debug("OPE cannot decrypt number " + cipherNum 
 						+ " because it is out of the ciphertext range. It has been returned without any change.");
 			return cipherNum;
 		}
-		long result = DecK(lowD, highD, lowR, highR, cipherNum);
+		long result = DecK(MIN_PLAINTEXT, MAX_PLAINTEXT, MIN_CIPHERTEXT, MAX_CIPHERTEXT, cipherNum);
 		
 		return result;
 	}
@@ -180,7 +180,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 			if(w == c)
 				return m;
 			else{
-				log.error("This value was not encrypted correctly");
+				log.error(String.format("This value %d was not encrypted correctly", c));
 				throw new IllegalArgumentException();
 			}
 		}

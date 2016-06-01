@@ -6,7 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 
 import com.sg.secram.impl.records.PosCigarFeature;
-import com.sg.secram.impl.records.PosCigarFeatureOld;
 
 public class BAMRecordBuilder {
 	private BAMRecord record;

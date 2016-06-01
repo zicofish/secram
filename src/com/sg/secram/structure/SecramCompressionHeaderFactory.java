@@ -28,7 +28,6 @@ import com.sg.secram.compression.SecramEncodingKey;
 import com.sg.secram.impl.records.PosCigarFeature;
 import com.sg.secram.impl.records.ReadHeader;
 import com.sg.secram.impl.records.SecramRecord;
-import com.sg.secram.impl.records.SecramRecordOld;
 
 public class SecramCompressionHeaderFactory {
 	public static int SENSITIVE_FIELD_EXTERNAL_ID = 0;

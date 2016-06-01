@@ -13,6 +13,7 @@ import com.sg.secram.structure.SecramBlock;
 import com.sg.secram.structure.SecramCompressionHeaderFactory;
 import com.sg.secram.structure.SecramContainer;
 import com.sg.secram.structure.SecramContainerIO;
+import com.sg.secram.util.Timings;
 
 public class SECRAMContainerIterator implements Iterator<SecramContainer> {
 	private InputStream inputStream;
@@ -25,15 +26,18 @@ public class SECRAMContainerIterator implements Iterator<SecramContainer> {
 		this.filter = filter;
 	}
 	
-	void readNextContainer(){
+	private void readNextContainer(){
 		try {
+			long nanoStart = System.nanoTime();
             nextContainer = SecramContainerIO.readContainer(inputStream);
+            Timings.IO += System.nanoTime() - nanoStart;
             		
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
 
-        if (null == nextContainer) eof = true;
+        if (null == nextContainer || !filter.isContainerPermitted(nextContainer.absolutePosStart)) 
+        	eof = true;
         else{
         	//initialize the block encryption for this container, and decrypt the sensitive block
             try {
@@ -42,7 +46,9 @@ public class SECRAMContainerIterator implements Iterator<SecramContainer> {
 				throw new RuntimeException(e);
 			}
             SecramBlock sensitiveBlock = nextContainer.external.get(SecramCompressionHeaderFactory.SENSITIVE_FIELD_EXTERNAL_ID);
+            long nanoStart = System.nanoTime();
             byte[] orginalBlock = filter.decryptBlock(sensitiveBlock.getRawContent(), nextContainer.containerID);
+            Timings.decryption += System.nanoTime() - nanoStart;
             sensitiveBlock.setContent(orginalBlock, orginalBlock);
         }
 	}
@@ -61,7 +67,7 @@ public class SECRAMContainerIterator implements Iterator<SecramContainer> {
 			nextContainer = null;
 			return result;
 		}
-		throw new NoSuchElementException("No more container. Please check with the method hasNext() before calling next().");
+		return null;
 	}
 	
 	public void close(){

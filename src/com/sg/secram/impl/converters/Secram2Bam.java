@@ -24,15 +24,13 @@ import com.sg.secram.impl.SECRAMIterator;
 import com.sg.secram.impl.SECRAMSecurityFilter;
 import com.sg.secram.impl.records.PosCigar;
 import com.sg.secram.impl.records.PosCigarFeature;
-import com.sg.secram.impl.records.PosCigarFeatureOld;
 import com.sg.secram.impl.records.PosCigarFeatureIterator;
 import com.sg.secram.impl.records.ReadHeader;
-import com.sg.secram.impl.records.ReadHeaderOld;
 import com.sg.secram.impl.records.SecramRecord;
-import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.records.SECRAMRecordCodec;
 import com.sg.secram.util.ReferenceUtils;
 import com.sg.secram.util.SECRAMUtils;
+import com.sg.secram.util.Timings;
 
 /**
  * 
@@ -43,45 +41,10 @@ public class Secram2Bam {
 
 	private static Log log = Log.getInstance(Secram2Bam.class);
 	
-	public SECRAMEncryptionFilter getEncryptionFilter(){
-		return mEncryptionFilter;
-	}
-	
-	private SECRAMEncryptionFilter mEncryptionFilter;
-	
 	private SAMFileHeader mSAMFileHeader;
 	
-	private ReferenceSequenceFile mRsf;
-	
-	private Secram2Bam(SAMFileHeader samFileHeader) throws IOException {
-		this(samFileHeader, "./data/hs37d5.fa", null);
-	}
-	
-	public Secram2Bam(SAMFileHeader samFileHeader, String referenceInput, SECRAMEncryptionFilter filter) throws IOException {
-		this(samFileHeader, ReferenceUtils.findReferenceFile(referenceInput), filter);
-	}
-	
-	private Secram2Bam(SAMFileHeader samFileHeader, ReferenceSequenceFile rsf, SECRAMEncryptionFilter filter) {
+	public Secram2Bam(SAMFileHeader samFileHeader) throws IOException {
 		mSAMFileHeader = samFileHeader;
-		mRsf = rsf;
-		mEncryptionFilter = filter;
-	}
-	
-	public ReferenceSequenceFile getReferenceSequenceFile() {
-		return mRsf;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		
-		String input = "./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415.newencsecram";
-		String output  = "./data/HG00115.chrom11.ILLUMINA.bwa.GBR.exome.20130415_output.bam";
-		
-		//small test
-//		String input = "./data/chrom11_small_test.secram";
-//		String output  = "./data/chrom11_small_test_output.bam";
-		
-		convertFile(input, output, "SECRET_1SECRET_2SECRET_3".getBytes());
-//		convertFile(input, output, null);
 	}
 	
 	/**
@@ -90,10 +53,10 @@ public class Secram2Bam {
 	 * @param output The new BAM file to create
 	 * @throws IOException If an {@link IOException} occurs during the operation
 	 */
-	public static void convertFile(String input, String output, byte[] masterKey) throws IOException {
+	public static void convertFile(File input, File output, String refFileName) throws IOException {
 		
-		SECRAMFileReader reader = new SECRAMFileReader(input, "./data/hs37d5.fa", masterKey);
-		SAMFileWriter bamWriter = new SAMFileWriterFactory().makeBAMWriter(reader.getSAMFileHeader(), true, new File(output));
+		SECRAMFileReader reader = new SECRAMFileReader(input.getAbsolutePath(), refFileName);
+		SAMFileWriter bamWriter = new SAMFileWriterFactory().makeBAMWriter(reader.getSAMFileHeader(), true, output);
 		
 		long startTime = System.currentTimeMillis();
 		
@@ -101,14 +64,14 @@ public class Secram2Bam {
 		
 		LinkedList<BAMRecordBuilder> incompleteReads = new LinkedList<BAMRecordBuilder>();
 		try {
-			SECRAMIterator secramIterator = reader.getIterator();
+			SECRAMIterator secramIterator = reader.getCompleteIterator();
 			while(secramIterator.hasNext()){
 				SecramRecord record = secramIterator.next();
 				int oneBasedPosition =  record.mPosition + 1;
 				
-				if(oneBasedPosition == 62051)
-					System.out.println("trap");
+				long nanoStart = System.nanoTime();
 				converter.addSECRAMRecordToIncompleteBAMRecords(record, incompleteReads);
+				Timings.invTransposition += System.nanoTime() - nanoStart;
 				
 				//Adds complete reads to the BAM file.
 				//Sometimes even if a BAM read is complete, we must wait for any potential read that starts before this read but is longer

@@ -5,22 +5,24 @@ import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
 
 import com.sg.secram.SECRAMEncryptionMethod;
+import com.sg.secram.util.SECRAMUtils;
 
 public class SECRAMEncryptionFactory {
-	public static SECRAMEncryptionMethod<byte[]> createContainerEM(byte[] key){
-		return new BouncyCastle_AES_CTR(key);
+	public static final int BLOCK_CIPHER_KEY_LEN = 24;
+	public static final int OPE_KEY_LEN = 24;
+	
+	public static SECRAMEncryptionMethod<byte[]> createContainerEM(byte[] masterKey, long salt){
+		if(null == masterKey)
+			return new DummyCipher<byte[]>();
+		byte[] derivedKey = deriveKey(masterKey, SECRAMUtils.longToBytes(salt), null, BLOCK_CIPHER_KEY_LEN);
+		return new BouncyCastle_AES_CTR(derivedKey);
 	}
 	
-	public static SECRAMEncryptionMethod<Long> createPositionEM(byte[] key){
-		return new OPE(key);
-	}
-	
-	public static SECRAMEncryptionMethod<Long> createDummyPositionEM(){
-		return new DummyCipher<Long>();
-	}
-	
-	public static SECRAMEncryptionMethod<byte[]> createDummyContainerEM(){
-		return new DummyCipher<byte[]>();
+	public static SECRAMEncryptionMethod<Long> createPositionEM(byte[] masterKey, long salt){
+		if(null == masterKey)
+			return new DummyCipher<Long>();
+		byte[] derivedKey = deriveKey(masterKey, SECRAMUtils.longToBytes(salt), null, OPE_KEY_LEN);
+		return new OPE(derivedKey);
 	}
 	
 	public static byte[] deriveKey(byte[] ikm, byte[] salt, byte[] info, int outKeyLen){

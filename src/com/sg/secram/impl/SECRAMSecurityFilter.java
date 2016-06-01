@@ -12,55 +12,37 @@ import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.HKDFParameters;
 
 import com.sg.secram.SECRAMEncryptionMethod;
+import com.sg.secram.encryption.OPE;
 import com.sg.secram.encryption.SECRAMEncryptionFactory;
-import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.util.SECRAMUtils;
 
 public class SECRAMSecurityFilter {
 	
-	private byte[] masterKey = null;
+//	private byte[] masterKey = null;	//create a dummy filter without encryption
+	private byte[] masterKey = "SECRET_1SECRET_2SECRET_3".getBytes();
 	
-	public static int BLOCK_CIPHER_KEY_LEN = 24;
-	private Map<Integer, SECRAMEncryptionMethod<byte[]> > containerEMs = new HashMap<Integer, SECRAMEncryptionMethod<byte[]> >();
-	public static int OPE_KEY_LEN = 24;
+	private Map<Integer, SECRAMEncryptionMethod<byte[]> > containerEMs = new HashMap<>();
 	private SECRAMEncryptionMethod<Long> positionEM = null;
+	private long[] lastOPEPair = new long[]{-1, -1};
 	
 	/*
 	 * TODO: We can also initialize this filter with accces control rights, e.g., permitted query range [lower_bound, upper_bound]
 	 */
-	
-	public SECRAMSecurityFilter(byte[] mk){
-		if(null == mk)
-			return; //create a dummy filter without encryption
-		
-		masterKey = new byte[mk.length];
-		System.arraycopy(mk, 0, masterKey, 0, mk.length);
-	}
+	private long lowerBound = OPE.MIN_PLAINTEXT;
+	private long upperBound = OPE.MAX_PLAINTEXT;
 	
 	public void initContainerEM(long salt, int containerID) throws NoSuchAlgorithmException{
-		if(null == masterKey)
-			containerEMs.put(containerID, SECRAMEncryptionFactory.createDummyContainerEM());
-		else{
-			byte[] newKey = SECRAMEncryptionFactory.deriveKey(masterKey, SECRAMUtils.longToBytes(salt), null, BLOCK_CIPHER_KEY_LEN);
-			containerEMs.put(containerID, SECRAMEncryptionFactory.createContainerEM(newKey));
-		}
-	}
-	
-	public void initContainerEM(byte[] key, int containerID){
-		containerEMs.put(containerID, SECRAMEncryptionFactory.createContainerEM(key));
+		containerEMs.put(containerID, SECRAMEncryptionFactory.createContainerEM(masterKey, salt));
 	}
 	
 	public void initPositionEM(long salt){
-		if(null == masterKey)
-			positionEM = SECRAMEncryptionFactory.createDummyPositionEM();
-		else{
-			byte[] newKey = SECRAMEncryptionFactory.deriveKey(masterKey, SECRAMUtils.longToBytes(salt), null, BLOCK_CIPHER_KEY_LEN);
-			positionEM = SECRAMEncryptionFactory.createPositionEM(newKey);
-		}
+		positionEM = SECRAMEncryptionFactory.createPositionEM(masterKey, salt);
+		lastOPEPair[0] = lastOPEPair[1] = -1;
 	}
 	
-	public void initPositionEM(byte[] key){
-		positionEM = SECRAMEncryptionFactory.createPositionEM(key);
+	public void setBounds(long encLowerBound, long encUpperBound){
+		lowerBound = decryptPosition(encLowerBound);
+		upperBound = decryptPosition(encUpperBound);
 	}
 	
 	public byte[] encryptBlock(byte[] block, int containerID){
@@ -76,10 +58,27 @@ public class SECRAMSecurityFilter {
 	}
 	
 	public long encryptPosition(long pos){
-		return positionEM.encrypt(pos, null);
+		if(lastOPEPair[0] != pos){
+			lastOPEPair[0] = pos;
+			lastOPEPair[1] = positionEM.encrypt(pos, null);
+		}
+		return lastOPEPair[1];
 	}
 	
 	public long decryptPosition(long encPos){
-		return positionEM.decrypt(encPos, null);
+		if(lastOPEPair[1] != encPos){
+			lastOPEPair[0] = positionEM.decrypt(encPos, null);
+			lastOPEPair[1] = encPos;
+		}
+		return lastOPEPair[0];
+	}
+	
+	public boolean isContainerPermitted(long encContainerStart){
+		return encContainerStart <= encryptPosition(upperBound);
+	}
+	
+	public boolean isRecordPermitted(long encStartPos, int offset){
+		long pos = offset + decryptPosition(encStartPos);
+		return pos >= lowerBound && pos <= upperBound;
 	}
 }

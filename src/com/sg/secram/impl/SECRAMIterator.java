@@ -16,6 +16,7 @@ import com.sg.secram.impl.records.SecramRecord;
 import com.sg.secram.structure.SecramContainer;
 import com.sg.secram.structure.SecramContainerParser;
 import com.sg.secram.structure.SecramHeader;
+import com.sg.secram.util.Timings;
 
 public class SECRAMIterator implements Iterator<SecramRecord>{
 	private SecramHeader secramHeader;
@@ -30,10 +31,13 @@ public class SECRAMIterator implements Iterator<SecramRecord>{
 	private byte[] cachedRefSequence = null;
 	private int cachedRefID = -1;
 	
-	private long prevEncPosition = -1;
-	private long prevOrgPosition = -1;
+	private long encPosition = -1;
+	private int offset = -1;
 	
-	public SECRAMIterator(SecramHeader header, InputStream inputStream, ReferenceSequenceFile referenceFile, SECRAMSecurityFilter filter){
+	public SECRAMIterator(SecramHeader header, 
+			InputStream inputStream, 
+			ReferenceSequenceFile referenceFile, 
+			SECRAMSecurityFilter filter){
 		this.secramHeader = header;
 		this.mRsf = referenceFile;
 		this.filter = filter;
@@ -48,10 +52,12 @@ public class SECRAMIterator implements Iterator<SecramRecord>{
 			return;
 		}
 		container = containerIterator.next();
+		long nanoStart = System.nanoTime();
 		secramRecords = parser.getRecords(container, filter);
+		Timings.decompression += System.nanoTime() - nanoStart;
 		iterator = secramRecords.iterator();
-		prevEncPosition = -1;
-		prevOrgPosition = -1;
+		encPosition = container.absolutePosStart;
+		offset = -1;
 	}
 
 	@Override
@@ -68,25 +74,25 @@ public class SECRAMIterator implements Iterator<SecramRecord>{
 
 	@Override
 	public SecramRecord next() {
-		if(hasNext()){
+		while(hasNext()){
 			SecramRecord record = iterator.next();
-			{//decrypt the positions
-				long originalPos;
-				if(prevEncPosition == -1 || record.getAbsolutePosition() != prevEncPosition){
-					originalPos = filter.decryptPosition(record.getAbsolutePosition());
-					prevEncPosition = record.getAbsolutePosition();
-					record.setAbsolutionPosition(originalPos);
-					prevOrgPosition = originalPos;
-				}
-				else{
-					record.setAbsolutionPosition(prevOrgPosition + 1);
-					prevOrgPosition += 1;
-				}
+			if(record.getAbsolutePosition() == encPosition)
+				offset += 1;
+			else{
+				encPosition = record.getAbsolutePosition();
+				offset = 0;
+			}
+			if(!filter.isRecordPermitted(encPosition, offset)) continue;
+			long nanoStart = System.nanoTime();
+			{//decrypt the position
+				long orgPos = offset + filter.decryptPosition(encPosition);
+				record.setAbsolutionPosition(orgPos);				
 				for(ReadHeader rh : record.mReadHeaders){
 					long nextPos = filter.decryptPosition(rh.getNextAbsolutePosition());
 					rh.setNextAbsolutionPosition(nextPos);
 				}
 			}
+			Timings.decryption += System.nanoTime() - nanoStart;
 			try {
 				record.setReferenceBase(getReferenceBase(record.getAbsolutePosition()));
 			} catch (Exception e) {
@@ -94,7 +100,7 @@ public class SECRAMIterator implements Iterator<SecramRecord>{
 			}
 			return record;
 		}
-		throw new NoSuchElementException("No more record. Please check with the method hasNext() before calling next().");
+		return null;
 	}
 	
 	public char getReferenceBase(long pos) throws ArrayIndexOutOfBoundsException,IOException {

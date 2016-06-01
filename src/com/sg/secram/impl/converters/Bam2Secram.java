@@ -31,9 +31,9 @@ import com.sg.secram.impl.SECRAMSecurityFilter;
 import com.sg.secram.impl.records.PosCigarFeature;
 import com.sg.secram.impl.records.PosCigarFeatureCode;
 import com.sg.secram.impl.records.SecramRecord;
-import com.sg.secram.impl.records.SecramRecordOld;
 import com.sg.secram.util.ReferenceUtils;
 import com.sg.secram.util.SECRAMUtils;
+import com.sg.secram.util.Timings;
 
 /**
  * 
@@ -41,8 +41,6 @@ import com.sg.secram.util.SECRAMUtils;
  *
  */
 public class Bam2Secram {
-
-	private SECRAMEncryptionFilter mEncryptionFilter;
 	
 	//TODO handle unaligned reads
 	//private int mNbUnalignedRead = 0;
@@ -56,25 +54,20 @@ public class Bam2Secram {
 
 	//For my local test invocation
 	public Bam2Secram(SAMFileHeader samFileHeader) throws IOException{
-		this(samFileHeader, "./data/hs37d5.fa", null);
+		this(samFileHeader, "./data/hs37d5.fa");
 	}
 	
-	public Bam2Secram(SAMFileHeader samFileHeader, String referenceInput, SECRAMEncryptionFilter filter) throws IOException {
-		this(samFileHeader, ReferenceUtils.findReferenceFile(referenceInput), filter);
+	public Bam2Secram(SAMFileHeader samFileHeader, String referenceInput) throws IOException {
+		this(samFileHeader, ReferenceUtils.findReferenceFile(referenceInput));
 	}
 	
-	private Bam2Secram(SAMFileHeader samFileHeader, ReferenceSequenceFile rsf, SECRAMEncryptionFilter filter) {
+	private Bam2Secram(SAMFileHeader samFileHeader, ReferenceSequenceFile rsf) {
 		mSAMFileHeader = samFileHeader;
 		mRsf = rsf;
-		mEncryptionFilter = filter;
 	}
 	
 	public ReferenceSequenceFile getReferenceSequenceFile() {
 		return mRsf;
-	}
-
-	public SECRAMEncryptionFilter getEncryptionFilter(){
-		return mEncryptionFilter;
 	}
 	
 	/**
@@ -117,29 +110,6 @@ public class Bam2Secram {
 		return (char)cachedRefSequence[(int)pos];
 	}
 	
-	
-	public static void main(String[] args) throws Exception {
-		File input = new File("./data/SG10000001_S1_L001_R1_001.bam");
-		File output = new File("./data/SG10000001_S1_L001_R1_001.secram");
-		System.out.println("Start processsing file  \""+ input +"\"");
-		long startTime = System.currentTimeMillis();
-		
-		convertFile(input, output, "SECRET_1SECRET_2SECRET_3".getBytes());
-		
-		long totalTime = System.currentTimeMillis()-startTime;
-		
-		long inputLen = input.length();
-		long outputLen = output.length();
-		double incr = 100*((((double)outputLen)/((double)inputLen))-1);
-		
-		System.out.println("Processing of file \"" + input + "\" complete.");
-		System.out.println("Total time elapsed: "+SECRAMUtils.timeString(totalTime));
-		System.out.println("Input size: "+inputLen);
-		System.out.println("Output size: "+outputLen);
-		System.out.println("Storage increase: "+incr+"%\n");
-	}
-	
-	
 	/**
 	 * Reads the input file in the BAM format and saves it to the output file in the SECRAM format.
 	 * @param input The BAM file to read from. The BAM records *SHOULD* be ordered by their starting positions in the file.
@@ -149,17 +119,16 @@ public class Bam2Secram {
 	 * @throws Exception 
 	 * @throws {@link IOException} If an {@link IOException} occurs during the operation
 	 */
-	public static void convertFile(File input, File output, byte[] masterKey) throws Exception {
+	public static void convertFile(File input, File output, String refFileName) throws Exception {
 		SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT).open(input);
 		
 		long startTime = System.currentTimeMillis();
 		
 		SAMFileHeader samFileHeader = reader.getFileHeader();
 		
-		SECRAMFileWriter secramFileWriter = new SECRAMFileWriter(new BufferedOutputStream(new FileOutputStream(output)), 
-				samFileHeader, output.getName(), masterKey);
+		SECRAMFileWriter secramFileWriter = new SECRAMFileWriter(output, samFileHeader);
 		
-		Bam2Secram converter = new Bam2Secram(samFileHeader);
+		Bam2Secram converter = new Bam2Secram(samFileHeader, refFileName);
 		
 		//a map that returns the record corresponding to this position
 		TreeMap<Long, SecramRecordBuilder> pos2Builder = new TreeMap<Long, SecramRecordBuilder>();
@@ -168,7 +137,11 @@ public class Bam2Secram {
 				if(samRecord.getReadUnmappedFlag())
 					continue;
 				BAMRecord bamRecord = (BAMRecord)samRecord;
+				
+				long nanoStart = System.nanoTime();
 				converter.addBamRecordToSecramRecords(bamRecord, pos2Builder);
+				Timings.transposition += System.nanoTime() - nanoStart;
+				
 				long startPosition = SECRAMUtils.getAbsolutePosition(bamRecord.getAlignmentStart()-1, bamRecord.getReferenceIndex());
 				long pos;
 				//Check for any position smaller than the start of this read. Having this loop is to make sure
@@ -192,7 +165,7 @@ public class Bam2Secram {
 			//Close the writer
 			secramFileWriter.close();
 			System.out.println("Total number of records written out: " + secramFileWriter.getNumberOfWrittenRecords());
-			long totalTime = System.currentTimeMillis()-startTime;
+			long totalTime = System.currentTimeMillis() - startTime;
 			System.out.println("Total time elapsed: "+SECRAMUtils.timeString(totalTime));
 		}
 		

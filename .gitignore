@@ -20,6 +20,8 @@
 *.txt
 *.png
 *.xlsx
+*.secrai
+*.sam
 
 !SG10000001_S1_L001_R1_001.bam
 !SG10000001_S1_L001_R1_001.bam.bai

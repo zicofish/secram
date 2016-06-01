@@ -14,7 +14,6 @@ import com.sg.secram.impl.records.PosCigarFeature;
 import com.sg.secram.impl.records.PosCigarFeatureCode;
 import com.sg.secram.impl.records.ReadHeader;
 import com.sg.secram.impl.records.SecramRecord;
-import com.sg.secram.impl.records.SecramRecordOld;
 
 import htsjdk.samtools.cram.encoding.DataSeriesType;
 import htsjdk.samtools.cram.io.DefaultBitInputStream;

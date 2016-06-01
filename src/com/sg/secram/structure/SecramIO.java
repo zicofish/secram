@@ -73,7 +73,7 @@ public class SecramIO {
             outputStream.write(0);
 
         long length = SecramIO.writeSAMFileHeader(secramHeader.getSamFileHeader(), outputStream);
-        length += LTF8.writeUnsignedLTF8(secramHeader.getOpeSalt(), outputStream);
+        length += (LTF8.writeUnsignedLTF8(secramHeader.getOpeSalt(), outputStream) + 7) / 8;
 
         return SecramIO.DEFINITION_LENGTH + length;
     }
