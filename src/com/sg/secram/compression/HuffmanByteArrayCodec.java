@@ -26,23 +26,24 @@ import htsjdk.samtools.cram.io.BitOutputStream;
 import java.io.IOException;
 
 public class HuffmanByteArrayCodec extends AbstractBitCodec<byte[]> {
-	BitCodec<Byte> huffmanByteCodec =  null;
-    public HuffmanByteArrayCodec(final byte[] values, final int[] bitLengths) {
-    	HuffmanByteEncoding hbe = new HuffmanByteEncoding();
+	BitCodec<Byte> huffmanByteCodec = null;
+
+	public HuffmanByteArrayCodec(final byte[] values, final int[] bitLengths) {
+		HuffmanByteEncoding hbe = new HuffmanByteEncoding();
 		hbe.fromByteArray(HuffmanByteEncoding.toParam(values, bitLengths).params);
 		huffmanByteCodec = hbe.buildCodec(null, null);
-    }
+	}
 
-    @Override
-    public byte[] read(final BitInputStream bitInputStream) throws IOException {
-    	throw new RuntimeException("Cannot read byte array of unknown length.");
-    }
+	@Override
+	public byte[] read(final BitInputStream bitInputStream) throws IOException {
+		throw new RuntimeException("Cannot read byte array of unknown length.");
+	}
 
 	@Override
 	public byte[] read(BitInputStream bitInputStream, int valueLen)
 			throws IOException {
 		byte[] array = new byte[valueLen];
-		for(int i = 0; i < valueLen; i++)
+		for (int i = 0; i < valueLen; i++)
 			array[i] = huffmanByteCodec.read(bitInputStream);
 		return array;
 	}
@@ -51,7 +52,7 @@ public class HuffmanByteArrayCodec extends AbstractBitCodec<byte[]> {
 	public long write(BitOutputStream bitOutputStream, byte[] object)
 			throws IOException {
 		int nBits = 0;
-		for(int i = 0; i < object.length; i++){
+		for (int i = 0; i < object.length; i++) {
 			nBits += huffmanByteCodec.write(bitOutputStream, object[i]);
 		}
 		return nBits;
@@ -60,7 +61,7 @@ public class HuffmanByteArrayCodec extends AbstractBitCodec<byte[]> {
 	@Override
 	public long numberOfBits(byte[] object) {
 		int nBits = 0;
-		for(int i = 0; i < object.length; i++){
+		for (int i = 0; i < object.length; i++) {
 			nBits += huffmanByteCodec.numberOfBits(object[i]);
 		}
 		return nBits;

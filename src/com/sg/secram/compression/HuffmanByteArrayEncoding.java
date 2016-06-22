@@ -29,63 +29,65 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 public class HuffmanByteArrayEncoding implements Encoding<byte[]> {
-    private static final EncodingID ENCODING_ID = EncodingID.HUFFMAN;
-    private int[] bitLengths;
-    private byte[] values;
-    private ByteBuffer buf = ByteBuffer.allocate(1024);
+	private static final EncodingID ENCODING_ID = EncodingID.HUFFMAN;
+	private int[] bitLengths;
+	private byte[] values;
+	private ByteBuffer buf = ByteBuffer.allocate(1024);
 
-    public HuffmanByteArrayEncoding() {
-    }
+	public HuffmanByteArrayEncoding() {
+	}
 
-    @Override
-    public EncodingID id() {
-        return ENCODING_ID;
-    }
+	@Override
+	public EncodingID id() {
+		return ENCODING_ID;
+	}
 
-    @Override
-    public byte[] toByteArray() {
-        buf.clear();
-        if (buf.capacity() < values.length * 8)
-            buf = ByteBuffer.allocate(values.length * 8);
+	@Override
+	public byte[] toByteArray() {
+		buf.clear();
+		if (buf.capacity() < values.length * 8)
+			buf = ByteBuffer.allocate(values.length * 8);
 
-        ITF8.writeUnsignedITF8(values.length, buf);
-        for (final byte value : values)
-            buf.put(value);
+		ITF8.writeUnsignedITF8(values.length, buf);
+		for (final byte value : values)
+			buf.put(value);
 
-        ITF8.writeUnsignedITF8(bitLengths.length, buf);
-        for (final int value : bitLengths)
-            ITF8.writeUnsignedITF8(value, buf);
+		ITF8.writeUnsignedITF8(bitLengths.length, buf);
+		for (final int value : bitLengths)
+			ITF8.writeUnsignedITF8(value, buf);
 
-        buf.flip();
-        final byte[] array = new byte[buf.limit()];
-        buf.get(array);
-        return array;
-    }
+		buf.flip();
+		final byte[] array = new byte[buf.limit()];
+		buf.get(array);
+		return array;
+	}
 
-    @Override
-    public void fromByteArray(final byte[] data) {
-        final ByteBuffer buf = ByteBuffer.wrap(data);
-        int size = ITF8.readUnsignedITF8(buf);
-        values = new byte[size];
-        buf.get(values);
+	@Override
+	public void fromByteArray(final byte[] data) {
+		final ByteBuffer buf = ByteBuffer.wrap(data);
+		int size = ITF8.readUnsignedITF8(buf);
+		values = new byte[size];
+		buf.get(values);
 
-        size = ITF8.readUnsignedITF8(buf);
-        bitLengths = new int[size];
-        for (int i = 0; i < size; i++)
-            bitLengths[i] = ITF8.readUnsignedITF8(buf);
-    }
+		size = ITF8.readUnsignedITF8(buf);
+		bitLengths = new int[size];
+		for (int i = 0; i < size; i++)
+			bitLengths[i] = ITF8.readUnsignedITF8(buf);
+	}
 
-    @Override
-    public BitCodec<byte[]> buildCodec(final Map<Integer, InputStream> inputMap,
-                                     final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
-        return new HuffmanByteArrayCodec(values, bitLengths);
-    }
+	@Override
+	public BitCodec<byte[]> buildCodec(
+			final Map<Integer, InputStream> inputMap,
+			final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
+		return new HuffmanByteArrayCodec(values, bitLengths);
+	}
 
-    public static EncodingParams toParam(final byte[] bfValues, final int[] bfBitLens) {
-        final HuffmanByteArrayEncoding e = new HuffmanByteArrayEncoding();
-        e.values = bfValues;
-        e.bitLengths = bfBitLens;
-        return new EncodingParams(ENCODING_ID, e.toByteArray());
-    }
+	public static EncodingParams toParam(final byte[] bfValues,
+			final int[] bfBitLens) {
+		final HuffmanByteArrayEncoding e = new HuffmanByteArrayEncoding();
+		e.values = bfValues;
+		e.bitLengths = bfBitLens;
+		return new EncodingParams(ENCODING_ID, e.toByteArray());
+	}
 
 }

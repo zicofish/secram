@@ -5,7 +5,7 @@ import java.util.Map;
 import com.sg.secram.impl.SECRAMSecurityFilter;
 
 public class SecramContainer {
-	public static int DEFATUL_RECORDS_PER_CONTAINER = 50000;
+	public static int DEFATUL_RECORDS_PER_CONTAINER = 100000;
     /**
      * Byte size of the content excluding header.
      */
@@ -45,8 +45,8 @@ public class SecramContainer {
     @Override
     public String toString() {
         return String
-                .format("seqID(start)=%d, start=%d, seqID(end)=%d, end=%d, span=%d, records=%d, startingCoverage=%d, blocks=%d, globalRecordCounter=%d.",
-                        (int) (absolutePosStart >> 32), (int)absolutePosStart, (int)(absolutePosEnd >> 32), (int)absolutePosEnd, absolutePosEnd - absolutePosStart,
+                .format("size=%f KBytes, seqID(start)=%d, start=%d, seqID(end)=%d, end=%d, span=%d, records=%d, startingCoverage=%d, blocks=%d, globalRecordCounter=%d.",
+                        containerByteSize / 1000.0, (int) (absolutePosStart >> 32), (int)absolutePosStart, (int)(absolutePosEnd >> 32), (int)absolutePosEnd, absolutePosEnd - absolutePosStart,
                         nofRecords, coverageStart, blockCount, globalRecordCounter);
     }
 }

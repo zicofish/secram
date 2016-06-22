@@ -74,17 +74,16 @@ public class SecramRecord {
 		mPosCigar.setReferenceBase(base);
 	}
 	
+	public int getCoverage(){
+		return mPosCigar.mCoverage;
+	}
+	
 	public String toString() {
 		String result="";
 		
 		result+="Reference: "+ mReferenceIndex +"\n";
 		result+="Position: "+ mPosition +"\n";
-		result+="# read headers: "+ mReadHeaders.size() +"\n";
-		
-		for (ReadHeader header : mReadHeaders) {
-			result += "   "+header.toString().replace("\n", "\n   ")+"\n";
-			result+="   ----------------------------------------\n";
-		}
+		result += "Coverage: " + getCoverage() + "\n";
 		result+="Pos Cigar: \""+ mPosCigar +"\"\n";
 		result+="Quality Scores: [ ";
 		
@@ -97,7 +96,13 @@ public class SecramRecord {
 				tmp += ", "+b;
 			}
 		}
-		result += tmp+" ]";
+		result += tmp+" ]\n";
+		result+="# read headers: "+ mReadHeaders.size() +"\n";
+		
+		for (ReadHeader header : mReadHeaders) {
+			result += "   "+header.toString().replace("\n", "\n   ")+"\n";
+			result+="   ----------------------------------------\n";
+		}
 		
 		return result;
 	}

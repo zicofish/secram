@@ -88,28 +88,16 @@ public class SecramContainerFactory {
 
         bitOutputStream.close();
         container.coreBlock = SecramBlock.buildNewCore(bitBAOS.toByteArray());
-        //debug
-//        container.coreBlock.setContent(new byte[0], new byte[0]);
-        //end debug
 
         container.external = new HashMap<Integer, SecramBlock>();
         for (final Integer key : map.keySet()) {
-            final ExposedByteArrayOutputStream os = map.get(key);
 
-            final SecramBlock externalBlock = new SecramBlock();
-            externalBlock.setContentId(key);
-            externalBlock.setContentType(SecramBlockContentType.EXTERNAL);
+            SecramBlock externalBlock = new SecramBlock(
+            		SecramBlockContentType.EXTERNAL,
+            		key,
+            		compressionHeader.externalCompressors.get(key),
+            		map.get(key).toByteArray());
 
-            final ExternalCompressor compressor = compressionHeader.externalCompressors.get(key);
-            final byte[] rawData = os.toByteArray();
-            final byte[] compressed = compressor.compress(rawData);
-            externalBlock.setContent(rawData, compressed);
-            externalBlock.setMethod(compressor.getMethod());
-            //debug
-//            if(key == 0){
-//            	externalBlock.setContent(new byte[0], new byte[0]);
-//            }
-            //end debug
             container.external.put(key, externalBlock);
         }
 

@@ -93,7 +93,7 @@ public class ReadHeader {
 		result += "Read name: "+ mReadName +"\n";
 		result += "Flag: "+ mFlags +"\n";
 		result += "Template Length: "+ mTemplateLength +"\n";
-		result += "Next reference index; " + mNextReferenceIndex + "\n";
+		result += "Next reference index: " + mNextReferenceIndex + "\n";
 		result += "Next position: " + mNextPosition + "\n";
 		result += "Auxiliary Data: \""+new String(mTags).replace("\n","\\n").replace("\0","\\0")+"\"";
 		

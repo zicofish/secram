@@ -6,31 +6,29 @@ import java.util.NoSuchElementException;
 public class PosCigarFeatureIterator implements Iterator<PosCigarFeature> {
 	private Iterator<PosCigarFeature> mElements;
 	private boolean nextOrderSame = false;
-	
+
 	private PosCigarFeature nextElement = null;
-	
-	
+
 	public PosCigarFeatureIterator(Iterator<PosCigarFeature> elements) {
 		mElements = elements;
 		fetch();
 	}
-	
+
 	private void fetch() {
 		PosCigarFeature tmp = nextElement;
-		nextElement = mElements.hasNext() ? mElements.next():null;
-		
-		if (tmp==null || nextElement==null) {
+		nextElement = mElements.hasNext() ? mElements.next() : null;
+
+		if (tmp == null || nextElement == null) {
 			nextOrderSame = false;
-		}
-		else {
+		} else {
 			nextOrderSame = tmp.mOrder == nextElement.mOrder;
 		}
-		
+
 	}
-	
+
 	@Override
 	public boolean hasNext() {
-		return nextElement!=null;
+		return nextElement != null;
 	}
 
 	@Override
@@ -42,7 +40,7 @@ public class PosCigarFeatureIterator implements Iterator<PosCigarFeature> {
 		fetch();
 		return r;
 	}
-	
+
 	public boolean nextIsSameOrder() {
 		return nextOrderSame;
 	}

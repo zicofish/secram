@@ -1,32 +1,33 @@
 package com.sg.secram.structure;
 
-import htsjdk.samtools.cram.build.CramIO;
-import htsjdk.samtools.cram.common.CramVersionPolicies;
-import htsjdk.samtools.cram.common.Version;
-import htsjdk.samtools.cram.io.CRC32OutputStream;
-import htsjdk.samtools.cram.io.CramArray;
 import htsjdk.samtools.cram.io.CramInt;
 import htsjdk.samtools.cram.io.ExposedByteArrayOutputStream;
 import htsjdk.samtools.cram.io.ITF8;
 import htsjdk.samtools.cram.io.LTF8;
 import htsjdk.samtools.cram.structure.BlockCompressionMethod;
 import htsjdk.samtools.util.Log;
-
 import org.apache.commons.compress.utils.CountingOutputStream;
 
-import java.io.ByteArrayInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Methods to read and write SECRAM containers.
  */
 public class SecramContainerIO {
     private static final Log log = Log.getInstance(SecramContainerIO.class);
+    
+    /*
+     * Calculate the storage size of each type of information 
+     */
+    public static int containerHeaderSize = 0;
+    public static int coreBlockSize = 0;
+    public static int compressionHeaderSize = 0;
+    public static int[] externalSizes = new int[12]; 
 
     /**
      * Reads container header only from a {@link InputStream}.
@@ -153,26 +154,32 @@ public class SecramContainerIO {
         }
         block.setRawContent(bytes);
         block.write(byteArrayOutputStream);
+        compressionHeaderSize += bytes.length;
         container.blockCount = 1;
 
         container.coreBlock.write(byteArrayOutputStream);
+        coreBlockSize += container.coreBlock.getCompressedContentSize();
         container.blockCount++;
-        for (final SecramBlock sb : container.external.values()) {
-            sb.write(byteArrayOutputStream);
+        for (final Entry entry : container.external.entrySet()) {
+            ((SecramBlock) entry.getValue()).write(byteArrayOutputStream);
+            externalSizes[(int) entry.getKey()] += ((SecramBlock) entry.getValue()).getCompressedContentSize();
             container.blockCount++;
         }
 
         container.containerByteSize = byteArrayOutputStream.size();
 
         int length = writeContainerHeader(container, outputStream);
+        containerHeaderSize += length;
         outputStream.write(byteArrayOutputStream.getBuffer(), 0, byteArrayOutputStream.size());
         length += byteArrayOutputStream.size();
+        byteArrayOutputStream.close();
 
         final long time2 = System.nanoTime();
 
         log.debug("CONTAINER WRITTEN: " + container.toString());
+        
         container.writeTime = time2 - time1;
-
+        
         return length;
     }
 

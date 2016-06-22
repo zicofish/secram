@@ -5,7 +5,6 @@ import htsjdk.samtools.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Hashtable;

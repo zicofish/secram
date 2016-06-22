@@ -2,7 +2,7 @@ package com.sg.secram.encryption;
 
 import com.sg.secram.SECRAMEncryptionMethod;
 
-public class DummyCipher<T> implements SECRAMEncryptionMethod<T>{
+public class DummyCipher<T> implements SECRAMEncryptionMethod<T> {
 
 	@Override
 	public T encrypt(T objectToEncrypt, String key) {

@@ -17,6 +17,7 @@
  */
 package com.sg.secram.structure;
 
+import htsjdk.samtools.cram.encoding.ExternalCompressor;
 import htsjdk.samtools.cram.io.ExternalCompression;
 import htsjdk.samtools.cram.io.ITF8;
 import htsjdk.samtools.cram.io.InputStreamUtils;
@@ -34,10 +35,16 @@ import java.util.Arrays;
  * to serialize/deserialize blocks.
  */
 public class SecramBlock {
-    /**
-     * Compression method that applied to this block's content.
-     */
-    private BlockCompressionMethod method;
+//    /**
+//     * Compression method that applied to this block's content.
+//     */
+//    private BlockCompressionMethod method;
+	
+	/**
+	 * Compressor applied to this block's content
+	 */
+	private ExternalCompressor compressor;
+	
     /**
      * Identifies SECRAM content type of the block.
      */
@@ -62,7 +69,22 @@ public class SecramBlock {
 
     public SecramBlock() {
     }
+    
+    public SecramBlock(SecramBlockContentType contentType, int contentId, BlockCompressionMethod method, byte[] rawContent){
+    	this(contentType, contentId, ExternalCompressor.createExternalCompressor(method), rawContent);
+    }
+    
+    public SecramBlock(SecramBlockContentType contentType, int contentId, ExternalCompressor compressor, byte[] rawContent){
+    	this.contentType = contentType;
+    	this.contentId = contentId;
+    	this.compressor = compressor;
+    	setRawContent(rawContent);
+    }
 
+    private SecramBlock(final SecramBlockContentType contentType, final byte[] rawContent) {
+    	this(contentType, 0, ExternalCompressor.createRAW(), rawContent);
+    }
+    
     /**
      * Deserialize the block from the {@link InputStream}. The reading is parametrized by the major CRAM version number.
      *
@@ -141,17 +163,9 @@ public class SecramBlock {
      * @return a new file header block {@link SecramBlock} object
      */
     public static SecramBlock buildNewFileHeaderBlock(final byte[] rawContent) {
-        final SecramBlock block = new SecramBlock(SecramBlockContentType.FILE_HEADER, rawContent);
-//        block.compress();
-        return block;
+        return new SecramBlock(SecramBlockContentType.FILE_HEADER, rawContent);
     }
 
-    private SecramBlock(final SecramBlockContentType contentType, final byte[] rawContent) {
-        this.setMethod(BlockCompressionMethod.RAW);
-        this.setContentType(contentType);
-        this.setContentId(0);
-        if (rawContent != null) setRawContent(rawContent);
-    }
 
     @Override
     public String toString() {
@@ -211,61 +225,69 @@ public class SecramBlock {
         if (compressedContent == null) compress();
         return compressedContent;
     }
+    
+    public int getCompressedContentSize() {
+        return compressedContentSize;
+    }
 
     private void compress() {
         if (compressedContent != null || rawContent == null) return;
 
-        switch (getMethod()) {
-            case RAW:
-                compressedContent = rawContent;
-                compressedContentSize = rawContentSize;
-                break;
-            case GZIP:
-                try {
-                    compressedContent = ExternalCompression.gzip(rawContent);
-                } catch (final IOException e) {
-                    throw new RuntimeException("This should have never happened.", e);
-                }
-                compressedContentSize = compressedContent.length;
-                break;
-            case RANS:
-                compressedContent = ExternalCompression.rans(rawContent, 1);
-                compressedContentSize = compressedContent.length;
-                break;
-            default:
-                break;
-        }
+        compressedContent = compressor.compress(rawContent);
+        compressedContentSize = compressedContent.length;
+//        switch (getMethod()) {
+//            case RAW:
+//                compressedContent = rawContent;
+//                compressedContentSize = rawContentSize;
+//                break;
+//            case GZIP:
+//                try {
+//                    compressedContent = ExternalCompression.gzip(rawContent);
+//                } catch (final IOException e) {
+//                    throw new RuntimeException("This should have never happened.", e);
+//                }
+//                compressedContentSize = compressedContent.length;
+//                break;
+//            case RANS:
+//                compressedContent = ExternalCompression.rans(rawContent, 1);
+//                compressedContentSize = compressedContent.length;
+//                break;
+//            default:
+//                break;
+//        }
     }
 
     private void uncompress() {
         if (rawContent != null || compressedContent == null) return;
 
-        switch (getMethod()) {
-            case RAW:
-                rawContent = compressedContent;
-                rawContentSize = compressedContentSize;
-                break;
-            case GZIP:
-                try {
-                    rawContent = ExternalCompression.gunzip(compressedContent);
-                } catch (final IOException e) {
-                    throw new RuntimeException("This should have never happened.", e);
-                }
-                break;
-            case RANS:
-                rawContent = ExternalCompression.unrans(compressedContent);
-                break;
-            default:
-                throw new RuntimeException("Unknown block compression method: " + getMethod().name());
-        }
+        rawContent = compressor.uncompress(compressedContent);
+        rawContentSize = rawContent.length;
+//        switch (getMethod()) {
+//            case RAW:
+//                rawContent = compressedContent;
+//                rawContentSize = compressedContentSize;
+//                break;
+//            case GZIP:
+//                try {
+//                    rawContent = ExternalCompression.gunzip(compressedContent);
+//                } catch (final IOException e) {
+//                    throw new RuntimeException("This should have never happened.", e);
+//                }
+//                break;
+//            case RANS:
+//                rawContent = ExternalCompression.unrans(compressedContent);
+//                break;
+//            default:
+//                throw new RuntimeException("Unknown block compression method: " + getMethod().name());
+//        }
     }
 
     BlockCompressionMethod getMethod() {
-        return method;
+        return compressor.getMethod();
     }
 
     public void setMethod(final BlockCompressionMethod method) {
-        this.method = method;
+        this.compressor = ExternalCompressor.createExternalCompressor(method);
     }
 
     public SecramBlockContentType getContentType() {
@@ -282,9 +304,5 @@ public class SecramBlock {
 
     public void setContentId(final int contentId) {
         this.contentId = contentId;
-    }
-
-    public int getCompressedContentSize() {
-        return compressedContentSize;
     }
 }

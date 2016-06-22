@@ -28,6 +28,8 @@ public class SecramCompressionHeader {
 
     public List<Integer> externalIds;
     
+    private static final ByteBuffer mapBuffer = ByteBuffer.allocate(1024 * 5000);
+    
     private static Log log = Log.getInstance(SecramCompressionHeader.class);
 	
 	public SecramCompressionHeader(){
@@ -51,7 +53,8 @@ public class SecramCompressionHeader {
                     size++;
             }
 
-            final ByteBuffer mapBuffer = ByteBuffer.allocate(1024 * 100);
+//            final ByteBuffer mapBuffer = ByteBuffer.allocate(1024 * 1000);
+            mapBuffer.clear();
             ITF8.writeUnsignedITF8(size, mapBuffer);
             for (final SecramEncodingKey encodingKey : encodingMap.keySet()) {
                 if (encodingMap.get(encodingKey).id == EncodingID.NULL)

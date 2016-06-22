@@ -111,21 +111,13 @@ public class PosCigar{
 		return nb;
 	}
 	
-//	public String toString() {
-//		String result = "";
-//		
-//		for (PosCigarFeature element : mPosCigarFeatures) {
-//			result+=element+" ";
-//		}
-//		return result;
-//	}
-//
-//	@Override
-//	public PosCigarFeatureIterator iterator() {
-//		return new PosCigarFeatureIterator(mPosCigarFeatures.iterator());
-//	}
-//	public boolean equals(Object obj) {
-//		if (!(obj instanceof PosCigar)) return false;
-//		return (mPosCigarFeatures.equals(((PosCigar)obj).mPosCigarFeatures));
-//	}
+	public String toString() {
+		String result = "";
+		List<PosCigarFeature> list = getNonMatchFeatures();
+		for (PosCigarFeature element : list) {
+			result += element + " ";
+		}
+		return result;
+	}
+
 }

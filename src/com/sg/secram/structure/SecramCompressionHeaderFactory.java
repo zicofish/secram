@@ -18,10 +18,16 @@ import htsjdk.samtools.cram.structure.EncodingKey;
 import htsjdk.samtools.cram.structure.EncodingParams;
 import htsjdk.samtools.util.Log;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
+
+import org.apache.commons.compress.compressors.deflate.DeflateCompressorInputStream;
+import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputStream;
 
 import com.sg.secram.compression.HalfByteEncoding;
 import com.sg.secram.compression.SecramEncodingKey;
@@ -45,31 +51,47 @@ public class SecramCompressionHeaderFactory {
 		
 		final int sensitiveFieldLengthID = exCounter++; //1
 		header.externalIds.add(sensitiveFieldLengthID);
-		header.externalCompressors.put(sensitiveFieldLengthID, ExternalCompressor.createGZIP());
+		header.externalCompressors.put(sensitiveFieldLengthID, ExternalCompressor.createLZMA());
 		
 		final int qualityScoreID = exCounter++; //2
 		header.externalIds.add(qualityScoreID);
-		header.externalCompressors.put(qualityScoreID, ExternalCompressor.createGZIP());
+		header.externalCompressors.put(qualityScoreID, ExternalCompressor.createLZMA());
 		
 		final int tagsID = exCounter++; //3
 		header.externalIds.add(tagsID);
-		header.externalCompressors.put(tagsID, ExternalCompressor.createGZIP());
+		header.externalCompressors.put(tagsID, ExternalCompressor.createBZIP2());
 		
 		final int absolutePositionID = exCounter++; //4
 		header.externalIds.add(absolutePositionID);
-		header.externalCompressors.put(absolutePositionID, ExternalCompressor.createGZIP());
+		header.externalCompressors.put(absolutePositionID, ExternalCompressor.createBZIP2());
 		
 		final int readNameID = exCounter++; //5
 		header.externalIds.add(readNameID);
-		header.externalCompressors.put(readNameID, ExternalCompressor.createGZIP());
+		header.externalCompressors.put(readNameID, ExternalCompressor.createBZIP2());
 		
 		final int templateLengthID = exCounter++; //6
 		header.externalIds.add(templateLengthID);
-		header.externalCompressors.put(templateLengthID, ExternalCompressor.createGZIP());
+		header.externalCompressors.put(templateLengthID, ExternalCompressor.createLZMA());
 		
 		final int nextAbsolutePositionID = exCounter++; //7
 		header.externalIds.add(nextAbsolutePositionID);
 		header.externalCompressors.put(nextAbsolutePositionID,  ExternalCompressor.createGZIP());
+		
+		final int coverageID = exCounter++; // 8
+		header.externalIds.add(coverageID);
+		header.externalCompressors.put(coverageID,  ExternalCompressor.createLZMA());
+		
+		final int numOfReadHeadersID = exCounter++; // 9
+		header.externalIds.add(numOfReadHeadersID);
+		header.externalCompressors.put(numOfReadHeadersID, ExternalCompressor.createLZMA());
+		
+		final int qualityScoreLengthID = exCounter++; // 10
+		header.externalIds.add(qualityScoreLengthID);
+		header.externalCompressors.put(qualityScoreLengthID, ExternalCompressor.createLZMA());
+		
+		final int numberOfFeaturesID = exCounter++; // 11
+		header.externalIds.add(numberOfFeaturesID);
+		header.externalCompressors.put(numberOfFeaturesID, ExternalCompressor.createLZMA());
 		
 		header.encodingMap = new TreeMap<SecramEncodingKey, EncodingParams>();
         for (final SecramEncodingKey key : SecramEncodingKey.values())
@@ -81,14 +103,14 @@ public class SecramCompressionHeaderFactory {
         }
         
         {//number of read headers
-        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
-        	for(final SecramRecord record : records)
-        		calculator.add(record.mReadHeaders.size());
-        	calculator.calculate();
+//        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
+//        	for(final SecramRecord record : records)
+//        		calculator.add(record.mReadHeaders.size());
+//        	calculator.calculate();
         	
-        	header.encodingMap.put(SecramEncodingKey.NH_NumberOfReadHeaders, 
-        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
-        	
+//        	header.encodingMap.put(SecramEncodingKey.NH_NumberOfReadHeaders, 
+//        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
+        	header.encodingMap.put(SecramEncodingKey.NH_NumberOfReadHeaders, ExternalIntegerEncoding.toParam(numOfReadHeadersID));
         }
         
         {//reference length
@@ -162,33 +184,38 @@ public class SecramCompressionHeaderFactory {
         }
         
         {//quality scores length
-        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
-        	for(final SecramRecord record : records)
-    			calculator.add(record.qualityLenDelta);
-        	calculator.calculate();
-        	
-        	header.encodingMap.put(SecramEncodingKey.QL_QualityScoreLength,
-        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
+//        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
+//        	for(final SecramRecord record : records)
+//    			calculator.add(record.qualityLenDelta);
+//        	calculator.calculate();
+//        	
+//        	header.encodingMap.put(SecramEncodingKey.QL_QualityScoreLength,
+//        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
+        	header.encodingMap.put(SecramEncodingKey.QL_QualityScoreLength, ExternalIntegerEncoding.toParam(qualityScoreLengthID));
         }
         
         {//coverage
-        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
-        	for(final SecramRecord record : records)
-    			calculator.add(record.coverageDelta);
-        	calculator.calculate();
+//        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
+//        	for(final SecramRecord record : records){
+//    			calculator.add(record.coverageDelta);
+//        	}
+//        	calculator.calculate();
         	
-        	header.encodingMap.put(SecramEncodingKey.CV_Coverage,
-        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
+//        	header.encodingMap.put(SecramEncodingKey.CV_Coverage,
+//        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
+        	header.encodingMap.put(SecramEncodingKey.CV_Coverage, ExternalIntegerEncoding.toParam(coverageID));
+        	
         }
         
         {//number of features
-        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
-        	for(final SecramRecord record : records)
-    			calculator.add(record.mPosCigar.getNonMatchFeatures().size());
-        	calculator.calculate();
-        	
-        	header.encodingMap.put(SecramEncodingKey.NF_NumberOfFeatures,
-        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
+//        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
+//        	for(final SecramRecord record : records)
+//    			calculator.add(record.mPosCigar.getNonMatchFeatures().size());
+//        	calculator.calculate();
+//        	
+//        	header.encodingMap.put(SecramEncodingKey.NF_NumberOfFeatures,
+//        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
+        	header.encodingMap.put(SecramEncodingKey.NF_NumberOfFeatures, ExternalIntegerEncoding.toParam(numberOfFeaturesID));
         }
         
         {//sensitive field
@@ -198,14 +225,24 @@ public class SecramCompressionHeaderFactory {
         }
         
         {//feature order
-        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
+//        	final HuffmanParamsCalculator calculator = new HuffmanParamsCalculator();
+//        	for(final SecramRecord record : records)
+//        		for(final PosCigarFeature feature : record.mPosCigar.getNonMatchFeatures()){
+//        			calculator.add(feature.mOrder);
+//        		}
+//        	calculator.calculate();
+//        	
+//        	header.encodingMap.put(SecramEncodingKey.FO_FeatureOrder,
+//        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
+        	final IntegerEncodingCalculator calculator = new IntegerEncodingCalculator(SecramEncodingKey.FO_FeatureOrder.name(), 0, 0);
         	for(final SecramRecord record : records)
-        		for(final PosCigarFeature feature : record.mPosCigar.getNonMatchFeatures())
-        			calculator.add(feature.mOrder);
-        	calculator.calculate();
+        		for(final PosCigarFeature feature : record.mPosCigar.getNonMatchFeatures()){
+        			calculator.addValue(feature.mOrder);
+        		}
+        	final Encoding<Integer> bestEncoding = calculator.getBestEncoding();
         	
         	header.encodingMap.put(SecramEncodingKey.FO_FeatureOrder,
-        			HuffmanIntegerEncoding.toParam(calculator.values(), calculator.bitLens()));
+        			new EncodingParams(bestEncoding.id(), bestEncoding.toByteArray()));
         }
         
         {//feature code

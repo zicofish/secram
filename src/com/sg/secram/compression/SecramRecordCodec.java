@@ -1,15 +1,11 @@
 package com.sg.secram.compression;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sg.secram.impl.SECRAMSecurityFilter;
 import com.sg.secram.impl.records.PosCigarFeature;
 import com.sg.secram.impl.records.PosCigarFeatureCode;
 import com.sg.secram.impl.records.ReadHeader;
@@ -19,7 +15,6 @@ import htsjdk.samtools.cram.encoding.DataSeriesType;
 import htsjdk.samtools.cram.io.DefaultBitInputStream;
 import htsjdk.samtools.cram.io.DefaultBitOutputStream;
 import htsjdk.samtools.cram.io.ExposedByteArrayOutputStream;
-import htsjdk.samtools.cram.structure.EncodingKey;
 
 public class SecramRecordCodec {
 	private Charset charset = Charset.forName("UTF8");
@@ -85,11 +80,6 @@ public class SecramRecordCodec {
 		@SecramDataSeries(key = SecramEncodingKey.FB_FeatureBase, type = DataSeriesType.BYTE)
 		public SecramFieldCodec<byte[]> featureBaseArrayCodec;
 	
-		
-	private static PrintStream debugfile;
-	private static int debugcounter=0;
-	private static int nb = 0;
-	private static boolean debug = true;
 	public SecramRecordCodec(boolean lossyQual){
 		this.lossyQual = lossyQual;
 	}
