@@ -1,27 +1,17 @@
 package com.sg.secram.impl;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.samtools.util.Log;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-
-import com.sg.secram.SECRAMEncryptionFilter;
 import com.sg.secram.impl.records.ReadHeader;
 import com.sg.secram.impl.records.SecramRecord;
 import com.sg.secram.structure.SecramBlock;

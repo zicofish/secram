@@ -193,17 +193,22 @@ public class SAMRecordSetBuilder implements Iterable<SAMRecord> {
     }
 
     /** Returns a CloseableIterator over the collection of SAMRecords. */
-    public CloseableIterator<SAMRecord> iterator() {
+    @Override
+	public CloseableIterator<SAMRecord> iterator() {
         return new CloseableIterator<SAMRecord>() {
             private final Iterator<SAMRecord> iterator = records.iterator();
 
-            public void close() { /** Do nothing. */}
+            @Override
+			public void close() { /** Do nothing. */}
 
-            public boolean hasNext() { return this.iterator.hasNext(); }
+            @Override
+			public boolean hasNext() { return this.iterator.hasNext(); }
 
-            public SAMRecord next() { return this.iterator.next(); }
+            @Override
+			public SAMRecord next() { return this.iterator.next(); }
 
-            public void remove() { this.iterator.remove(); }
+            @Override
+			public void remove() { this.iterator.remove(); }
         };
     }
 
@@ -365,7 +370,7 @@ public class SAMRecordSetBuilder implements Iterable<SAMRecord> {
         end1.setMateNegativeStrandFlag(true);
         end1.setFirstOfPairFlag(end1IsFirstOfPair);
         end1.setSecondOfPairFlag(!end1IsFirstOfPair);
-        end1.setInferredInsertSize((int) CoordMath.getLength(start1, CoordMath.getEnd(start2, this.readLength)));
+        end1.setInferredInsertSize(CoordMath.getLength(start1, CoordMath.getEnd(start2, this.readLength)));
         end1.setAttribute(SAMTag.RG.name(), READ_GROUP_ID);
         if (programRecord != null) {
             end1.setAttribute(SAMTag.PG.name(), programRecord.getProgramGroupId());

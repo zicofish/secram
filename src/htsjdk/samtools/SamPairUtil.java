@@ -25,9 +25,6 @@
 package htsjdk.samtools;
 
 import htsjdk.samtools.util.PeekableIterator;
-import htsjdk.samtools.util.ProgressLogger;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -385,7 +382,8 @@ public class SamPairUtil {
          */
         public long getNumMateCigarsAdded() { return this.numMateCigarsAdded; }
 
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             return (!records.isEmpty() || super.hasNext());
         }
 
@@ -450,13 +448,15 @@ public class SamPairUtil {
             }
         }
 
-        public SAMRecord next() {
+        @Override
+		public SAMRecord next() {
             advance();
             if (records.isEmpty()) throw new IllegalStateException("Unexpectedly found an empty record list");
             return this.records.poll();
         }
 
-        public SAMRecord peek() {
+        @Override
+		public SAMRecord peek() {
             advance();
             if (records.isEmpty()) throw new IllegalStateException("Unexpectedly found an empty record list");
             return this.records.peek();

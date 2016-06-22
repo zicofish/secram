@@ -81,6 +81,7 @@ public class IntervalList implements Iterable<Interval> {
 	}
 
 	/** Returns an iterator over the intervals. */
+	@Override
 	public Iterator<Interval> iterator() {
 		return this.intervals.iterator();
 	}
@@ -902,6 +903,7 @@ class IntervalCoordinateComparator implements Comparator<Interval> {
 		this.header = header;
 	}
 
+	@Override
 	public int compare(final Interval lhs, final Interval rhs) {
 		final int lhsIndex = this.header.getSequenceIndex(lhs.getContig());
 		final int rhsIndex = this.header.getSequenceIndex(rhs.getContig());

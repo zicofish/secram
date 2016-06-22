@@ -123,23 +123,27 @@ class JEXLMap implements Map<JexlVCMatchExp, Boolean> {
     /**
      * @return the size of the internal data structure
      */
-    public int size() {
+    @Override
+	public int size() {
         return jexl.size();
     }
 
     /**
      * @return true if we're empty
      */
-    public boolean isEmpty() { return this.jexl.isEmpty(); }
+    @Override
+	public boolean isEmpty() { return this.jexl.isEmpty(); }
 
     /**
      * do we contain the specified key
      * @param o the key
      * @return true if we have a value for that key
      */
-    public boolean containsKey(Object o) { return jexl.containsKey(o); }
+    @Override
+	public boolean containsKey(Object o) { return jexl.containsKey(o); }
 
-    public Boolean get(Object o) {
+    @Override
+	public Boolean get(Object o) {
         // if we've already determined the value, return it
         if (jexl.containsKey(o) && jexl.get(o) != null) return jexl.get(o);
 
@@ -153,7 +157,8 @@ class JEXLMap implements Map<JexlVCMatchExp, Boolean> {
      * get the keyset of map
      * @return a set of keys of type JexlVCMatchExp
      */
-    public Set<JexlVCMatchExp> keySet() {
+    @Override
+	public Set<JexlVCMatchExp> keySet() {
         return jexl.keySet();
     }
 
@@ -163,7 +168,8 @@ class JEXLMap implements Map<JexlVCMatchExp, Boolean> {
      * the keys you want, you would be better off using get() to get them by name.
      * @return a collection of boolean values, representing the results of all the variants evaluated
      */
-    public Collection<Boolean> values() {
+    @Override
+	public Collection<Boolean> values() {
         // this is an expensive call
         for (JexlVCMatchExp exp : jexl.keySet())
             if (jexl.get(exp) == null)
@@ -203,11 +209,13 @@ class JEXLMap implements Map<JexlVCMatchExp, Boolean> {
         }
     }
 
-    public Boolean put(JexlVCMatchExp jexlVCMatchExp, Boolean aBoolean) {
+    @Override
+	public Boolean put(JexlVCMatchExp jexlVCMatchExp, Boolean aBoolean) {
         return jexl.put(jexlVCMatchExp,aBoolean);
     }
 
-    public void putAll(Map<? extends JexlVCMatchExp, ? extends Boolean> map) {
+    @Override
+	public void putAll(Map<? extends JexlVCMatchExp, ? extends Boolean> map) {
         jexl.putAll(map);
     }
 
@@ -217,22 +225,26 @@ class JEXLMap implements Map<JexlVCMatchExp, Boolean> {
 
     // this doesn't make much sense to implement, boolean doesn't offer too much variety to deal
     // with evaluating every key in the internal map.
-    public boolean containsValue(Object o) {
+    @Override
+	public boolean containsValue(Object o) {
         throw new UnsupportedOperationException("containsValue() not supported on a JEXLMap");
     }
 
     // this doesn't make much sense
-    public Boolean remove(Object o) {
+    @Override
+	public Boolean remove(Object o) {
         throw new UnsupportedOperationException("remove() not supported on a JEXLMap");
     }
 
 
-    public Set<Entry<JexlVCMatchExp, Boolean>> entrySet() {
+    @Override
+	public Set<Entry<JexlVCMatchExp, Boolean>> entrySet() {
         throw new UnsupportedOperationException("clear() not supported on a JEXLMap");
     }
 
     // nope
-    public void clear() {
+    @Override
+	public void clear() {
         throw new UnsupportedOperationException("clear() not supported on a JEXLMap");
     }
 }

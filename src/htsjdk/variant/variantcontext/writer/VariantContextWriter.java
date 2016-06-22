@@ -40,7 +40,8 @@ public interface VariantContextWriter extends Closeable {
     /**
      * attempt to close the VCF file
      */
-    public void close();
+    @Override
+	public void close();
 
     public void add(VariantContext vc);
 }

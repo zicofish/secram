@@ -66,6 +66,7 @@ class DiskBasedBAMFileIndex extends AbstractBAMFileIndex {
 	 *         SAMRecord beyond the range that may contain the indicated
 	 *         SAMRecords.
 	 */
+	@Override
 	public BAMFileSpan getSpanOverlapping(final int referenceIndex,
 			final int startPos, final int endPos) {
 		final BAMIndexContent queryResults = query(referenceIndex, startPos,
@@ -82,6 +83,7 @@ class DiskBasedBAMFileIndex extends AbstractBAMFileIndex {
 		return new BAMFileSpan(chunkList);
 	}
 
+	@Override
 	protected BAMIndexContent getQueryResults(final int reference) {
 		throw new UnsupportedOperationException();
 		// todo: there ought to be a way to support this using the first

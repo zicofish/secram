@@ -210,6 +210,7 @@ public class TribbleIndexedFeatureReader<T extends Feature, SOURCE> extends
 		return pathIsRegularFile;
 	}
 
+	@Override
 	public void close() throws IOException {
 		// close the seekable stream if that's necessary
 		if (seekableStream != null)
@@ -221,6 +222,7 @@ public class TribbleIndexedFeatureReader<T extends Feature, SOURCE> extends
 	 *
 	 * @return list of strings of the contig names
 	 */
+	@Override
 	public List<String> getSequenceNames() {
 		return !this.hasIndex() ? new ArrayList<String>()
 				: new ArrayList<String>(index.getSequenceNames());
@@ -293,6 +295,7 @@ public class TribbleIndexedFeatureReader<T extends Feature, SOURCE> extends
 	 * @return an iterator of records in this interval
 	 * @throws IOException
 	 */
+	@Override
 	public CloseableTribbleIterator<T> query(final String chr, final int start,
 			final int end) throws IOException {
 
@@ -312,6 +315,7 @@ public class TribbleIndexedFeatureReader<T extends Feature, SOURCE> extends
 	 * @return Return an iterator to iterate over the entire file
 	 * @throws IOException
 	 */
+	@Override
 	public CloseableTribbleIterator<T> iterator() throws IOException {
 		return new WFIterator();
 	}
@@ -452,10 +456,12 @@ public class TribbleIndexedFeatureReader<T extends Feature, SOURCE> extends
 
 		}
 
+		@Override
 		public boolean hasNext() {
 			return currentRecord != null;
 		}
 
+		@Override
 		public T next() {
 			final T ret = currentRecord;
 			try {
@@ -547,10 +553,12 @@ public class TribbleIndexedFeatureReader<T extends Feature, SOURCE> extends
 			}
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException("Remove is not supported.");
 		}
 
+		@Override
 		public void close() {
 			// Note that this depends on BlockStreamWrapper not actually closing
 			// the underlying stream
@@ -567,6 +575,7 @@ public class TribbleIndexedFeatureReader<T extends Feature, SOURCE> extends
 			}
 		}
 
+		@Override
 		public Iterator<T> iterator() {
 			return this;
 		}

@@ -415,7 +415,8 @@ public final class SAMUtils {
      * @param end 0-based end of read (exclusive)
      * @deprecated Use GenomicIndexUtil.reg2bin
      */
-    static int reg2bin(final int beg, final int end) {
+    @Deprecated
+	static int reg2bin(final int beg, final int end) {
         return GenomicIndexUtil.reg2bin(beg, end);
     }
 

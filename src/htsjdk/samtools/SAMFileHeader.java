@@ -55,6 +55,7 @@ public class SAMFileHeader extends AbstractSAMHeaderRecord {
 	public static final Set<String> STANDARD_TAGS = new HashSet<String>(
 			Arrays.asList(VERSION_TAG, SORT_ORDER_TAG, GROUP_ORDER_TAG));
 
+	@Override
 	Set<String> getStandardTags() {
 		return STANDARD_TAGS;
 	}
@@ -121,11 +122,11 @@ public class SAMFileHeader extends AbstractSAMHeaderRecord {
 	}
 
 	public String getVersion() {
-		return (String) getAttribute("VN");
+		return getAttribute("VN");
 	}
 
 	public String getCreator() {
-		return (String) getAttribute("CR");
+		return getAttribute("CR");
 	}
 
 	public SAMSequenceDictionary getSequenceDictionary() {
@@ -261,7 +262,7 @@ public class SAMFileHeader extends AbstractSAMHeaderRecord {
 		if (so == null || so.equals("unknown")) {
 			return SortOrder.unsorted;
 		}
-		return SortOrder.valueOf((String) so);
+		return SortOrder.valueOf(so);
 	}
 
 	public void setSortOrder(final SortOrder so) {
@@ -272,7 +273,7 @@ public class SAMFileHeader extends AbstractSAMHeaderRecord {
 		if (getAttribute("GO") == null) {
 			return GroupOrder.none;
 		}
-		return GroupOrder.valueOf((String) getAttribute("GO"));
+		return GroupOrder.valueOf(getAttribute("GO"));
 	}
 
 	public void setGroupOrder(final GroupOrder go) {
@@ -376,6 +377,7 @@ public class SAMFileHeader extends AbstractSAMHeaderRecord {
 		return result;
 	}
 
+	@Override
 	public final SAMFileHeader clone() {
 		final SAMTextHeaderCodec codec = new SAMTextHeaderCodec();
 		codec.setValidationStringency(ValidationStringency.SILENT);

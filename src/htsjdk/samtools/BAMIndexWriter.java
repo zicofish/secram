@@ -49,6 +49,7 @@ interface BAMIndexWriter extends Closeable {  // note - only package visibility
     /**
      * Any necessary processing at the end of the file
      */
-    public void close();
+    @Override
+	public void close();
 
 }

@@ -19,7 +19,6 @@ package htsjdk.samtools.cram.encoding;
 
 import htsjdk.samtools.cram.io.BitInputStream;
 import htsjdk.samtools.cram.io.BitOutputStream;
-import htsjdk.samtools.cram.io.ITF8;
 import htsjdk.samtools.cram.io.LTF8;
 
 import java.io.IOException;

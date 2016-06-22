@@ -57,7 +57,8 @@ public class SAMProgramRecord extends AbstractSAMHeaderRecord {
         }
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return getProgramGroupId();
     }
 
@@ -66,7 +67,7 @@ public class SAMProgramRecord extends AbstractSAMHeaderRecord {
     }
 
     public String getProgramName() {
-        return (String)getAttribute(PROGRAM_NAME_TAG);
+        return getAttribute(PROGRAM_NAME_TAG);
     }
 
     public void setProgramName(final String name) {
@@ -74,7 +75,7 @@ public class SAMProgramRecord extends AbstractSAMHeaderRecord {
     }
 
     public String getProgramVersion() {
-        return (String)getAttribute(PROGRAM_VERSION_TAG);
+        return getAttribute(PROGRAM_VERSION_TAG);
     }
 
     public void setProgramVersion(final String version) {
@@ -82,7 +83,7 @@ public class SAMProgramRecord extends AbstractSAMHeaderRecord {
     }
 
     public String getCommandLine() {
-        return (String)getAttribute(COMMAND_LINE_TAG);
+        return getAttribute(COMMAND_LINE_TAG);
     }
 
     public void setCommandLine(final String commandLine) {
@@ -90,7 +91,7 @@ public class SAMProgramRecord extends AbstractSAMHeaderRecord {
     }
 
     public String getPreviousProgramGroupId() {
-        return (String)getAttribute(PREVIOUS_PROGRAM_GROUP_ID_TAG);
+        return getAttribute(PREVIOUS_PROGRAM_GROUP_ID_TAG);
     }
 
     public void setPreviousProgramGroupId(final String id) {
@@ -126,7 +127,8 @@ public class SAMProgramRecord extends AbstractSAMHeaderRecord {
         return result;
     }
 
-    Set<String> getStandardTags() {
+    @Override
+	Set<String> getStandardTags() {
         return STANDARD_TAGS;
     }
 }

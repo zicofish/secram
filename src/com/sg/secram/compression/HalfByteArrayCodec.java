@@ -18,8 +18,6 @@
 package com.sg.secram.compression;
 
 import htsjdk.samtools.cram.encoding.AbstractBitCodec;
-import htsjdk.samtools.cram.encoding.BitCodec;
-import htsjdk.samtools.cram.encoding.huffman.codec.HuffmanByteEncoding;
 import htsjdk.samtools.cram.io.BitInputStream;
 import htsjdk.samtools.cram.io.BitOutputStream;
 

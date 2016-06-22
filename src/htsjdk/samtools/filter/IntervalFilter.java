@@ -65,7 +65,8 @@ public class IntervalFilter implements SamRecordFilter {
      * @param record the SAMRecord to evaluate
      * @return true if the SAMRecord matches the filter, otherwise false
      */
-    public boolean filterOut(final SAMRecord record) {
+    @Override
+	public boolean filterOut(final SAMRecord record) {
         while (currentInterval != null &&
                 (currentSequenceIndex < record.getReferenceIndex() ||
                  (currentSequenceIndex == record.getReferenceIndex() && currentInterval.getEnd() < record.getAlignmentStart()))) {
@@ -93,7 +94,8 @@ public class IntervalFilter implements SamRecordFilter {
      *
      * @return true if the SAMRecords matches the filter, otherwise false
      */
-    public boolean filterOut(final SAMRecord first, final SAMRecord second) {
+    @Override
+	public boolean filterOut(final SAMRecord first, final SAMRecord second) {
         throw new UnsupportedOperationException("Paired IntervalFilter filter not implemented!");
     }
 }

@@ -37,12 +37,14 @@ public class VersionHeader implements Header {
 	private String versionedItem;
 	private String versionString;
 
+	@Override
 	public void parse(String in) {
 		String[] fields = in.split("\t");
 		this.versionedItem = fields[0];
 		this.versionString = fields[1];
 	}
 
+	@Override
 	public String toString() {
 		return this.versionedItem + "\t" + this.versionString;
 	}
@@ -69,6 +71,7 @@ public class VersionHeader implements Header {
 	 * Equals method that checks that both the item and version string are
 	 * equal.
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;

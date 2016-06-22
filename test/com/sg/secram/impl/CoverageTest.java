@@ -1,6 +1,5 @@
 package com.sg.secram.impl;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import com.sg.secram.encryption.OPE;

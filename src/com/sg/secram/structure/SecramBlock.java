@@ -18,7 +18,6 @@
 package com.sg.secram.structure;
 
 import htsjdk.samtools.cram.encoding.ExternalCompressor;
-import htsjdk.samtools.cram.io.ExternalCompression;
 import htsjdk.samtools.cram.io.ITF8;
 import htsjdk.samtools.cram.io.InputStreamUtils;
 import htsjdk.samtools.cram.structure.BlockCompressionMethod;

@@ -421,7 +421,8 @@ class IntelDeflater extends Deflater {
      * @throws IllegalArgumentException if the flush mode is invalid
      * @since 1.7
      */
-    public int deflate(byte[] b, int off, int len, int flush) {
+    @Override
+	public int deflate(byte[] b, int off, int len, int flush) {
         //System.out.println("Inside IntelDeflater\n");
         if (b == null) {
             throw new NullPointerException();
@@ -543,7 +544,8 @@ class IntelDeflater extends Deflater {
     /**
      * Closes the compressor when garbage is collected.
      */
-    protected void finalize() {
+    @Override
+	protected void finalize() {
         end();
     }
 

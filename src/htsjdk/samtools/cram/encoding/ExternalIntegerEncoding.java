@@ -38,11 +38,13 @@ public class ExternalIntegerEncoding implements Encoding<Integer> {
         return new EncodingParams(encodingId, externalIntegerEncoding.toByteArray());
     }
 
-    public byte[] toByteArray() {
+    @Override
+	public byte[] toByteArray() {
         return ITF8.writeUnsignedITF8(contentId);
     }
 
-    public void fromByteArray(final byte[] data) {
+    @Override
+	public void fromByteArray(final byte[] data) {
         contentId = ITF8.readUnsignedITF8(data);
     }
 

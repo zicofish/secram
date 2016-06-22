@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.junit.Test;
-
 import com.sg.secram.example.Bam2SecramFile;
 import com.sg.secram.example.Secram2BamFile;
 import com.sg.secram.structure.SecramContainerIO;

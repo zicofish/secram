@@ -41,7 +41,8 @@ public class WholeGenomeReferenceSequenceMask implements ReferenceSequenceMask {
     /**
      * @return true if the mask is set for the given sequence and position
      */
-    public boolean get(final int sequenceIndex, final int position) {
+    @Override
+	public boolean get(final int sequenceIndex, final int position) {
         if (sequenceIndex < 0) {
             throw new IllegalArgumentException("Negative sequence index " + sequenceIndex);
         }
@@ -55,7 +56,8 @@ public class WholeGenomeReferenceSequenceMask implements ReferenceSequenceMask {
     /**
      * @return the next pos on the given sequence >= position that is set, or -1 if there are no more set positions
      */
-    public int nextPosition(final int sequenceIndex, final int position) {
+    @Override
+	public int nextPosition(final int sequenceIndex, final int position) {
         if (get(sequenceIndex, position + 1)) {
             return position + 1;
         } else {
@@ -66,14 +68,16 @@ public class WholeGenomeReferenceSequenceMask implements ReferenceSequenceMask {
     /**
      * @return Largest sequence index for which there are set bits.
      */
-    public int getMaxSequenceIndex() {
+    @Override
+	public int getMaxSequenceIndex() {
         return header.getSequenceDictionary().size() - 1;
     }
 
     /**
      * @return the largest position on the last sequence index
      */
-    public int getMaxPosition() {
+    @Override
+	public int getMaxPosition() {
         SAMSequenceRecord lastSequenceRecord = header.getSequence(getMaxSequenceIndex());
         return lastSequenceRecord.getSequenceLength();
     }

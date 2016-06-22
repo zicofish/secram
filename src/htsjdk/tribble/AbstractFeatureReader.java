@@ -159,15 +159,20 @@ public abstract class AbstractFeatureReader<T extends Feature, SOURCE> implement
      *
      * @return the header object we've read-in
      */
-    public Object getHeader() {
+    @Override
+	public Object getHeader() {
         return header.getHeaderValue();
     }
 
     static class EmptyIterator<T extends Feature> implements CloseableTribbleIterator<T> {
-        public Iterator iterator() { return this; }
-        public boolean hasNext() { return false; }
-        public T next() { return null; }
-        public void remove() { }
+        @Override
+		public Iterator iterator() { return this; }
+        @Override
+		public boolean hasNext() { return false; }
+        @Override
+		public T next() { return null; }
+        @Override
+		public void remove() { }
         @Override public void close() { }
     }
 

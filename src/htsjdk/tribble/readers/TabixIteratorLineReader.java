@@ -40,7 +40,8 @@ public class TabixIteratorLineReader implements LineReader {
         this.iterator = iterator;
     }
 
-    public String readLine() {
+    @Override
+	public String readLine() {
         try {
             return iterator != null ? iterator.next() : null;
         } catch (IOException e) {
@@ -48,7 +49,8 @@ public class TabixIteratorLineReader implements LineReader {
         }
     }
 
-    public void close() {
+    @Override
+	public void close() {
         // Ignore -
     }
 }

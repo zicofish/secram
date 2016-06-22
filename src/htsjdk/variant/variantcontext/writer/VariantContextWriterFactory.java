@@ -27,6 +27,7 @@ package htsjdk.variant.variantcontext.writer;
 
 import htsjdk.samtools.Defaults;
 import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.util.AbstractAsyncWriter;
 import htsjdk.samtools.util.BlockCompressedOutputStream;
 import htsjdk.samtools.util.IOUtil;
 import htsjdk.samtools.util.RuntimeIOException;
@@ -233,7 +234,7 @@ public class VariantContextWriterFactory {
     private static VariantContextWriter maybeWrapWithAsyncWriter(final VariantContextWriter writer,
                                                                  final EnumSet<Options> options) {
         if (options.contains(Options.USE_ASYNC_IO)) {
-            return new AsyncVariantContextWriter(writer, AsyncVariantContextWriter.DEFAULT_QUEUE_SIZE);
+            return new AsyncVariantContextWriter(writer, AbstractAsyncWriter.DEFAULT_QUEUE_SIZE);
         }
         else return writer;
     }

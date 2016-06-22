@@ -101,7 +101,8 @@ public class LinearIndex extends AbstractIndex {
         read(dis);
     }
 
-    public boolean isCurrentVersion() {
+    @Override
+	public boolean isCurrentVersion() {
         if (!super.isCurrentVersion()) return false;
 
         // todo fixme nasty hack to determine if this is an old style V3 linear index (without nFeaturesPerBin)
@@ -117,7 +118,8 @@ public class LinearIndex extends AbstractIndex {
         return INDEX_TYPE;
     }
 
-    public List<String> getSequenceNames() {
+    @Override
+	public List<String> getSequenceNames() {
         return (chrIndices == null ? Collections.EMPTY_LIST :
                 Collections.unmodifiableList(new ArrayList<String>(chrIndices.keySet())));
     }
@@ -173,7 +175,8 @@ public class LinearIndex extends AbstractIndex {
             this.nFeatures = 0;
         }
 
-        public String getName() {
+        @Override
+		public String getName() {
             return name;
         }
 
@@ -186,11 +189,13 @@ public class LinearIndex extends AbstractIndex {
             return blocks.size();
         }
 
-        public List<Block> getBlocks() {
+        @Override
+		public List<Block> getBlocks() {
             return blocks;
         }
 
-        public List<Block> getBlocks(final int start, final int end) {
+        @Override
+		public List<Block> getBlocks(final int start, final int end) {
             if (blocks.isEmpty()) {
                 return Collections.emptyList();
             } else {
@@ -231,7 +236,8 @@ public class LinearIndex extends AbstractIndex {
             this.nFeatures++;
         }
 
-        public void write(final LittleEndianOutputStream dos) throws IOException {
+        @Override
+		public void write(final LittleEndianOutputStream dos) throws IOException {
 
             // Chr name, binSize,  # bins,  longest feature
             dos.writeString(name);
@@ -253,7 +259,8 @@ public class LinearIndex extends AbstractIndex {
             dos.writeLong(pos + size);
         }
 
-        public void read(final LittleEndianInputStream dis) throws IOException {
+        @Override
+		public void read(final LittleEndianInputStream dis) throws IOException {
             name = dis.readString();
             binWidth = dis.readInt();
             final int nBins = dis.readInt();
@@ -275,7 +282,8 @@ public class LinearIndex extends AbstractIndex {
             }
         }
 
-        public boolean equals(final Object obj) {
+        @Override
+		public boolean equals(final Object obj) {
             if (this == obj) return true;
             if (!(obj instanceof ChrIndex)) return false;
             final ChrIndex other = (ChrIndex) obj;

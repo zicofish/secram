@@ -54,7 +54,8 @@ public class TribbleException extends RuntimeException {
      * override the default message with ours, which attaches the source file in question
      * @return a string with our internal error, along with the causitive source file (or other input source)
      */
-    public String getMessage() {
+    @Override
+	public String getMessage() {
         String ret = super.getMessage();
         if ( source != null )
             ret = ret + ", for input source: " + source;

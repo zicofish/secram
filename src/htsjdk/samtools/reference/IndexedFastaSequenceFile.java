@@ -93,7 +93,8 @@ public class IndexedFastaSequenceFile extends AbstractFastaSequenceFile implemen
     }
 
 
-    public boolean isIndexed() {return true;}
+    @Override
+	public boolean isIndexed() {return true;}
 
     private static File findFastaIndex(File fastaFile) {
         File indexFile = getFastaIndexFileName(fastaFile);
@@ -151,7 +152,8 @@ public class IndexedFastaSequenceFile extends AbstractFastaSequenceFile implemen
      * Retrieves the sequence dictionary for the fasta file.
      * @return sequence dictionary of the fasta.
      */
-    public SAMSequenceDictionary getSequenceDictionary() {
+    @Override
+	public SAMSequenceDictionary getSequenceDictionary() {
         return sequenceDictionary;
     }
 
@@ -160,7 +162,8 @@ public class IndexedFastaSequenceFile extends AbstractFastaSequenceFile implemen
      * @param contig contig whose data should be returned.
      * @return The full sequence associated with this contig.
      */
-    public ReferenceSequence getSequence( String contig ) {
+    @Override
+	public ReferenceSequence getSequence( String contig ) {
         return getSubsequenceAt( contig, 1, (int)index.getIndexEntry(contig).getSize() );
     }
 
@@ -171,7 +174,8 @@ public class IndexedFastaSequenceFile extends AbstractFastaSequenceFile implemen
      * @param stop inclusive, 1-based stop of region.
      * @return The partial reference sequence associated with this range.
      */
-    public ReferenceSequence getSubsequenceAt( String contig, long start, long stop ) {
+    @Override
+	public ReferenceSequence getSubsequenceAt( String contig, long start, long stop ) {
         if(start > stop + 1)
             throw new SAMException(String.format("Malformed query; start point %d lies after end point %d",start,stop));
 
@@ -235,7 +239,8 @@ public class IndexedFastaSequenceFile extends AbstractFastaSequenceFile implemen
      * Gets the next sequence if available, or null if not present.
      * @return next sequence if available, or null if not present.
      */
-    public ReferenceSequence nextSequence() {
+    @Override
+	public ReferenceSequence nextSequence() {
         if( !indexIterator.hasNext() )
             return null;
         return getSequence( indexIterator.next().getContig() );
@@ -244,7 +249,8 @@ public class IndexedFastaSequenceFile extends AbstractFastaSequenceFile implemen
     /**
      * Reset the iterator over the index.
      */
-    public void reset() {
+    @Override
+	public void reset() {
         indexIterator = index.iterator();
     }
 
@@ -252,7 +258,8 @@ public class IndexedFastaSequenceFile extends AbstractFastaSequenceFile implemen
      * A simple toString implementation for debugging.
      * @return String representation of the file.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return this.file.getAbsolutePath();
     }
 

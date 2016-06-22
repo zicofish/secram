@@ -25,7 +25,6 @@ import htsjdk.samtools.cram.structure.EncodingID;
 import htsjdk.samtools.cram.structure.EncodingParams;
 
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 public class HalfByteArrayEncoding implements Encoding<byte[]> {
@@ -48,11 +47,13 @@ public class HalfByteArrayEncoding implements Encoding<byte[]> {
         return new EncodingParams(encodingId, halfByteArrayEncoding.toByteArray());
     }
 
-    public byte[] toByteArray() {
+    @Override
+	public byte[] toByteArray() {
         return ITF8.writeUnsignedITF8(contentId);
     }
 
-    public void fromByteArray(final byte[] data) {
+    @Override
+	public void fromByteArray(final byte[] data) {
         contentId = ITF8.readUnsignedITF8(data);
     }
     

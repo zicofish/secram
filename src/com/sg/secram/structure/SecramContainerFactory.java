@@ -18,7 +18,6 @@
 package com.sg.secram.structure;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.cram.encoding.ExternalCompressor;
 import htsjdk.samtools.cram.io.DefaultBitOutputStream;
 import htsjdk.samtools.cram.io.ExposedByteArrayOutputStream;
 

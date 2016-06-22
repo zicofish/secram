@@ -5,8 +5,6 @@ import htsjdk.samtools.DefaultSAMRecordFactory;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
-import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.reference.ReferenceSequenceFile;
 import htsjdk.samtools.util.Log;
 
 import java.io.File;
@@ -15,20 +13,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sg.secram.SECRAMEncryptionFilter;
-import com.sg.secram.SECRAMWriter;
-import com.sg.secram.converters.SECRAMtoBAMConverter;
-import com.sg.secram.header.SECRAMFileHeader;
 import com.sg.secram.impl.SECRAMFileReader;
 import com.sg.secram.impl.SECRAMIterator;
-import com.sg.secram.impl.SECRAMSecurityFilter;
-import com.sg.secram.impl.records.PosCigar;
 import com.sg.secram.impl.records.PosCigarFeature;
-import com.sg.secram.impl.records.PosCigarFeatureIterator;
 import com.sg.secram.impl.records.ReadHeader;
 import com.sg.secram.impl.records.SecramRecord;
-import com.sg.secram.records.SECRAMRecordCodec;
-import com.sg.secram.util.ReferenceUtils;
 import com.sg.secram.util.SECRAMUtils;
 import com.sg.secram.util.Timings;
 

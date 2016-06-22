@@ -63,7 +63,8 @@ public class ProgressLogger implements ProgressLoggerInterface {
      */
     public ProgressLogger(final Log log) { this(log, 1000000); }
 
-    public synchronized boolean record(final String chrom, final int pos) {
+    @Override
+	public synchronized boolean record(final String chrom, final int pos) {
 	    if (this.lastStartTime == -1) this.lastStartTime = System.currentTimeMillis();
 	    if (++this.processed % this.n == 0) {
             final long now = System.currentTimeMillis();
@@ -92,7 +93,8 @@ public class ProgressLogger implements ProgressLoggerInterface {
      * Records that a given record has been processed and triggers logging if necessary.
      * @return boolean true if logging was triggered, false otherwise
      */
-    public synchronized boolean record(final SAMRecord rec) {
+    @Override
+	public synchronized boolean record(final SAMRecord rec) {
         if (rec.getReferenceIndex() == SAMRecord.NO_ALIGNMENT_REFERENCE_INDEX) {
             return record(null, 0);
         }
@@ -102,7 +104,8 @@ public class ProgressLogger implements ProgressLoggerInterface {
     }
     
     /** Records multiple SAMRecords and triggers logging if necessary. */
-    public boolean record(final SAMRecord... recs) {
+    @Override
+	public boolean record(final SAMRecord... recs) {
         boolean triggered = false;
         for (final SAMRecord rec : recs) triggered = record(rec) || triggered;
         return triggered;

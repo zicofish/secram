@@ -84,7 +84,9 @@ public interface ReferenceSequenceFile extends Closeable {
     /**
      * @return Reference name, file name, or something other human-readable representation.
      */
-    public String toString();
+    @Override
+	public String toString();
 
-    public void close() throws IOException;
+    @Override
+	public void close() throws IOException;
 }

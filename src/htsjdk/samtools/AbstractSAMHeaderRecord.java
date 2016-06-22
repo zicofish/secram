@@ -52,6 +52,7 @@ public abstract class AbstractSAMHeaderRecord implements Serializable {
 	 *            attribute value
 	 * @deprecated Use the version that takes a String value instead
 	 */
+	@Deprecated
 	public void setAttribute(final String key, final Object value) {
 		setAttribute(key, value == null ? null : value.toString());
 	}

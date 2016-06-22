@@ -49,14 +49,16 @@ public class BAMRecordCodec implements SortingCollection.Codec<SAMRecord> {
         this.samRecordFactory = factory;
     }
 
-    public BAMRecordCodec clone() {
+    @Override
+	public BAMRecordCodec clone() {
         // Do not clone the references to codecs, as they must be distinct for each instance.
         return new BAMRecordCodec(this.header, this.samRecordFactory);
     }
 
 
     /** Sets the output stream that records will be written to. */
-    public void setOutputStream(final OutputStream os) {
+    @Override
+	public void setOutputStream(final OutputStream os) {
         this.binaryCodec.setOutputStream(os);
     }
 
@@ -67,7 +69,8 @@ public class BAMRecordCodec implements SortingCollection.Codec<SAMRecord> {
     }
 
     /** Sets the input stream that records will be read from. */
-    public void setInputStream(final InputStream is) {
+    @Override
+	public void setInputStream(final InputStream is) {
         this.binaryCodec.setInputStream(is);
     }
 
@@ -85,7 +88,8 @@ public class BAMRecordCodec implements SortingCollection.Codec<SAMRecord> {
      *
      * @param alignment Record to be written.
      */
-    public void encode(final SAMRecord alignment) {
+    @Override
+	public void encode(final SAMRecord alignment) {
         // Compute block size, as it is the first element of the file representation of SAMRecord
         final int readLength = alignment.getReadLength();
 
@@ -171,7 +175,8 @@ public class BAMRecordCodec implements SortingCollection.Codec<SAMRecord> {
      * @return null if no more records.  Should throw exception if EOF is encountered in the middle of
      *         a record.
      */
-    public SAMRecord decode() {
+    @Override
+	public SAMRecord decode() {
         int recordLength = 0;
         try {
             recordLength = this.binaryCodec.readInt();

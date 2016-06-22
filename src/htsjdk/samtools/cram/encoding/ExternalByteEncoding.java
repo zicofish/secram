@@ -38,11 +38,13 @@ public class ExternalByteEncoding implements Encoding<Byte> {
         return new EncodingParams(encodingId, externalByteEncoding.toByteArray());
     }
 
-    public byte[] toByteArray() {
+    @Override
+	public byte[] toByteArray() {
         return ITF8.writeUnsignedITF8(contentId);
     }
 
-    public void fromByteArray(final byte[] data) {
+    @Override
+	public void fromByteArray(final byte[] data) {
         contentId = ITF8.readUnsignedITF8(data);
     }
 

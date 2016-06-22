@@ -59,7 +59,8 @@ public abstract class AbstractAsyncWriter<T> implements Closeable {
      * Attempts to finishing draining the queue and then calls synchronoslyClose() to allow implementation
      * to do any one time clean up.
      */
-    public void close() {
+    @Override
+	public void close() {
         checkAndRethrow();
 
         if (!this.isClosed.getAndSet(true)) {
@@ -98,7 +99,8 @@ public abstract class AbstractAsyncWriter<T> implements Closeable {
      * synchronous writer.
      */
     private class WriterRunnable implements Runnable {
-        public void run() {
+        @Override
+		public void run() {
             try {
                 while (!queue.isEmpty() || !isClosed.get()) {
                     try {

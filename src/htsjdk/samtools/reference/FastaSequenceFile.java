@@ -56,11 +56,13 @@ public class FastaSequenceFile extends AbstractFastaSequenceFile {
     /**
      * It's good to call this to free up memory.
      */
-    public void close() {
+    @Override
+	public void close() {
         in.close();
     }
 
-    public ReferenceSequence nextSequence() {
+    @Override
+	public ReferenceSequence nextSequence() {
         this.sequenceIndex += 1;
 
         // Read the header line
@@ -77,7 +79,8 @@ public class FastaSequenceFile extends AbstractFastaSequenceFile {
         return new ReferenceSequence(name, this.sequenceIndex, bases);
     }
 
-    public void reset() {
+    @Override
+	public void reset() {
         this.sequenceIndex = -1;
         this.in.close();
         this.in = new FastLineReader(IOUtil.openFileForReading(file));

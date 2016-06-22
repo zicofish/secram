@@ -46,7 +46,8 @@ public class ReadBase implements Serializable, ReadFeature {
         return position;
     }
 
-    public void setPosition(final int position) {
+    @Override
+	public void setPosition(final int position) {
         this.position = position;
     }
 

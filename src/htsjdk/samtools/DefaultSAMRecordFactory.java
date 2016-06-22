@@ -14,12 +14,14 @@ public class DefaultSAMRecordFactory implements SAMRecordFactory {
     }
 
     /** Create a new SAMRecord to be filled in */
-    public SAMRecord createSAMRecord(final SAMFileHeader header) {
+    @Override
+	public SAMRecord createSAMRecord(final SAMFileHeader header) {
         return new SAMRecord(header);
     }
 
     /** Create a new BAM Record. */
-    public BAMRecord createBAMRecord (final SAMFileHeader header,
+    @Override
+	public BAMRecord createBAMRecord (final SAMFileHeader header,
                                       final int referenceSequenceIndex,
                                       final int alignmentStart,
                                       final short readNameLength,

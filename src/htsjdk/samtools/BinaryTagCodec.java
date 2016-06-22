@@ -338,7 +338,7 @@ public class BinaryTagCodec {
                 return (int)byteBuffer.get();
             case 'C':
                 // Convert to unsigned byte stored in an int
-                return (int)byteBuffer.get() & 0xff;
+                return byteBuffer.get() & 0xff;
             case 'f':
                 return byteBuffer.getFloat();
             case 'H':

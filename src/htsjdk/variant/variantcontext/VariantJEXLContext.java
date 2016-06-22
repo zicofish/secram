@@ -56,26 +56,38 @@ class VariantJEXLContext implements JexlContext {
     private static Map<String, AttributeGetter> x = new HashMap<String, AttributeGetter>();
 
     static {
-        x.put("vc",   new AttributeGetter() { public Object get(VariantContext vc) { return vc; }});
-        x.put("CHROM",   new AttributeGetter() { public Object get(VariantContext vc) { return vc.getChr(); }});
-        x.put("POS",     new AttributeGetter() { public Object get(VariantContext vc) { return vc.getStart(); }});
-        x.put("TYPE",    new AttributeGetter() { public Object get(VariantContext vc) { return vc.getType().toString(); }});
-        x.put("QUAL",    new AttributeGetter() { public Object get(VariantContext vc) { return -10 * vc.getLog10PError(); }});
-        x.put("ALLELES", new AttributeGetter() { public Object get(VariantContext vc) { return vc.getAlleles(); }});
-        x.put("N_ALLELES", new AttributeGetter() { public Object get(VariantContext vc) { return vc.getNAlleles(); }});
-        x.put("FILTER",    new AttributeGetter() { public Object get(VariantContext vc) { return vc.isFiltered() ? "1" : "0"; }});
+        x.put("vc",   new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc; }});
+        x.put("CHROM",   new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc.getChr(); }});
+        x.put("POS",     new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc.getStart(); }});
+        x.put("TYPE",    new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc.getType().toString(); }});
+        x.put("QUAL",    new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return -10 * vc.getLog10PError(); }});
+        x.put("ALLELES", new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc.getAlleles(); }});
+        x.put("N_ALLELES", new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc.getNAlleles(); }});
+        x.put("FILTER",    new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc.isFiltered() ? "1" : "0"; }});
 
 //        x.put("GT",        new AttributeGetter() { public Object get(VariantContext vc) { return g.getGenotypeString(); }});
-        x.put("homRefCount",  new AttributeGetter() { public Object get(VariantContext vc) { return vc.getHomRefCount(); }});
-        x.put("hetCount",     new AttributeGetter() { public Object get(VariantContext vc) { return vc.getHetCount(); }});
-        x.put("homVarCount",  new AttributeGetter() { public Object get(VariantContext vc) { return vc.getHomVarCount(); }});
+        x.put("homRefCount",  new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc.getHomRefCount(); }});
+        x.put("hetCount",     new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc.getHetCount(); }});
+        x.put("homVarCount",  new AttributeGetter() { @Override
+		public Object get(VariantContext vc) { return vc.getHomVarCount(); }});
     }
 
     public VariantJEXLContext(VariantContext vc) {
         this.vc = vc;
     }
 
-    public Object get(String name) {
+    @Override
+	public Object get(String name) {
         Object result = null;
         if ( x.containsKey(name) ) { // dynamic resolution of name -> value via map
             result = x.get(name).get(vc);
@@ -90,11 +102,13 @@ class VariantJEXLContext implements JexlContext {
         return result;
     }
 
-    public boolean has(String name) {
+    @Override
+	public boolean has(String name) {
         return get(name) != null;
     }
 
-    public void	set(String name, Object value) {
+    @Override
+	public void	set(String name, Object value) {
         throw new UnsupportedOperationException("remove() not supported on a VariantJEXLContext");
     }
 }

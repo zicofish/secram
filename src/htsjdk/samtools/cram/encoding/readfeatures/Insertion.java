@@ -42,11 +42,13 @@ public class Insertion implements Serializable, ReadFeature {
         return operator;
     }
 
-    public int getPosition() {
+    @Override
+	public int getPosition() {
         return position;
     }
 
-    public void setPosition(final int position) {
+    @Override
+	public void setPosition(final int position) {
         this.position = position;
     }
 

@@ -92,10 +92,12 @@ public class SamLocusIterator implements Iterable<SamLocusIterator.LocusInfo>, C
             recordAndOffsets.add(new RecordAndOffset(read, position));
         }
 
-        public int getSequenceIndex() { return referenceSequence.getSequenceIndex(); }
+        @Override
+		public int getSequenceIndex() { return referenceSequence.getSequenceIndex(); }
 
         /** @return 1-based reference position */
-        public int getPosition() { return position; }
+        @Override
+		public int getPosition() { return position; }
         public List<RecordAndOffset> getRecordAndPositions() { return Collections.unmodifiableList(recordAndOffsets); }
         public String getSequenceName() { return referenceSequence.getSequenceName(); }
         @Override public String toString() { return referenceSequence.getSequenceName() + ":" + position; }
@@ -200,7 +202,8 @@ public class SamLocusIterator implements Iterable<SamLocusIterator.LocusInfo>, C
         }
     }
 
-    public Iterator<LocusInfo> iterator() {
+    @Override
+	public Iterator<LocusInfo> iterator() {
         if (samIterator != null) {
             throw new IllegalStateException("Cannot call iterator() more than once on SamLocusIterator");
         }
@@ -217,7 +220,8 @@ public class SamLocusIterator implements Iterable<SamLocusIterator.LocusInfo>, C
         return this;
     }
 
-    public void close() {
+    @Override
+	public void close() {
         this.samIterator.close();
     }
 
@@ -231,7 +235,8 @@ public class SamLocusIterator implements Iterable<SamLocusIterator.LocusInfo>, C
      *   2) there are LocusInfos in some stage of accumulation
      *   3) there are loci in the target mask that have yet to be accumulated (even if there are no reads covering them)
      */
-    public boolean hasNext() {
+    @Override
+	public boolean hasNext() {
         if (this.samIterator == null) {
             iterator();
         }
@@ -266,7 +271,8 @@ public class SamLocusIterator implements Iterable<SamLocusIterator.LocusInfo>, C
     /**
      * hasNext() has been fixed so that if it returns true, next() is now guaranteed not to return null.
      */
-    public LocusInfo next() {
+    @Override
+	public LocusInfo next() {
 
         // if we don't have any completed entries to return, try and make some!
         while (complete.isEmpty() && samHasMore()) {
@@ -473,7 +479,8 @@ public class SamLocusIterator implements Iterable<SamLocusIterator.LocusInfo>, C
         return samReader.getFileHeader().getSequence(referenceSequenceIndex);
     }
 
-    public void remove() {
+    @Override
+	public void remove() {
         throw new UnsupportedOperationException("Can not remove records from a SAM file via an iterator!");
     }
 

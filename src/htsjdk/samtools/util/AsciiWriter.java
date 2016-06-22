@@ -50,7 +50,8 @@ public class AsciiWriter extends Writer {
     /**
      * flushes and closes underlying OutputStream.
      */
-    public void close() throws IOException {
+    @Override
+	public void close() throws IOException {
         flush();
         os.close();
     }
@@ -58,7 +59,8 @@ public class AsciiWriter extends Writer {
     /**
      * flushes underlying OutputStream
      */
-    public void flush() throws IOException {
+    @Override
+	public void flush() throws IOException {
         os.write(buffer, 0, numBytes);
         numBytes = 0;
         os.flush();
@@ -67,7 +69,8 @@ public class AsciiWriter extends Writer {
     /**
      * All other Writer methods vector through this, so this is the only one that must be overridden.
      */
-    public void write(final char[] chars, int offset, int length) throws IOException {
+    @Override
+	public void write(final char[] chars, int offset, int length) throws IOException {
         while (length > 0) {
             final int charsToConvert = Math.min(length, buffer.length - numBytes);
             StringUtil.charsToBytes(chars, offset, charsToConvert, buffer, numBytes);

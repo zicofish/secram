@@ -55,7 +55,8 @@ public class BasicFastqWriter implements FastqWriter {
         this(null, writer);
     }
 
-    public void write(final FastqRecord rec) {
+    @Override
+	public void write(final FastqRecord rec) {
         writer.print(FastqConstants.SEQUENCE_HEADER);
         writer.println(rec.getReadHeader());
         writer.println(rec.getReadString());
@@ -71,7 +72,8 @@ public class BasicFastqWriter implements FastqWriter {
         writer.flush();
     }
 
-    public void close() {
+    @Override
+	public void close() {
         writer.close();
     }
 

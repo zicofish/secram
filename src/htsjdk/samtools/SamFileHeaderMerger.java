@@ -54,8 +54,8 @@ public class SamFileHeaderMerger {
     private static final char[] INT_TO_BASE36 = new char[36];
 
     static {
-        int aVal = (int) 'A';
-        int zeroVal = (int) '0';
+        int aVal = 'A';
+        int zeroVal = '0';
 
         for (int i = 0; i < 10; i++) {
             INT_TO_BASE36[i] = (char) (zeroVal + i);
@@ -98,21 +98,24 @@ public class SamFileHeaderMerger {
 
     //HeaderRecordFactory that creates SAMReadGroupRecord instances.
     private static final HeaderRecordFactory<SAMReadGroupRecord> READ_GROUP_RECORD_FACTORY = new HeaderRecordFactory<SAMReadGroupRecord>() {
-        public SAMReadGroupRecord createRecord(final String id, final SAMReadGroupRecord srcReadGroupRecord) {
+        @Override
+		public SAMReadGroupRecord createRecord(final String id, final SAMReadGroupRecord srcReadGroupRecord) {
             return new SAMReadGroupRecord(id, srcReadGroupRecord);
         }
     };
 
     //HeaderRecordFactory that creates SAMProgramRecord instances.
     private static final HeaderRecordFactory<SAMProgramRecord> PROGRAM_RECORD_FACTORY = new HeaderRecordFactory<SAMProgramRecord>() {
-        public SAMProgramRecord createRecord(final String id, final SAMProgramRecord srcProgramRecord) {
+        @Override
+		public SAMProgramRecord createRecord(final String id, final SAMProgramRecord srcProgramRecord) {
             return new SAMProgramRecord(id, srcProgramRecord);
         }
     };
 
     //comparator used to sort lists of program group and read group records
     private static final Comparator<AbstractSAMHeaderRecord> RECORD_ID_COMPARATOR = new Comparator<AbstractSAMHeaderRecord>() {
-        public int compare(final AbstractSAMHeaderRecord o1, final AbstractSAMHeaderRecord o2) {
+        @Override
+		public int compare(final AbstractSAMHeaderRecord o1, final AbstractSAMHeaderRecord o2) {
             return o1.getId().compareTo(o2.getId());
         }
     };
@@ -124,7 +127,8 @@ public class SamFileHeaderMerger {
      * @param sortOrder sort order new header should have
      * @deprecated replaced by SamFileHeaderMerger(Collection<SAMFileHeader>, SAMFileHeader.SortOrder, boolean)
      */
-    public SamFileHeaderMerger(final Collection<SamReader> readers, final SAMFileHeader.SortOrder sortOrder) {
+    @Deprecated
+	public SamFileHeaderMerger(final Collection<SamReader> readers, final SAMFileHeader.SortOrder sortOrder) {
         this(readers, sortOrder, false);
     }
 
@@ -137,7 +141,8 @@ public class SamFileHeaderMerger {
      *                          all input sequence dictionaries be identical.
      * @deprecated replaced by SamFileHeaderMerger(Collection<SAMFileHeader>, SAMFileHeader.SortOrder, boolean)
      */
-    public SamFileHeaderMerger(final Collection<SamReader> readers, final SAMFileHeader.SortOrder sortOrder, final boolean mergeDictionaries) {
+    @Deprecated
+	public SamFileHeaderMerger(final Collection<SamReader> readers, final SAMFileHeader.SortOrder sortOrder, final boolean mergeDictionaries) {
         this(sortOrder, getHeadersFromReaders(readers), mergeDictionaries);
         this.readers = readers;
     }
@@ -352,7 +357,7 @@ public class SamFileHeaderMerger {
         for (final HeaderRecordAndFileHeader<SAMProgramRecord> pair : programGroups) {
             final SAMProgramRecord record = pair.getHeaderRecord();
             final String id = record.getProgramGroupId();
-            final String ppId = (String) record.getAttribute(SAMProgramRecord.PREVIOUS_PROGRAM_GROUP_ID_TAG);
+            final String ppId = record.getAttribute(SAMProgramRecord.PREVIOUS_PROGRAM_GROUP_ID_TAG);
 
             final SAMFileHeader header = pair.getFileHeader();
             final Map<String, String> translations = idTranslationTable.get(header);
@@ -642,7 +647,8 @@ public class SamFileHeaderMerger {
      *
      * @deprecated replaced by getReadGroupId(SAMFileHeader, String)
      */
-    public String getReadGroupId(final SamReader reader, final String originalReadGroupId) {
+    @Deprecated
+	public String getReadGroupId(final SamReader reader, final String originalReadGroupId) {
         return getReadGroupId(reader.getFileHeader(), originalReadGroupId);
     }
 
@@ -657,7 +663,8 @@ public class SamFileHeaderMerger {
      * @return new ID from the merged list of program groups in the output file
      * @deprecated replaced by getProgramGroupId(SAMFileHeader, String)
      */
-    public String getProgramGroupId(final SamReader reader, final String originalProgramGroupId) {
+    @Deprecated
+	public String getProgramGroupId(final SamReader reader, final String originalProgramGroupId) {
         return getProgramGroupId(reader.getFileHeader(), originalProgramGroupId);
     }
 
@@ -695,7 +702,8 @@ public class SamFileHeaderMerger {
      *
      * @deprecated replaced by getHeaders()
      */
-    public Collection<SamReader> getReaders() {
+    @Deprecated
+	public Collection<SamReader> getReaders() {
         return this.readers;
     }
 
@@ -714,7 +722,8 @@ public class SamFileHeaderMerger {
      * @return the new index value
      * @deprecated replaced by getMergedSequenceIndex(SAMFileHeader, Integer)
      */
-    public Integer getMergedSequenceIndex(final SamReader reader, final Integer oldReferenceSequenceIndex) {
+    @Deprecated
+	public Integer getMergedSequenceIndex(final SamReader reader, final Integer oldReferenceSequenceIndex) {
         return this.getMergedSequenceIndex(reader.getFileHeader(), oldReferenceSequenceIndex);
     }
 

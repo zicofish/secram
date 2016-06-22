@@ -78,14 +78,14 @@ public class LittleEndianInputStream extends FilterInputStream {
 
     public long readLong() throws IOException {
         readFully(buffer);
-        long byte1 = (long) buffer[0];
-        long byte2 = (long) buffer[1];
-        long byte3 = (long) buffer[2];
-        long byte4 = (long) buffer[3];
-        long byte5 = (long) buffer[4];
-        long byte6 = (long) buffer[5];
-        long byte7 = (long) buffer[6];
-        long byte8 = (long) buffer[7];
+        long byte1 = buffer[0];
+        long byte2 = buffer[1];
+        long byte3 = buffer[2];
+        long byte4 = buffer[3];
+        long byte5 = buffer[4];
+        long byte6 = buffer[5];
+        long byte7 = buffer[6];
+        long byte8 = buffer[7];
         return (byte8 << 56)
                 + ((byte7 << 56) >>> 8)
                 + ((byte6 << 56) >>> 16)

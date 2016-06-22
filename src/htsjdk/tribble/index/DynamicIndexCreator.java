@@ -66,6 +66,7 @@ public class DynamicIndexCreator extends TribbleIndexCreator {
 		creators = getIndexCreators(inputFile, iba);
 	}
 
+	@Override
 	public Index finalizeIndex(final long finalFilePosition) {
 		// finalize all of the indexes
 		// return the score of the indexes we've generated
@@ -136,6 +137,7 @@ public class DynamicIndexCreator extends TribbleIndexCreator {
 		return creators;
 	}
 
+	@Override
 	public void addFeature(final Feature f, final long filePosition) {
 		// protected static Map<Double,Index>
 		// createIndex(FileBasedFeatureIterator<Feature> iterator,
@@ -215,7 +217,7 @@ public class DynamicIndexCreator extends TribbleIndexCreator {
 						.getBinSize();
 				scores.put(
 						binSize * densityOfFeatures
-								* Math.ceil((double) longestFeature / binSize),
+								* Math.ceil(longestFeature / binSize),
 						entry.getValue());
 			} else if (entry.getValue() instanceof IntervalIndexCreator) {
 				scores.put((double) ((IntervalIndexCreator) entry.getValue())

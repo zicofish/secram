@@ -148,6 +148,7 @@ public class VCFFileReader implements Closeable, Iterable<VariantContext> {
 	}
 
 	/** Returns an iterator over all records in this VCF/BCF file. */
+	@Override
 	public CloseableIterator<VariantContext> iterator() {
 		try {
 			return reader.iterator();
@@ -168,6 +169,7 @@ public class VCFFileReader implements Closeable, Iterable<VariantContext> {
 		}
 	}
 
+	@Override
 	public void close() {
 		try {
 			this.reader.close();

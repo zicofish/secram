@@ -202,7 +202,8 @@ public class CoordinateSortedPairInfoMap<KEY, REC> implements Iterable<Map.Entry
      * or removed from map when iteration is in progress, nor may a second iteration be started.
      * Iterator must be closed in order to allow normal access to the map.
      */
-    public CloseableIterator<Map.Entry<KEY, REC>> iterator() {
+    @Override
+	public CloseableIterator<Map.Entry<KEY, REC>> iterator() {
         if (iterationInProgress) throw new IllegalStateException("Cannot be called when iteration is in progress");
         iterationInProgress = true;
         return new MapIterator();
@@ -238,19 +239,22 @@ public class CoordinateSortedPairInfoMap<KEY, REC> implements Iterable<Map.Entry
             currentReferenceIterator = mapInRam.entrySet().iterator();
         }
 
-        public void close() {
+        @Override
+		public void close() {
             closed = true;
             iterationInProgress = false;
         }
 
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             if (closed) throw new IllegalStateException("Iterator has been closed");
             if (currentReferenceIterator != null && !currentReferenceIterator.hasNext())
                 throw new IllegalStateException("Should not happen");
             return currentReferenceIterator != null;
         }
 
-        public Map.Entry<KEY, REC> next() {
+        @Override
+		public Map.Entry<KEY, REC> next() {
             if (closed) throw new IllegalStateException("Iterator has been closed");
             if (!hasNext()) throw new NoSuchElementException();
             final Map.Entry<KEY, REC> ret = currentReferenceIterator.next();
@@ -258,7 +262,8 @@ public class CoordinateSortedPairInfoMap<KEY, REC> implements Iterable<Map.Entry
             return ret;
         }
 
-        public void remove() {
+        @Override
+		public void remove() {
             throw new UnsupportedOperationException();
         }
     }

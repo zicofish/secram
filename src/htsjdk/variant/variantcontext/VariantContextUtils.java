@@ -130,7 +130,7 @@ public class VariantContextUtils {
                 ArrayList<Double> alleleFreqs = new ArrayList<Double>();
                 ArrayList<Integer> alleleCounts = new ArrayList<Integer>();
                 ArrayList<Integer> foundersAlleleCounts = new ArrayList<Integer>();
-                double totalFoundersChromosomes = (double)vc.getCalledChrCount(founderIds);
+                double totalFoundersChromosomes = vc.getCalledChrCount(founderIds);
                 int foundersAltChromosomes;
                 for ( Allele allele : vc.getAlternateAlleles() ) {
                     foundersAltChromosomes = vc.getCalledChrCount(allele,founderIds);
@@ -139,7 +139,7 @@ public class VariantContextUtils {
                     if ( AN == 0 ) {
                         alleleFreqs.add(0.0);
                     } else {
-                        final Double freq = (double)foundersAltChromosomes / totalFoundersChromosomes;
+                        final Double freq = foundersAltChromosomes / totalFoundersChromosomes;
                         alleleFreqs.add(freq);
                     }
                 }

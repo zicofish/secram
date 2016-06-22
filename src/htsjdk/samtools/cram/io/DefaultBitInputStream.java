@@ -41,7 +41,8 @@ public class DefaultBitInputStream extends DataInputStream implements BitInputSt
         this.throwEOF = true;
     }
 
-    public final boolean readBit() throws IOException {
+    @Override
+	public final boolean readBit() throws IOException {
         if (--nofBufferedBits >= 0)
             return ((byteBuffer >>> nofBufferedBits) & 1) == 1;
 
@@ -55,7 +56,8 @@ public class DefaultBitInputStream extends DataInputStream implements BitInputSt
         return ((byteBuffer >>> 7) & 1) == 1;
     }
 
-    public final int readBits(int n) throws IOException {
+    @Override
+	public final int readBits(int n) throws IOException {
         if (n == 0)
             return 0;
         int x = 0;
@@ -77,7 +79,8 @@ public class DefaultBitInputStream extends DataInputStream implements BitInputSt
         return x & ((1 << n) - 1);
     }
 
-    public final long readLongBits(int n) throws IOException {
+    @Override
+	public final long readLongBits(int n) throws IOException {
         if (n > 64)
             throw new RuntimeException("More then 64 bits are requested in one read from bit stream.");
 
@@ -108,7 +111,8 @@ public class DefaultBitInputStream extends DataInputStream implements BitInputSt
         return x | (byteBuffer >>> nofBufferedBits);
     }
 
-    public void reset() {
+    @Override
+	public void reset() {
         nofBufferedBits = 0;
         byteBuffer = 0;
     }

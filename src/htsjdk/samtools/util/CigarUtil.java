@@ -51,7 +51,7 @@ public class CigarUtil {
      */
     // package visible so can be unit-tested
     public static List<CigarElement> softClipEndOfRead(final int clipFrom, final List<CigarElement> oldCigar) {
-        final int clippedBases = (int)CoordMath.getLength(clipFrom, Cigar.getReadLength(oldCigar));
+        final int clippedBases = CoordMath.getLength(clipFrom, Cigar.getReadLength(oldCigar));
         List<CigarElement> newCigar = new LinkedList<CigarElement>();
         int pos = 1;
 

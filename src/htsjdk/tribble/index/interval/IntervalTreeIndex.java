@@ -119,7 +119,8 @@ public class IntervalTreeIndex extends AbstractIndex {
             tree = new IntervalTree();
         }
 
-        public String getName() {
+        @Override
+		public String getName() {
             return name;
         }
 
@@ -127,12 +128,14 @@ public class IntervalTreeIndex extends AbstractIndex {
             tree.insert(iv);
         }
 
-        public List<Block> getBlocks() {
+        @Override
+		public List<Block> getBlocks() {
             return null;
         }
 
 
-        public List<Block> getBlocks(final int start, final int end) {
+        @Override
+		public List<Block> getBlocks(final int start, final int end) {
 
             // Get intervals and build blocks list
             final List<Interval> intervals = tree.findOverlapping(new Interval(start, end));
@@ -148,7 +151,8 @@ public class IntervalTreeIndex extends AbstractIndex {
 
             // Sort blocks by start position
             Arrays.sort(blocks, new Comparator<Block>() {
-                public int compare(final Block b1, final Block b2) {
+                @Override
+				public int compare(final Block b1, final Block b2) {
                     // this is a little cryptic because the normal method (b1.getStartPosition() - b2.getStartPosition()) wraps in int space and we incorrectly sort the blocks in extreme cases
                     return b1.getStartPosition() - b2.getStartPosition() < 1 ? -1 : (b1.getStartPosition() - b2.getStartPosition() > 1 ? 1 : 0);
                 }
@@ -175,7 +179,8 @@ public class IntervalTreeIndex extends AbstractIndex {
             System.out.println(tree.toString());
         }
 
-        public void write(final LittleEndianOutputStream dos) throws IOException {
+        @Override
+		public void write(final LittleEndianOutputStream dos) throws IOException {
 
             dos.writeString(name);
             final List<Interval> intervals = tree.getIntervals();
@@ -190,7 +195,8 @@ public class IntervalTreeIndex extends AbstractIndex {
 
         }
 
-        public void read(final LittleEndianInputStream dis) throws IOException {
+        @Override
+		public void read(final LittleEndianInputStream dis) throws IOException {
 
             tree = new IntervalTree();
 

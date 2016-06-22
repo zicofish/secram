@@ -3,13 +3,8 @@ package com.sg.secram.impl.converters;
 import htsjdk.samtools.BAMRecord;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
-
-import com.sg.secram.SECRAMEncryptionFilter;
 import com.sg.secram.impl.records.PosCigar;
 import com.sg.secram.impl.records.PosCigarFeature;
 import com.sg.secram.impl.records.ReadHeader;

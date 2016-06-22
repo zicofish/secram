@@ -282,7 +282,7 @@ public final class BCF2Decoder {
     }
 
     private double rawFloatToFloat(final int rawFloat) {
-        return (double)Float.intBitsToFloat(rawFloat);
+        return Float.intBitsToFloat(rawFloat);
     }
 
     // ----------------------------------------------------------------------

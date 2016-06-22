@@ -80,6 +80,7 @@ public class ReferenceSequence {
 		return length;
 	}
 
+	@Override
 	public String toString() {
 		return "ReferenceSequence " + getName();
 	}

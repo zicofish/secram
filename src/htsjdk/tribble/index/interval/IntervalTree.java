@@ -85,7 +85,8 @@ public class IntervalTree {
         return results;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return root().toString();
     }
 
@@ -496,7 +497,8 @@ public class IntervalTree {
         }
 
 
-        public String toString() {
+        @Override
+		public String toString() {
 
             // Make some shorthand for the nodes
             Map<Interval, Integer> keys = new LinkedHashMap<Interval, Integer>();

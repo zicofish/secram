@@ -91,6 +91,7 @@ public enum PosCigarFeatureCode {
 		return bamChar;
 	}
 	
+	@Override
 	public String toString() {
 		if (this == M) {
 			return "";

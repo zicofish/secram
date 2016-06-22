@@ -433,6 +433,7 @@ public abstract class Genotype implements Comparable<Genotype>, Serializable {
 		return al;
 	}
 
+	@Override
 	public String toString() {
 		return String
 				.format("[%s %s%s%s%s%s%s%s]",

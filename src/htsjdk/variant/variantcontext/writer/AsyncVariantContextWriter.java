@@ -53,10 +53,12 @@ public class AsyncVariantContextWriter extends
 		return "VariantContextWriterThread-";
 	}
 
+	@Override
 	public void add(final VariantContext vc) {
 		write(vc);
 	}
 
+	@Override
 	public void writeHeader(final VCFHeader header) {
 		this.underlyingWriter.writeHeader(header);
 	}

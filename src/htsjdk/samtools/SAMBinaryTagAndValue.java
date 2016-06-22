@@ -71,7 +71,7 @@ public class SAMBinaryTagAndValue implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = (int) tag;
+        int result = tag;
         result = 31 * result + value.hashCode();
         return result;
     }

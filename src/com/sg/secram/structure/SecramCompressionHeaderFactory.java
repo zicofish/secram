@@ -11,25 +11,13 @@ import htsjdk.samtools.cram.encoding.ExternalLongEncoding;
 import htsjdk.samtools.cram.encoding.NullEncoding;
 import htsjdk.samtools.cram.encoding.huffman.codec.HuffmanByteEncoding;
 import htsjdk.samtools.cram.encoding.huffman.codec.HuffmanIntegerEncoding;
-import htsjdk.samtools.cram.encoding.rans.RANS;
-import htsjdk.samtools.cram.structure.CompressionHeader;
-import htsjdk.samtools.cram.structure.CramCompressionRecord;
-import htsjdk.samtools.cram.structure.EncodingKey;
 import htsjdk.samtools.cram.structure.EncodingParams;
 import htsjdk.samtools.util.Log;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.apache.commons.compress.compressors.deflate.DeflateCompressorInputStream;
-import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputStream;
-
-import com.sg.secram.compression.HalfByteEncoding;
 import com.sg.secram.compression.SecramEncodingKey;
 import com.sg.secram.impl.records.PosCigarFeature;
 import com.sg.secram.impl.records.ReadHeader;

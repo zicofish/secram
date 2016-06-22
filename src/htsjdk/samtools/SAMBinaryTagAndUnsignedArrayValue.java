@@ -36,6 +36,7 @@ public class SAMBinaryTagAndUnsignedArrayValue extends SAMBinaryTagAndValue {
 	}
 
 	/** Creates and returns a deep copy of the list of tag/values. */
+	@Override
 	public SAMBinaryTagAndValue copy() {
 		final SAMBinaryTagAndValue retval = new SAMBinaryTagAndUnsignedArrayValue(
 				this.tag, this.value);

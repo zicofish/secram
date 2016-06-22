@@ -258,7 +258,8 @@ public class SortingCollection<T> implements Iterable<T> {
      * Prepare to iterate through the records in order.  This method may be called more than once,
      * but add() may not be called after this method has been called.
      */
-    public CloseableIterator<T> iterator() {
+    @Override
+	public CloseableIterator<T> iterator() {
         if (this.cleanedUp) {
             throw new IllegalStateException("Cannot call iterator() after cleanup() was called.");
         }
@@ -353,15 +354,18 @@ public class SortingCollection<T> implements Iterable<T> {
                         SortingCollection.this.comparator);
         }
 
-        public void close() {
+        @Override
+		public void close() {
             // nothing to do
         }
 
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             return this.iterationIndex < SortingCollection.this.numRecordsInRam;
         }
 
-        public T next() {
+        @Override
+		public T next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -371,7 +375,8 @@ public class SortingCollection<T> implements Iterable<T> {
             return ret;
         }
 
-        public void remove() {
+        @Override
+		public void remove() {
             throw new UnsupportedOperationException();
         }
     }
@@ -408,11 +413,13 @@ public class SortingCollection<T> implements Iterable<T> {
             }
         }
 
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             return !this.queue.isEmpty();
         }
 
-        public T next() {
+        @Override
+		public T next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -429,11 +436,13 @@ public class SortingCollection<T> implements Iterable<T> {
             return ret;
         }
 
-        public void remove() {
+        @Override
+		public void remove() {
             throw new UnsupportedOperationException();
         }
 
-        public void close() {
+        @Override
+		public void close() {
             while (!this.queue.isEmpty()) {
                 final PeekFileRecordIterator it = this.queue.poll();
                 ((CloseableIterator<T>)it.getUnderlyingIterator()).close();
@@ -463,11 +472,13 @@ public class SortingCollection<T> implements Iterable<T> {
             }
         }
 
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             return this.currentRecord != null;
         }
 
-        public T next() {
+        @Override
+		public T next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -476,7 +487,8 @@ public class SortingCollection<T> implements Iterable<T> {
             return ret;
         }
 
-        public void remove() {
+        @Override
+		public void remove() {
             throw new UnsupportedOperationException();
         }
 
@@ -484,7 +496,8 @@ public class SortingCollection<T> implements Iterable<T> {
             this.currentRecord = this.codec.decode();
         }
 
-        public void close() {
+        @Override
+		public void close() {
             CloserUtil.close(this.is);
         }
     }
@@ -503,7 +516,8 @@ public class SortingCollection<T> implements Iterable<T> {
 
     class PeekFileRecordIteratorComparator implements Comparator<PeekFileRecordIterator> {
 
-        public int compare(final PeekFileRecordIterator lhs, final PeekFileRecordIterator rhs) {
+        @Override
+		public int compare(final PeekFileRecordIterator lhs, final PeekFileRecordIterator rhs) {
             final int result = comparator.compare(lhs.peek(), rhs.peek());
             if (result == 0) return lhs.n - rhs.n;
             else return result;

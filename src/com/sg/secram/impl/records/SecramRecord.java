@@ -1,15 +1,8 @@
 package com.sg.secram.impl.records;
 
-import htsjdk.samtools.BAMRecord;
-
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
-
-import com.sg.secram.SECRAMEncryptionFilter;
 
 /*
  * SECRAM record
@@ -78,6 +71,7 @@ public class SecramRecord {
 		return mPosCigar.mCoverage;
 	}
 	
+	@Override
 	public String toString() {
 		String result="";
 		

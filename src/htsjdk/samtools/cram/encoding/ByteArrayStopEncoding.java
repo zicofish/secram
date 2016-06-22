@@ -56,7 +56,8 @@ public class ByteArrayStopEncoding implements Encoding<byte[]> {
         return new EncodingParams(ID, e.toByteArray());
     }
 
-    public byte[] toByteArray() {
+    @Override
+	public byte[] toByteArray() {
         final ByteBuffer buf = ByteBuffer.allocate(1024);
         buf.order(ByteOrder.LITTLE_ENDIAN);
         buf.put(stopByte);
@@ -69,7 +70,8 @@ public class ByteArrayStopEncoding implements Encoding<byte[]> {
         return array;
     }
 
-    public void fromByteArray(final byte[] data) {
+    @Override
+	public void fromByteArray(final byte[] data) {
         final ByteBuffer buf = ByteBuffer.wrap(data);
         buf.order(ByteOrder.LITTLE_ENDIAN);
         stopByte = buf.get();

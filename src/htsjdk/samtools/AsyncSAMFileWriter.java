@@ -60,11 +60,13 @@ class AsyncSAMFileWriter extends AbstractAsyncWriter<SAMRecord> implements
 	 * that was received when writing prior record(s) to the underlying
 	 * SAMFileWriter.
 	 */
+	@Override
 	public void addAlignment(final SAMRecord alignment) {
 		write(alignment);
 	}
 
 	/** Returns the SAMFileHeader from the underlying SAMFileWriter. */
+	@Override
 	public SAMFileHeader getFileHeader() {
 		return this.underlyingWriter.getFileHeader();
 	}

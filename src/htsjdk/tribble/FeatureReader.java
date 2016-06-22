@@ -35,6 +35,7 @@ public interface FeatureReader<T extends Feature> extends Closeable {
 
 	public CloseableTribbleIterator<T> iterator() throws IOException;
 
+	@Override
 	public void close() throws IOException;
 
 	public List<String> getSequenceNames();

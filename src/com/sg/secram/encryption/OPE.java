@@ -259,7 +259,7 @@ public class OPE implements SECRAMEncryptionMethod<Long>{
 		
 		//check for validity
 		
-		if(NN1 < 0 || NN2 < 0 || KK < 0|| (long)KK > (((long)NN1)+((long)NN2))){
+		if(NN1 < 0 || NN2 < 0 || KK < 0|| KK > ((NN1)+(NN2))){
 			log.error("Invalid parameters for HGD NN1: " + NN1 + ", NN2: "+NN2 + ", KK: "+KK);
 			throw new IllegalArgumentException();
 		}

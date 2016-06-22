@@ -129,7 +129,8 @@ public class DiskBackedQueue<E> implements Queue<E> {
      * @return true (if add successful)
      * @throws IllegalStateException if the queue cannot be added to
      */
-    public boolean add(final E record) throws IllegalStateException {
+    @Override
+	public boolean add(final E record) throws IllegalStateException {
         if (!canAdd) throw new IllegalStateException("Cannot add to DiskBackedQueue whose canAdd() method returns false");
 
         // NB: we add all the records before removing them, so we can never have spilled to disk unless all the space for ram records
@@ -189,7 +190,8 @@ public class DiskBackedQueue<E> implements Queue<E> {
     /**
      * Return the total number of elements in the queue, both in memory and on disk
      */
-    public int size() {
+    @Override
+	public int size() {
         return (this.headRecord == null) ? 0 : (1 + this.ramRecords.size() + this.numRecordsOnDisk);
     }
 
@@ -235,7 +237,8 @@ public class DiskBackedQueue<E> implements Queue<E> {
      *
      * @throws Throwable
      */
-    protected void finalize() throws Throwable {
+    @Override
+	protected void finalize() throws Throwable {
         this.closeIOResources();
         super.finalize(); // NB: intellij wanted me to do this. Need I?  I'm not extending anything
     }

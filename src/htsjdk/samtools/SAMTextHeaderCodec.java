@@ -170,7 +170,7 @@ public class SAMTextHeaderCodec {
 
         // Convert non-String attributes to the appropriate types
         final String predictedMedianInsertSize =
-                (String)samReadGroupRecord.getAttribute(SAMReadGroupRecord.PREDICTED_MEDIAN_INSERT_SIZE_TAG);
+                samReadGroupRecord.getAttribute(SAMReadGroupRecord.PREDICTED_MEDIAN_INSERT_SIZE_TAG);
         if (predictedMedianInsertSize != null) {
             try {
                 Integer.parseInt(predictedMedianInsertSize);
@@ -182,7 +182,7 @@ public class SAMTextHeaderCodec {
             }
         }
 
-        final String dateRunProduced = (String)samReadGroupRecord.getAttribute(SAMReadGroupRecord.DATE_RUN_PRODUCED_TAG);
+        final String dateRunProduced = samReadGroupRecord.getAttribute(SAMReadGroupRecord.DATE_RUN_PRODUCED_TAG);
         if (dateRunProduced != null) {
             Object date;
             try {

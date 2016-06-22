@@ -55,6 +55,7 @@ public class Interval implements Comparable {
 		this.block = block;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (this == other)
 			return true;
@@ -65,10 +66,12 @@ public class Interval implements Comparable {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return start;
 	}
 
+	@Override
 	public int compareTo(Object o) {
 		Interval other = (Interval) o;
 		if (this.start < other.start)
@@ -84,6 +87,7 @@ public class Interval implements Comparable {
 		return 0;
 	}
 
+	@Override
 	public String toString() {
 		return "Interval[" + this.start + ", " + this.end + "]";
 	}

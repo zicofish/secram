@@ -49,6 +49,7 @@ public class StringLineReader implements LineReader {
 	/**
 	 * Read a line and remove the line terminator
 	 */
+	@Override
 	public String readLine() {
 		return readLine(false);
 	}
@@ -81,6 +82,7 @@ public class StringLineReader implements LineReader {
 	/**
 	 * @return 1-based number of line most recently read
 	 */
+	@Override
 	public int getLineNumber() {
 		return lineNumber;
 	}
@@ -90,6 +92,7 @@ public class StringLineReader implements LineReader {
 	 *
 	 * @return If not eof, the next character that would be read. If eof, -1.
 	 */
+	@Override
 	public int peek() {
 		if (curPos == theString.length()) {
 			return -1;
@@ -97,6 +100,7 @@ public class StringLineReader implements LineReader {
 		return theString.charAt(curPos);
 	}
 
+	@Override
 	public void close() {
 		curPos = theString.length();
 	}

@@ -51,7 +51,8 @@ public class SortingVariantContextWriter extends SortingVariantContextWriterBase
         this(innerWriter, maxCachingStartDistance, false); // by default, don't own inner
     }
 
-    protected void noteCurrentRecord(VariantContext vc) {
+    @Override
+	protected void noteCurrentRecord(VariantContext vc) {
         super.noteCurrentRecord(vc); // first, check for errors
 
         // then, update mostUpstreamWritableLoc:

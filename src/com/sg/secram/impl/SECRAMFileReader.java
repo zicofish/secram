@@ -1,28 +1,11 @@
 package com.sg.secram.impl;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMSequenceRecord;
-import htsjdk.samtools.SAMTextHeaderCodec;
-import htsjdk.samtools.ValidationStringency;
-import htsjdk.samtools.reference.ReferenceSequence;
 import htsjdk.samtools.reference.ReferenceSequenceFile;
 import htsjdk.samtools.seekablestream.SeekableFileStream;
 import htsjdk.samtools.seekablestream.SeekableStream;
-import htsjdk.samtools.util.BufferedLineReader;
-
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.TreeMap;
-import java.util.Map.Entry;
-
 import com.sg.secram.structure.SecramHeader;
 import com.sg.secram.structure.SecramIO;
 import com.sg.secram.util.ReferenceUtils;

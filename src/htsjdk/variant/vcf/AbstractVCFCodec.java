@@ -308,6 +308,7 @@ public abstract class AbstractVCFCodec extends
 	 *            the line
 	 * @return a VariantContext
 	 */
+	@Override
 	public VariantContext decode(String line) {
 		return decodeLine(line, true);
 	}
@@ -445,6 +446,7 @@ public abstract class AbstractVCFCodec extends
 	 * 
 	 * @return our set name
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -455,6 +457,7 @@ public abstract class AbstractVCFCodec extends
 	 * @param name
 	 *            new name
 	 */
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}

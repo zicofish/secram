@@ -62,6 +62,7 @@ public class ByteArrayLenEncoding implements Encoding<byte[]> {
 		return new EncodingParams(ID, byteArrayOutputStream.toByteArray());
 	}
 
+	@Override
 	public byte[] toByteArray() {
 		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		try {
@@ -80,6 +81,7 @@ public class ByteArrayLenEncoding implements Encoding<byte[]> {
 		return byteArrayOutputStream.toByteArray();
 	}
 
+	@Override
 	public void fromByteArray(final byte[] data) {
 		final ByteBuffer buffer = ByteBuffer.wrap(data);
 

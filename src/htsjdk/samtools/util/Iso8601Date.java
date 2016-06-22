@@ -36,7 +36,8 @@ import java.util.Date;
  */
 public class Iso8601Date extends Date {
     private static final ThreadLocal<DateFormat> iso8601DateFormatter = new ThreadLocal<DateFormat>() {
-        protected synchronized DateFormat initialValue() {
+        @Override
+		protected synchronized DateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         }
     };
@@ -51,7 +52,8 @@ public class Iso8601Date extends Date {
         truncateMilliseconds();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return iso8601DateFormatter.get().format(this);
     }
 

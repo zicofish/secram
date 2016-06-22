@@ -122,7 +122,8 @@ public class GenotypeLikelihoods {
         return GLs == null ? null : GLsToPLs(GLs);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return getAsString();
     }
 

@@ -1,14 +1,9 @@
 package com.sg.secram.impl;
 
-import htsjdk.samtools.cram.io.CountingInputStream;
-import htsjdk.samtools.cram.structure.ContainerIO;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 import com.sg.secram.structure.SecramBlock;
 import com.sg.secram.structure.SecramCompressionHeaderFactory;
 import com.sg.secram.structure.SecramContainer;

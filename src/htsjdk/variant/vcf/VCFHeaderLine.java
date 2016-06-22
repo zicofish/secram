@@ -93,7 +93,8 @@ public class VCFHeaderLine implements Comparable, Serializable {
         return false;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return toStringEncoding();
     }
 
@@ -127,7 +128,8 @@ public class VCFHeaderLine implements Comparable, Serializable {
         return result;
     }
 
-    public int compareTo(Object other) {
+    @Override
+	public int compareTo(Object other) {
         return toString().compareTo(other.toString());
     }
 

@@ -48,7 +48,8 @@ public final class PositionalBufferedStream extends InputStream implements Posit
         nextChar = nChars = 0;
     }
 
-    public final long getPosition() {
+    @Override
+	public final long getPosition() {
         return position;
     }
 
@@ -129,7 +130,8 @@ public final class PositionalBufferedStream extends InputStream implements Posit
         return nChars;
     }
 
-    public final long skip(final long nBytes) throws IOException {
+    @Override
+	public final long skip(final long nBytes) throws IOException {
         long remainingToSkip = nBytes;
 
         // because we have this buffer, that may be shorter than nBytes
@@ -156,7 +158,8 @@ public final class PositionalBufferedStream extends InputStream implements Posit
         return actuallySkipped;
     }
 
-    public final void close() {
+    @Override
+	public final void close() {
         try {
             is.close();
         } catch (IOException ex) {

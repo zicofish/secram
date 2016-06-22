@@ -40,7 +40,7 @@ public class BaseHalfByteMap {
 	public static byte[] halfByteArray2BaseArray(byte[] halfByteArray){
 		byte[] baseArray = new byte[halfByteArray.length];
 		for(int i = 0; i < halfByteArray.length; i++)
-			baseArray[i] = halfByte2BaseArray[(int)halfByteArray[i]];
+			baseArray[i] = halfByte2BaseArray[halfByteArray[i]];
 		return baseArray;
 	}
 }

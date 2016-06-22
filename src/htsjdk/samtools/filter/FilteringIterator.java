@@ -86,7 +86,8 @@ public class FilteringIterator implements CloseableIterator<SAMRecord> {
      *
      * @return true if the iteration has more elements.  Otherwise returns false.
      */
-    public boolean hasNext() {
+    @Override
+	public boolean hasNext() {
         return next != null;
     }
 
@@ -97,7 +98,8 @@ public class FilteringIterator implements CloseableIterator<SAMRecord> {
      * @throws java.util.NoSuchElementException
      *
      */
-    public SAMRecord next() {
+    @Override
+	public SAMRecord next() {
         if (next == null) {
             throw new NoSuchElementException("Iterator has no more elements.");
         }
@@ -111,11 +113,13 @@ public class FilteringIterator implements CloseableIterator<SAMRecord> {
      *
      * @throws UnsupportedOperationException
      */
-    public void remove() {
+    @Override
+	public void remove() {
         throw new UnsupportedOperationException("Remove() not supported by FilteringIterator");
     }
 
-    public void close() {
+    @Override
+	public void close() {
         CloserUtil.close(iterator);
     }
 

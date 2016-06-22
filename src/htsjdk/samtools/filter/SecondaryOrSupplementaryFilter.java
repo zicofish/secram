@@ -13,7 +13,8 @@ public class SecondaryOrSupplementaryFilter  implements SamRecordFilter {
      * @param record the SAMRecord to evaluate
      * @return true if the SAMRecord matches the filter, otherwise false
      */
-    public boolean filterOut(final SAMRecord record) {
+    @Override
+	public boolean filterOut(final SAMRecord record) {
         return record.isSecondaryOrSupplementary();
     }
 
@@ -25,7 +26,8 @@ public class SecondaryOrSupplementaryFilter  implements SamRecordFilter {
      *
      * @return true if the SAMRecords matches the filter, otherwise false
      */
-    public boolean filterOut(final SAMRecord first, final SAMRecord second) {
+    @Override
+	public boolean filterOut(final SAMRecord first, final SAMRecord second) {
         // if either fails, exclude them both
         return first.isSecondaryOrSupplementary() || second.isSecondaryOrSupplementary();
     }

@@ -43,7 +43,8 @@ public class MetricBase {
      * @param o an instance to compare to
      * @return true if they are equal, false otherwise
      */
-    public boolean equals(final Object o) {
+    @Override
+	public boolean equals(final Object o) {
         if (o == null) return false;
         if (o.getClass() != getClass()) return false;
 
@@ -80,7 +81,8 @@ public class MetricBase {
         return true;
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         int result = 0;
         for (final Field f : getClass().getFields()) {
             try {
@@ -93,7 +95,8 @@ public class MetricBase {
     }
 
     /** Converts the metric class to a human readable string. */
-    public String toString() {
+    @Override
+	public String toString() {
         final StringBuilder buffer = new StringBuilder();
         final FormatUtil formatter = new FormatUtil();
 

@@ -79,6 +79,7 @@ public abstract class SAMFileWriterImpl implements SAMFileWriter {
 	 * this writer emit log messages as SAM records in a SortingCollection are
 	 * being written to disk.
 	 */
+	@Override
 	public void setProgressLogger(final ProgressLoggerInterface progress) {
 		this.progressLogger = progress;
 	}
@@ -163,6 +164,7 @@ public abstract class SAMFileWriterImpl implements SAMFileWriter {
 		}
 	}
 
+	@Override
 	public SAMFileHeader getFileHeader() {
 		return header;
 	}
@@ -181,6 +183,7 @@ public abstract class SAMFileWriterImpl implements SAMFileWriter {
 		throw new IllegalStateException("sortOrder should not be null");
 	}
 
+	@Override
 	public void addAlignment(final SAMRecord alignment) {
 		if (sortOrder.equals(SAMFileHeader.SortOrder.unsorted)) {
 			if (!header.getGroupOrder().equals(SAMFileHeader.GroupOrder.none)) {
@@ -211,6 +214,7 @@ public abstract class SAMFileWriterImpl implements SAMFileWriter {
 	/**
 	 * Must be called or else file will likely be defective.
 	 */
+	@Override
 	public final void close() {
 		if (!isClosed) {
 			if (alignmentSorter != null) {

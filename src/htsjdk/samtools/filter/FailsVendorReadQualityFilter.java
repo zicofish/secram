@@ -39,6 +39,7 @@ public class FailsVendorReadQualityFilter implements SamRecordFilter {
 	 *            the SAMRecord to evaluate
 	 * @return true if the SAMRecord matches the filter, otherwise false
 	 */
+	@Override
 	public boolean filterOut(final SAMRecord record) {
 		return record.getReadFailsVendorQualityCheckFlag();
 	}
@@ -53,6 +54,7 @@ public class FailsVendorReadQualityFilter implements SamRecordFilter {
 	 *
 	 * @return true if the SAMRecords matches the filter, otherwise false
 	 */
+	@Override
 	public boolean filterOut(final SAMRecord first, final SAMRecord second) {
 		// if either fails, exclude them both
 		return (first.getReadFailsVendorQualityCheckFlag() || second

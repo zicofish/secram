@@ -1,7 +1,5 @@
 package com.sg.secram.impl.records;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +109,7 @@ public class PosCigar{
 		return nb;
 	}
 	
+	@Override
 	public String toString() {
 		String result = "";
 		List<PosCigarFeature> list = getNonMatchFeatures();

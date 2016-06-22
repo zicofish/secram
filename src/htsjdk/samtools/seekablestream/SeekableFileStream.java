@@ -48,19 +48,23 @@ public class SeekableFileStream extends SeekableStream {
         allInstances.add(this);
     }
 
-    public long length() {
+    @Override
+	public long length() {
         return file.length();
     }
 
-    public boolean eof() throws IOException {
+    @Override
+	public boolean eof() throws IOException {
         return fis.length() == fis.getFilePointer();
     }
 
-    public void seek(final long position) throws IOException {
+    @Override
+	public void seek(final long position) throws IOException {
         fis.seek(position);
     }
 
-    public long position() throws IOException {
+    @Override
+	public long position() throws IOException {
         return fis.getChannel().position();
     }
 
@@ -71,7 +75,8 @@ public class SeekableFileStream extends SeekableStream {
         return position() - initPos;
     }
     
-    public int read(final byte[] buffer, final int offset, final int length) throws IOException {
+    @Override
+	public int read(final byte[] buffer, final int offset, final int length) throws IOException {
         if (length < 0) {
             throw new IndexOutOfBoundsException();
         }
@@ -91,7 +96,8 @@ public class SeekableFileStream extends SeekableStream {
 
     }
 
-    public int read() throws IOException {
+    @Override
+	public int read() throws IOException {
         return fis.read();  
     }
 
@@ -106,7 +112,8 @@ public class SeekableFileStream extends SeekableStream {
     }
 
 
-    public void close() throws IOException {
+    @Override
+	public void close() throws IOException {
         allInstances.remove(this);
         fis.close();
 

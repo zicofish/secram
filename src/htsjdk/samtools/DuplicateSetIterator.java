@@ -89,7 +89,8 @@ public class DuplicateSetIterator implements CloseableIterator<DuplicateSet> {
         this.comparator.setScoringStrategy(scoringStrategy);
     }
 
-    public DuplicateSet next() {
+    @Override
+	public DuplicateSet next() {
         DuplicateSet duplicateSet = null;
 
         int cmp = 0;
@@ -130,12 +131,15 @@ public class DuplicateSetIterator implements CloseableIterator<DuplicateSet> {
         return duplicateSet;
     }
 
-    public void close() { wrappedIterator.close(); }
+    @Override
+	public void close() { wrappedIterator.close(); }
 
-    public boolean hasNext() {
+    @Override
+	public boolean hasNext() {
         return (!duplicateSet.isEmpty() || wrappedIterator.hasNext());
     }
 
     // Does nothing!
-    public void remove() { }
+    @Override
+	public void remove() { }
 }

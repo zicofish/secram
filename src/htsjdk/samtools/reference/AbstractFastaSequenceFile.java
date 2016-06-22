@@ -101,25 +101,30 @@ abstract class AbstractFastaSequenceFile implements ReferenceSequenceFile {
      * Returns the list of sequence records associated with the reference sequence if found
      * otherwise null.
      */
-    public SAMSequenceDictionary getSequenceDictionary() {
+    @Override
+	public SAMSequenceDictionary getSequenceDictionary() {
         return this.sequenceDictionary;
     }
 
     /** Returns the full path to the reference file. */
-    public String toString() {
+    @Override
+	public String toString() {
         return this.file.getAbsolutePath();
     }
 
     /** default implementation -- override if index is supported */
-    public boolean isIndexed() {return false;}
+    @Override
+	public boolean isIndexed() {return false;}
 
     /** default implementation -- override if index is supported */
-    public ReferenceSequence getSequence( String contig ) {
+    @Override
+	public ReferenceSequence getSequence( String contig ) {
         throw new UnsupportedOperationException();
     }
 
     /** default implementation -- override if index is supported */
-    public ReferenceSequence getSubsequenceAt( String contig, long start, long stop ) {
+    @Override
+	public ReferenceSequence getSubsequenceAt( String contig, long start, long stop ) {
         throw new UnsupportedOperationException("Index does not appear to exist for" + file.getAbsolutePath() + ".  samtools faidx can be used to create an index");
     }
 

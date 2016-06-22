@@ -1,6 +1,7 @@
 package htsjdk.samtools.fastq;
 
 import htsjdk.samtools.Defaults;
+import htsjdk.samtools.util.AbstractAsyncWriter;
 
 import java.io.File;
 
@@ -22,7 +23,7 @@ public class FastqWriterFactory {
     public FastqWriter newWriter(final File out) {
         final FastqWriter writer = new BasicFastqWriter(out, createMd5);
         if (useAsyncIo) {
-            return new AsyncFastqWriter(writer, AsyncFastqWriter.DEFAULT_QUEUE_SIZE);
+            return new AsyncFastqWriter(writer, AbstractAsyncWriter.DEFAULT_QUEUE_SIZE);
         }
         else {
             return writer;

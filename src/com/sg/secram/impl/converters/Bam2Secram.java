@@ -12,22 +12,14 @@ import htsjdk.samtools.ValidationStringency;
 import htsjdk.samtools.reference.ReferenceSequence;
 import htsjdk.samtools.reference.ReferenceSequenceFile;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import com.sg.secram.SECRAMEncryptionFilter;
-import com.sg.secram.compression.SecramRecordCodec;
 import com.sg.secram.impl.SECRAMFileWriter;
-import com.sg.secram.impl.SECRAMSecurityFilter;
 import com.sg.secram.impl.records.PosCigarFeature;
 import com.sg.secram.impl.records.PosCigarFeatureCode;
 import com.sg.secram.impl.records.SecramRecord;

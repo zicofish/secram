@@ -1,8 +1,6 @@
 package htsjdk.samtools;
 
-import htsjdk.samtools.seekablestream.SeekableFTPStream;
 import htsjdk.samtools.seekablestream.SeekableFileStream;
-import htsjdk.samtools.seekablestream.SeekableHTTPStream;
 import htsjdk.samtools.seekablestream.SeekableStream;
 import htsjdk.samtools.seekablestream.SeekableStreamFactory;
 import htsjdk.samtools.util.Lazy;

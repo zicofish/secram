@@ -65,6 +65,7 @@ public class BinList implements Iterable<Bin> {
 	 * 
 	 * @return An iterator over all selected bins.
 	 */
+	@Override
 	public Iterator<Bin> iterator() {
 		return new BinIterator();
 	}
@@ -104,6 +105,7 @@ public class BinList implements Iterable<Bin> {
 		 * 
 		 * @return True if more bins are remaining.
 		 */
+		@Override
 		public boolean hasNext() {
 			return nextBin >= 0;
 		}
@@ -113,6 +115,7 @@ public class BinList implements Iterable<Bin> {
 		 * 
 		 * @return the next available bin in the BinList.
 		 */
+		@Override
 		public Bin next() {
 			if (!hasNext())
 				throw new NoSuchElementException(
@@ -122,6 +125,7 @@ public class BinList implements Iterable<Bin> {
 			return new Bin(referenceSequence, currentBin);
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException(
 					"Unable to remove from a bin iterator");

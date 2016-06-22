@@ -2,8 +2,6 @@ package com.sg.secram.structure;
 
 import java.util.Map;
 
-import com.sg.secram.impl.SECRAMSecurityFilter;
-
 public class SecramContainer {
 	public static int DEFATUL_RECORDS_PER_CONTAINER = 100000;
     /**

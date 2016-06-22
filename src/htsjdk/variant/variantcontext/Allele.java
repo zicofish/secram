@@ -26,8 +26,6 @@
 package htsjdk.variant.variantcontext;
 
 import htsjdk.samtools.util.StringUtil;
-import htsjdk.variant.vcf.VCFConstants;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -407,7 +405,8 @@ public class Allele implements Comparable<Allele>, Serializable {
     public boolean isSymbolic()         { return isSymbolic; }
 
     // Returns a nice string representation of this object
-    public String toString() {
+    @Override
+	public String toString() {
         return ( isNoCall() ? NO_CALL_STRING : getDisplayString() ) + (isReference() ? "*" : "");
     }
 
@@ -450,14 +449,16 @@ public class Allele implements Comparable<Allele>, Serializable {
      *
      * @return true if these alleles are equal
      */
-    public boolean equals(Object other) {
+    @Override
+	public boolean equals(Object other) {
         return ( ! (other instanceof Allele) ? false : equals((Allele)other, false) );
     }
 
     /**
      * @return hash code
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         int hash = 1;
         for (int i = 0; i < bases.length; i++)
             hash += (i+1) * bases[i];
@@ -523,7 +524,8 @@ public class Allele implements Comparable<Allele>, Serializable {
             return null;    // couldn't find anything
     }
 
-    public int compareTo(final Allele other) {
+    @Override
+	public int compareTo(final Allele other) {
         if ( isReference() && other.isNonReference() )
             return -1;
         else if ( isNonReference() && other.isReference() ) 

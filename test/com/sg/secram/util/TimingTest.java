@@ -29,7 +29,6 @@ import com.sg.secram.example.Bam2SecramFile;
 import com.sg.secram.example.Secram2BamFile;
 import com.sg.secram.impl.SECRAMFileReader;
 import com.sg.secram.impl.SECRAMIterator;
-import com.sg.secram.impl.converters.Bam2Secram;
 import com.sg.secram.impl.records.SecramRecord;
 
 public class TimingTest {

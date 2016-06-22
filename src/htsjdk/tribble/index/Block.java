@@ -73,7 +73,8 @@ public class Block {
         return size;
     }
 
-    public boolean equals(final Object obj) {
+    @Override
+	public boolean equals(final Object obj) {
         if ( this == obj ) return true;
         if ( ! (obj instanceof Block) ) return false;
         final Block otherBlock = (Block)obj;

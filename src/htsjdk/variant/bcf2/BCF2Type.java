@@ -88,7 +88,7 @@ public enum BCF2Type {
 			final int b3 = BCF2Utils.readByte(in) & 0xFF;
 			final int b2 = BCF2Utils.readByte(in) & 0xFF;
 			final int b1 = BCF2Utils.readByte(in) & 0xFF;
-			return (int) (b1 << 24 | b2 << 16 | b3 << 8 | b4);
+			return b1 << 24 | b2 << 16 | b3 << 8 | b4;
 		}
 
 		@Override

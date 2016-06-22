@@ -159,15 +159,18 @@ public class TextTagCodec {
         final String stringVal = fields[2];
         final Object val = convertStringToObject(type, stringVal);
         return new Map.Entry<String, Object>() {
-            public String getKey() {
+            @Override
+			public String getKey() {
                 return key;
             }
 
-            public Object getValue() {
+            @Override
+			public Object getValue() {
                 return val;
             }
 
-            public Object setValue(final Object o) {
+            @Override
+			public Object setValue(final Object o) {
                 throw new UnsupportedOperationException();
             }
         };

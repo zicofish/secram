@@ -112,6 +112,7 @@ public class TabixFeatureReader<T extends Feature, SOURCE> extends
 		return true;
 	}
 
+	@Override
 	public List<String> getSequenceNames() {
 		return sequenceNames;
 	}
@@ -125,6 +126,7 @@ public class TabixFeatureReader<T extends Feature, SOURCE> extends
 	 * @return
 	 * @throws IOException
 	 */
+	@Override
 	public CloseableTribbleIterator<T> query(final String chr, final int start,
 			final int end) throws IOException {
 		final List<String> mp = getSequenceNames();
@@ -140,6 +142,7 @@ public class TabixFeatureReader<T extends Feature, SOURCE> extends
 		return new FeatureIterator<T>(lineReader, start - 1, end);
 	}
 
+	@Override
 	public CloseableTribbleIterator<T> iterator() throws IOException {
 		final InputStream is = new BlockCompressedInputStream(
 				ParsingUtils.openInputStream(path));
@@ -149,6 +152,7 @@ public class TabixFeatureReader<T extends Feature, SOURCE> extends
 		return new FeatureIterator<T>(reader, 0, Integer.MAX_VALUE);
 	}
 
+	@Override
 	public void close() throws IOException {
 		tabixReader.close();
 	}
@@ -205,10 +209,12 @@ public class TabixFeatureReader<T extends Feature, SOURCE> extends
 			}
 		}
 
+		@Override
 		public boolean hasNext() {
 			return currentRecord != null;
 		}
 
+		@Override
 		public T next() {
 			T ret = currentRecord;
 			try {
@@ -223,15 +229,18 @@ public class TabixFeatureReader<T extends Feature, SOURCE> extends
 
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException(
 					"Remove is not supported in Iterators");
 		}
 
+		@Override
 		public void close() {
 			lineReader.close();
 		}
 
+		@Override
 		public Iterator<T> iterator() {
 			return this;
 		}

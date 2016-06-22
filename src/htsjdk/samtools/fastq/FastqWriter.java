@@ -9,5 +9,6 @@ import java.io.Closeable;
  */
 public interface FastqWriter extends Closeable {
     void write(final FastqRecord rec);
-    void close();
+    @Override
+	void close();
 }

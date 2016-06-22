@@ -216,6 +216,7 @@ abstract class SortingVariantContextWriterBase implements VariantContextWriter {
 
 	private static class VariantContextComparator implements
 			Comparator<VCFRecord> {
+		@Override
 		public int compare(VCFRecord r1, VCFRecord r2) {
 			return r1.vc.getStart() - r2.vc.getStart();
 		}

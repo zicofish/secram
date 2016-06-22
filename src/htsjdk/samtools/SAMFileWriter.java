@@ -46,5 +46,6 @@ public interface SAMFileWriter extends Closeable {
     /**
      * Must be called to flush or file will likely be defective. 
      */
-    void close();
+    @Override
+	void close();
 }

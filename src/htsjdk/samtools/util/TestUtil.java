@@ -47,7 +47,8 @@ public class TestUtil {
     /**
      * @deprecated Use properly spelled method.
      */
-    public static File getTempDirecory(final String prefix, final String suffix) {
+    @Deprecated
+	public static File getTempDirecory(final String prefix, final String suffix) {
         return getTempDirectory(prefix, suffix);
     }
 

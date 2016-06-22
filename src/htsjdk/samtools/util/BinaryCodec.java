@@ -548,7 +548,7 @@ public class BinaryCodec implements Closeable {
      * @return boolean
      */
     public boolean readBoolean() {
-        return (((int)readByte()) == 1);
+        return ((readByte()) == 1);
     }
 
     /**
@@ -587,7 +587,8 @@ public class BinaryCodec implements Closeable {
     /**
      * Close the appropriate stream
      */
-    public void close() {
+    @Override
+	public void close() {
         try {
             if (this.isWriting) {
                 // To the degree possible, make sure the bytes get forced to the file system,

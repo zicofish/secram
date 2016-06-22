@@ -60,6 +60,7 @@ public abstract class VCFCompoundHeaderLine extends VCFHeaderLine implements
 	private VCFHeaderLineType type;
 
 	// access methods
+	@Override
 	public String getID() {
 		return name;
 	}
@@ -283,6 +284,7 @@ public abstract class VCFCompoundHeaderLine extends VCFHeaderLine implements
 	 * 
 	 * @return a string representation
 	 */
+	@Override
 	protected String toStringEncoding() {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("ID", name);

@@ -89,7 +89,8 @@ public class SAMTextWriter extends SAMFileWriterImpl {
      *
      * @param alignment SAMRecord.
      */
-    public void writeAlignment(final SAMRecord alignment) {
+    @Override
+	public void writeAlignment(final SAMRecord alignment) {
         try {
             out.write(alignment.getReadName());
             out.write(FIELD_SEPARATOR);
@@ -155,7 +156,8 @@ public class SAMTextWriter extends SAMFileWriterImpl {
      *
      * @param textHeader String containing the text to write.
      */
-    public void writeHeader(final String textHeader) {
+    @Override
+	public void writeHeader(final String textHeader) {
         try {
             out.write(textHeader);
         } catch (IOException e) {
@@ -166,7 +168,8 @@ public class SAMTextWriter extends SAMFileWriterImpl {
     /**
      * Do any required flushing here.
      */
-    public void finish() {
+    @Override
+	public void finish() {
         try {
             out.close();
         } catch (IOException e) {
@@ -179,7 +182,8 @@ public class SAMTextWriter extends SAMFileWriterImpl {
      *
      * @return Output filename, or null if there isn't one.
      */
-    public String getFilename() {
+    @Override
+	public String getFilename() {
         if (file == null) {
             return null;
         }

@@ -231,7 +231,8 @@ public abstract class BCF2FieldWriter {
             super(header, fieldEncoder);
         }
 
-        public void addGenotype(final BCF2Encoder encoder, final VariantContext vc, final Genotype g) throws IOException {
+        @Override
+		public void addGenotype(final BCF2Encoder encoder, final VariantContext vc, final Genotype g) throws IOException {
             final String fieldValue = g.getFilters();
             getFieldEncoder().encodeValue(encoder, fieldValue, encodingType, nValuesPerGenotype);
         }

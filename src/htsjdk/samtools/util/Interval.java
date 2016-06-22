@@ -95,7 +95,7 @@ public class Interval implements Comparable<Interval>, Cloneable, Locatable {
 
     public int getIntersectionLength(final Interval other) {
         if (this.intersects(other)) {
-            return (int)CoordMath.getOverlap(this.getStart(), this.getEnd(), other.getStart(), other.getEnd());
+            return CoordMath.getOverlap(this.getStart(), this.getEnd(), other.getStart(), other.getEnd());
         }
         return 0;
     }
@@ -141,7 +141,8 @@ public class Interval implements Comparable<Interval>, Cloneable, Locatable {
      * Sort based on sequence.compareTo, then start pos, then end pos
      * with null objects coming lexically last
      */
-    public int compareTo(final Interval that) {
+    @Override
+	public int compareTo(final Interval that) {
         if (that == null) return -1; // nulls last
 
         int result = this.getContig().compareTo(that.getContig());
@@ -158,7 +159,8 @@ public class Interval implements Comparable<Interval>, Cloneable, Locatable {
     }
 
     /** Equals method that agrees with {@link #compareTo(Interval)}. */
-    public boolean equals(final Object other) {
+    @Override
+	public boolean equals(final Object other) {
         if (!(other instanceof Interval)) return false;
         else if (this == other) return true;
         else {
@@ -175,7 +177,8 @@ public class Interval implements Comparable<Interval>, Cloneable, Locatable {
         return result;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return getContig() + ":" + getStart() + "-" + getEnd() + "\t" + (negativeStrand ? '-' : '+') + "\t" + ((null == name) ? '.' : name);
     }
 

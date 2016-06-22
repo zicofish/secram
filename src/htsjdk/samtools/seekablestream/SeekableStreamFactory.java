@@ -71,10 +71,12 @@ public class SeekableStreamFactory {
 	private static class DefaultSeekableStreamFactory implements
 			ISeekableStreamFactory {
 
+		@Override
 		public SeekableStream getStreamFor(final URL url) throws IOException {
 			return getStreamFor(url.toExternalForm());
 		}
 
+		@Override
 		public SeekableStream getStreamFor(final String path)
 				throws IOException {
 			// todo -- add support for SeekableBlockInputStream
@@ -89,11 +91,13 @@ public class SeekableStreamFactory {
 			}
 		}
 
+		@Override
 		public SeekableStream getBufferedStream(SeekableStream stream) {
 			return getBufferedStream(stream,
 					SeekableBufferedStream.DEFAULT_BUFFER_SIZE);
 		}
 
+		@Override
 		public SeekableStream getBufferedStream(SeekableStream stream,
 				int bufferSize) {
 			if (bufferSize == 0)

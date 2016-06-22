@@ -299,6 +299,7 @@ public class QualityEncodingDetector {
 				}
 			}
 
+			@Override
 			public boolean hasNext() {
 				// If this returns true, the head of the queue will have a next
 				// element
@@ -311,6 +312,7 @@ public class QualityEncodingDetector {
 				return false;
 			}
 
+			@Override
 			public FastqRecord next() {
 				if (!hasNext())
 					throw new NoSuchElementException();
@@ -320,6 +322,7 @@ public class QualityEncodingDetector {
 				return result;
 			}
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}

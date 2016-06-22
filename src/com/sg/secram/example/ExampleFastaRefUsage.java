@@ -3,7 +3,6 @@ package com.sg.secram.example;
 import java.io.File;
 
 import htsjdk.samtools.SAMSequenceDictionary;
-import htsjdk.samtools.reference.FastaSequenceFile;
 import htsjdk.samtools.reference.ReferenceSequence;
 import htsjdk.samtools.reference.ReferenceSequenceFile;
 import htsjdk.samtools.reference.ReferenceSequenceFileFactory;

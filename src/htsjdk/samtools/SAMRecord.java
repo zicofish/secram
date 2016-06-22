@@ -837,6 +837,7 @@ public class SAMRecord implements Cloneable, Locatable, Serializable {
 	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	public void setReadUmappedFlag(final boolean flag) {
 		setReadUnmappedFlag(flag);
 	}
@@ -1472,6 +1473,7 @@ public class SAMRecord implements Cloneable, Locatable, Serializable {
 	 *             representation of the SAMRecord. To get standard SAM text
 	 *             representation, use htsjdk.samtools.SAMRecord#getSAMString().
 	 */
+	@Deprecated
 	public String format() {
 		final StringBuilder buffer = new StringBuilder();
 		addField(buffer, getReadName(), null, null);

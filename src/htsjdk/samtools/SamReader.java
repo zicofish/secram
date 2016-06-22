@@ -159,6 +159,7 @@ public interface SamReader extends Iterable<SAMRecord>, Closeable {
 	 * time. If you want to start a second iteration, the first one must be
 	 * closed first.
 	 */
+	@Override
 	public SAMRecordIterator iterator();
 
 	/**
@@ -637,6 +638,7 @@ public interface SamReader extends Iterable<SAMRecord>, Closeable {
 			wrappedIterator = iterator;
 		}
 
+		@Override
 		public SAMRecordIterator assertSorted(
 				final SAMFileHeader.SortOrder sortOrder) {
 
@@ -650,6 +652,7 @@ public interface SamReader extends Iterable<SAMRecord>, Closeable {
 			return this;
 		}
 
+		@Override
 		public SAMRecord next() {
 			final SAMRecord result = wrappedIterator.next();
 			if (comparator != null) {
@@ -672,14 +675,17 @@ public interface SamReader extends Iterable<SAMRecord>, Closeable {
 			return result;
 		}
 
+		@Override
 		public void close() {
 			wrappedIterator.close();
 		}
 
+		@Override
 		public boolean hasNext() {
 			return wrappedIterator.hasNext();
 		}
 
+		@Override
 		public void remove() {
 			wrappedIterator.remove();
 		}

@@ -279,7 +279,8 @@ public class LiftOver {
             this.percentLiftedOver = 0.0f;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             if (toInterval == null) {
                 // Matched a chain, but entirely within a gap.
                 return fromInterval.toString() + " (len " + fromInterval.length() + ")=>null using chain " + chainId;

@@ -340,7 +340,8 @@ public class IntervalTree<V> implements Iterable<IntervalTree.Node<V>>
      * Return an iterator over the entire tree.
      * @return An iterator.
      */
-    public Iterator<Node<V>> iterator()
+    @Override
+	public Iterator<Node<V>> iterator()
     {
         return new FwdIterator(min());
     }
@@ -1046,7 +1047,8 @@ public class IntervalTree<V> implements Iterable<IntervalTree.Node<V>>
             if (mRight != null) mRight.printNodeInternal(padding + "  ", "right:");
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "Node(" + mStart + "," + mEnd + "," + mValue + "," + mSize + "," + mMaxEnd + "," + mIsBlack + ")";
         }
 
@@ -1069,12 +1071,14 @@ public class IntervalTree<V> implements Iterable<IntervalTree.Node<V>>
             mNext = node;
         }
 
-        public boolean hasNext()
+        @Override
+		public boolean hasNext()
         {
             return mNext != null;
         }
 
-        public Node<V> next()
+        @Override
+		public Node<V> next()
         {
             if ( mNext == null )
             {
@@ -1092,7 +1096,8 @@ public class IntervalTree<V> implements Iterable<IntervalTree.Node<V>>
             return mLast;
         }
 
-        public void remove()
+        @Override
+		public void remove()
         {
             if ( mLast == null )
             {
@@ -1115,12 +1120,14 @@ public class IntervalTree<V> implements Iterable<IntervalTree.Node<V>>
             mNext = node;
         }
 
-        public boolean hasNext()
+        @Override
+		public boolean hasNext()
         {
             return mNext != null;
         }
 
-        public Node<V> next()
+        @Override
+		public Node<V> next()
         {
             if ( mNext == null )
                 throw new NoSuchElementException("No next element.");
@@ -1135,7 +1142,8 @@ public class IntervalTree<V> implements Iterable<IntervalTree.Node<V>>
             return mLast;
         }
 
-        public void remove()
+        @Override
+		public void remove()
         {
             if ( mLast == null )
             {
@@ -1160,12 +1168,14 @@ public class IntervalTree<V> implements Iterable<IntervalTree.Node<V>>
             mEnd = end;
         }
 
-        public boolean hasNext()
+        @Override
+		public boolean hasNext()
         {
             return mNext != null;
         }
 
-        public Node<V> next()
+        @Override
+		public Node<V> next()
         {
             if ( mNext == null )
             {
@@ -1182,7 +1192,8 @@ public class IntervalTree<V> implements Iterable<IntervalTree.Node<V>>
             return mLast;
         }
 
-        public void remove()
+        @Override
+		public void remove()
         {
             if ( mLast == null )
             {
@@ -1207,17 +1218,20 @@ public class IntervalTree<V> implements Iterable<IntervalTree.Node<V>>
             mItr = itr;
         }
 
-        public boolean hasNext()
+        @Override
+		public boolean hasNext()
         {
             return mItr.hasNext();
         }
 
-        public V1 next()
+        @Override
+		public V1 next()
         {
             return mItr.next().getValue();
         }
 
-        public void remove()
+        @Override
+		public void remove()
         {
             mItr.remove();
         }

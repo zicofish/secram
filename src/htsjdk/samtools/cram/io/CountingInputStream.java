@@ -37,43 +37,51 @@ public class CountingInputStream extends InputStream {
         return delegate.read();
     }
 
-    public int read(@SuppressWarnings("NullableProblems") final byte[] b) throws IOException {
+    @Override
+	public int read(@SuppressWarnings("NullableProblems") final byte[] b) throws IOException {
         final int read = delegate.read(b);
         count += read;
         return read;
     }
 
-    public int read(@SuppressWarnings("NullableProblems") final byte[] b, final int off, final int length) throws IOException {
+    @Override
+	public int read(@SuppressWarnings("NullableProblems") final byte[] b, final int off, final int length) throws IOException {
         final int read = delegate.read(b, off, length);
         count += read;
         return read;
     }
 
-    public long skip(final long n) throws IOException {
+    @Override
+	public long skip(final long n) throws IOException {
         final long skipped = delegate.skip(n);
         count += skipped;
         return skipped;
     }
 
-    public int available() throws IOException {
+    @Override
+	public int available() throws IOException {
         return delegate.available();
     }
 
-    public void close() throws IOException {
+    @Override
+	public void close() throws IOException {
         if (delegate != null)
             delegate.close();
     }
 
-    public void mark(final int readLimit) {
+    @Override
+	public void mark(final int readLimit) {
         delegate.mark(readLimit);
     }
 
-    public void reset() throws IOException {
+    @Override
+	public void reset() throws IOException {
         delegate.reset();
         count = 0;
     }
 
-    public boolean markSupported() {
+    @Override
+	public boolean markSupported() {
         return delegate.markSupported();
     }
 

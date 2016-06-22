@@ -3,7 +3,6 @@ package com.sg.secram.util;
 import java.io.File;
 import java.io.IOException;
 
-import htsjdk.samtools.BAMRecordCodec;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;

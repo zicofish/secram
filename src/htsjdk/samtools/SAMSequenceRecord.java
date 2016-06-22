@@ -75,7 +75,8 @@ public class SAMSequenceRecord extends AbstractSAMHeaderRecord implements Clonea
      * @deprecated Use SAMSequenceRecord(final String name, final int sequenceLength) instead.
      * sequenceLength is required for the object to be considered valid.
      */
-    public SAMSequenceRecord(final String name) {
+    @Deprecated
+	public SAMSequenceRecord(final String name) {
         this(name, UNKNOWN_SEQUENCE_LENGTH);
     }
 
@@ -105,10 +106,10 @@ public class SAMSequenceRecord extends AbstractSAMHeaderRecord implements Clonea
     public int getSequenceLength() { return mSequenceLength; }
     public void setSequenceLength(final int value) { mSequenceLength = value; }
 
-    public String getAssembly() { return (String) getAttribute("AS"); }
+    public String getAssembly() { return getAttribute("AS"); }
     public void setAssembly(final String value) { setAttribute("AS", value); }
 
-    public String getSpecies() { return (String) getAttribute("SP"); }
+    public String getSpecies() { return getAttribute("SP"); }
     public void setSpecies(final String value) { setAttribute("SP", value); }
 
 
@@ -133,8 +134,8 @@ public class SAMSequenceRecord extends AbstractSAMHeaderRecord implements Clonea
         if (mSequenceLength != UNKNOWN_SEQUENCE_LENGTH && that.mSequenceLength != UNKNOWN_SEQUENCE_LENGTH && mSequenceLength != that.mSequenceLength)
             return false;
         if (this.getAttribute(SAMSequenceRecord.MD5_TAG) != null && that.getAttribute(SAMSequenceRecord.MD5_TAG) != null) {
-            final BigInteger thisMd5 = new BigInteger((String)this.getAttribute(SAMSequenceRecord.MD5_TAG), 16);
-            final BigInteger thatMd5 = new BigInteger((String)that.getAttribute(SAMSequenceRecord.MD5_TAG), 16);
+            final BigInteger thisMd5 = new BigInteger(this.getAttribute(SAMSequenceRecord.MD5_TAG), 16);
+            final BigInteger thatMd5 = new BigInteger(that.getAttribute(SAMSequenceRecord.MD5_TAG), 16);
             if (!thisMd5.equals(thatMd5)) {
                 return false;
             }
@@ -174,11 +175,13 @@ public class SAMSequenceRecord extends AbstractSAMHeaderRecord implements Clonea
         return mSequenceName != null ? mSequenceName.hashCode() : 0;
     }
 
-    Set<String> getStandardTags() {
+    @Override
+	Set<String> getStandardTags() {
         return STANDARD_TAGS;
     }
 
-    public final SAMSequenceRecord clone() {
+    @Override
+	public final SAMSequenceRecord clone() {
         final SAMSequenceRecord ret = new SAMSequenceRecord(this.mSequenceName, this.mSequenceLength);
         ret.mSequenceIndex = this.mSequenceIndex;
         for (final Map.Entry<String, String> entry : this.getAttributes()) {

@@ -69,6 +69,7 @@ class TextualBAMIndexWriter implements BAMIndexWriter {
 	/**
 	 * Write this content as human-readable text
 	 */
+	@Override
 	public void writeReference(final BAMIndexContent content) {
 
 		final int reference = content.getReferenceSequence();
@@ -189,6 +190,7 @@ class TextualBAMIndexWriter implements BAMIndexWriter {
 	 *            the count of records seen with no coordinate positions in the
 	 *            start coordinate
 	 */
+	@Override
 	public void writeNoCoordinateRecordCount(final Long noCoordinateCount) {
 		pw.println("No Coordinate Count=" + noCoordinateCount);
 	}
@@ -196,6 +198,7 @@ class TextualBAMIndexWriter implements BAMIndexWriter {
 	/**
 	 * Any necessary processing at the end of the file
 	 */
+	@Override
 	public void close() {
 		pw.close();
 	}

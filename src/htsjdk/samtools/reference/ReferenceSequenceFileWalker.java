@@ -118,6 +118,7 @@ public class ReferenceSequenceFileWalker implements Closeable {
 		return referenceSequenceFile.getSequenceDictionary();
 	}
 
+	@Override
 	public void close() throws IOException {
 		referenceSequenceFile.close();
 	}

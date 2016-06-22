@@ -83,6 +83,7 @@ class BinaryBAMIndexWriter implements BAMIndexWriter {
 	/**
 	 * Write this content as binary output
 	 */
+	@Override
 	public void writeReference(final BAMIndexContent content) {
 
 		if (content == null) {
@@ -158,6 +159,7 @@ class BinaryBAMIndexWriter implements BAMIndexWriter {
 	 *
 	 * @param count
 	 */
+	@Override
 	public void writeNoCoordinateRecordCount(final Long count) {
 		codec.writeLong(count == null ? 0 : count);
 	}
@@ -165,6 +167,7 @@ class BinaryBAMIndexWriter implements BAMIndexWriter {
 	/**
 	 * Any necessary processing at the end of the file
 	 */
+	@Override
 	public void close() {
 		codec.close();
 	}

@@ -83,6 +83,7 @@ public class ReadNameFilter implements SamRecordFilter {
 	 *
 	 * @return true if the SAMRecord matches the filter, otherwise false
 	 */
+	@Override
 	public boolean filterOut(final SAMRecord record) {
 		if (includeReads) {
 			if (readNameFilterSet.contains(record.getReadName())) {
@@ -107,6 +108,7 @@ public class ReadNameFilter implements SamRecordFilter {
 	 *
 	 * @return true if the pair of records matches filter, otherwise false
 	 */
+	@Override
 	public boolean filterOut(final SAMRecord first, final SAMRecord second) {
 		if (includeReads) {
 			if (readNameFilterSet.contains(first.getReadName())

@@ -61,6 +61,7 @@ public class BufferedLineReader implements LineReader {
 	 *
 	 * @return the line read, or null if EOF has been reached.
 	 */
+	@Override
 	public String readLine() {
 		++lineNumber;
 		try {
@@ -80,6 +81,7 @@ public class BufferedLineReader implements LineReader {
 	/**
 	 * @return 1-based number of line most recently read
 	 */
+	@Override
 	public int getLineNumber() {
 		return lineNumber;
 	}
@@ -89,6 +91,7 @@ public class BufferedLineReader implements LineReader {
 	 *
 	 * @return If not eof, the next character that would be read. If eof, -1.
 	 */
+	@Override
 	public int peek() {
 		if (peekedLine == null) {
 			try {
@@ -106,6 +109,7 @@ public class BufferedLineReader implements LineReader {
 		return peekedLine.charAt(0);
 	}
 
+	@Override
 	public void close() {
 		peekedLine = null;
 		try {

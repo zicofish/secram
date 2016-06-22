@@ -39,7 +39,7 @@ public class DefaultBitOutputStream extends OutputStream implements BitOutputStr
     }
 
     public void write(final byte b) throws IOException {
-        out.write((int) b);
+        out.write(b);
     }
 
     @Override
@@ -53,7 +53,8 @@ public class DefaultBitOutputStream extends OutputStream implements BitOutputStr
                 + Integer.toBinaryString(bufferByte).substring(0, bufferedNumberOfBits);
     }
 
-    public void write(final long bitContainer, final int nofBits) throws IOException {
+    @Override
+	public void write(final long bitContainer, final int nofBits) throws IOException {
         if (nofBits == 0)
             return;
 
@@ -95,7 +96,8 @@ public class DefaultBitOutputStream extends OutputStream implements BitOutputStr
         }
     }
 
-    public void write(final int bitContainer, final int nofBits) throws IOException {
+    @Override
+	public void write(final int bitContainer, final int nofBits) throws IOException {
         write_int_LSB_0(bitContainer, nofBits);
     }
 
@@ -109,7 +111,8 @@ public class DefaultBitOutputStream extends OutputStream implements BitOutputStr
         }
     }
 
-    public void write(byte bitContainer, final int nofBits) throws IOException {
+    @Override
+	public void write(byte bitContainer, final int nofBits) throws IOException {
         if (nofBits < 0 || nofBits > 8)
             throw new IOException("Expecting 0 to 8 bits.");
 
@@ -145,7 +148,8 @@ public class DefaultBitOutputStream extends OutputStream implements BitOutputStr
         write(bit ? (byte) 1 : (byte) 0, 1);
     }
 
-    public void write(final boolean bit, final long repeat) throws IOException {
+    @Override
+	public void write(final boolean bit, final long repeat) throws IOException {
         for (long i = 0; i < repeat; i++)
             write(bit);
     }

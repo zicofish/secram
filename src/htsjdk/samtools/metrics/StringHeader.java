@@ -43,14 +43,17 @@ public class StringHeader implements Header {
         setValue(value);
     }
 
-    public void parse(String in) { value = in.trim(); }
-    public String toString() { return value; }
+    @Override
+	public void parse(String in) { value = in.trim(); }
+    @Override
+	public String toString() { return value; }
 
     public String getValue() { return value; }
     public void setValue(String value) { this.value = StringUtil.assertCharactersNotInString(value, '\n'); }
 
     /** Checks equality on the value of the header. */
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
         if (o != null && o instanceof StringHeader) {
             StringHeader that = (StringHeader) o;
             if (this.value == null) {

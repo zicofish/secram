@@ -102,7 +102,7 @@ public class TabixFormat implements Cloneable {
         result = 31 * result + sequenceColumn;
         result = 31 * result + startPositionColumn;
         result = 31 * result + endPositionColumn;
-        result = 31 * result + (int) metaCharacter;
+        result = 31 * result + metaCharacter;
         result = 31 * result + numHeaderLinesToSkip;
         return result;
     }

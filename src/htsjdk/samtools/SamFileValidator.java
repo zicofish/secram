@@ -709,22 +709,26 @@ public class SamFileValidator {
 
         PairEndInfo remove(int mateReferenceIndex, String key);
 
-        CloseableIterator<Map.Entry<String, PairEndInfo>> iterator();
+        @Override
+		CloseableIterator<Map.Entry<String, PairEndInfo>> iterator();
     }
 
     private class CoordinateSortedPairEndInfoMap implements PairEndInfoMap {
         private final CoordinateSortedPairInfoMap<String, PairEndInfo> onDiskMap =
                 new CoordinateSortedPairInfoMap<String, PairEndInfo>(maxTempFiles, new Codec());
 
-        public void put(int mateReferenceIndex, String key, PairEndInfo value) {
+        @Override
+		public void put(int mateReferenceIndex, String key, PairEndInfo value) {
             onDiskMap.put(mateReferenceIndex, key, value);
         }
 
-        public PairEndInfo remove(int mateReferenceIndex, String key) {
+        @Override
+		public PairEndInfo remove(int mateReferenceIndex, String key) {
             return onDiskMap.remove(mateReferenceIndex, key);
         }
 
-        public CloseableIterator<Map.Entry<String, PairEndInfo>> iterator() {
+        @Override
+		public CloseableIterator<Map.Entry<String, PairEndInfo>> iterator() {
             return onDiskMap.iterator();
         }
 
@@ -732,15 +736,18 @@ public class SamFileValidator {
             private DataInputStream in;
             private DataOutputStream out;
 
-            public void setOutputStream(final OutputStream os) {
+            @Override
+			public void setOutputStream(final OutputStream os) {
                 this.out = new DataOutputStream(os);
             }
 
-            public void setInputStream(final InputStream is) {
+            @Override
+			public void setInputStream(final InputStream is) {
                 this.in = new DataInputStream(is);
             }
 
-            public void encode(final String key, final PairEndInfo record) {
+            @Override
+			public void encode(final String key, final PairEndInfo record) {
                 try {
                     out.writeUTF(key);
                     out.writeInt(record.readAlignmentStart);
@@ -761,7 +768,8 @@ public class SamFileValidator {
                 }
             }
 
-            public Map.Entry<String, PairEndInfo> decode() {
+            @Override
+			public Map.Entry<String, PairEndInfo> decode() {
                 try {
                     final String key = in.readUTF();
                     final int readAlignmentStart = in.readInt();
@@ -797,32 +805,39 @@ public class SamFileValidator {
     private static class InMemoryPairEndInfoMap implements PairEndInfoMap {
         private final Map<String, PairEndInfo> map = new HashMap<String, PairEndInfo>();
 
-        public void put(int mateReferenceIndex, String key, PairEndInfo value) {
+        @Override
+		public void put(int mateReferenceIndex, String key, PairEndInfo value) {
             if (mateReferenceIndex != value.mateReferenceIndex)
                 throw new IllegalArgumentException("mateReferenceIndex does not agree with PairEndInfo");
             map.put(key, value);
         }
 
-        public PairEndInfo remove(int mateReferenceIndex, String key) {
+        @Override
+		public PairEndInfo remove(int mateReferenceIndex, String key) {
             return map.remove(key);
         }
 
-        public CloseableIterator<Map.Entry<String, PairEndInfo>> iterator() {
+        @Override
+		public CloseableIterator<Map.Entry<String, PairEndInfo>> iterator() {
             final Iterator<Map.Entry<String, PairEndInfo>> it = map.entrySet().iterator();
             return new CloseableIterator<Map.Entry<String, PairEndInfo>>() {
-                public void close() {
+                @Override
+				public void close() {
                     // do nothing
                 }
 
-                public boolean hasNext() {
+                @Override
+				public boolean hasNext() {
                     return it.hasNext();
                 }
 
-                public Map.Entry<String, PairEndInfo> next() {
+                @Override
+				public Map.Entry<String, PairEndInfo> next() {
                     return it.next();
                 }
 
-                public void remove() {
+                @Override
+				public void remove() {
                     it.remove();
                 }
             };

@@ -35,7 +35,8 @@ import java.io.Serializable;
  */
 public interface Header extends Serializable {
     /** Converts the header to a String for persisting to a file. */
-    public String toString();
+    @Override
+	public String toString();
 
     /** Parses the data contained in the String version of the header. */
     public void parse(String in);

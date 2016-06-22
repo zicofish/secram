@@ -153,7 +153,8 @@ public class LongLineBufferedReader extends Reader {
      *         end of the stream has been reached
      * @throws IOException If an I/O error occurs
      */
-    public int read() throws IOException {
+    @Override
+	public int read() throws IOException {
         synchronized (lock) {
             ensureOpen();
             for (; ; ) {
@@ -250,7 +251,8 @@ public class LongLineBufferedReader extends Reader {
      *         stream has been reached
      * @throws IOException If an I/O error occurs
      */
-    public int read(char cbuf[], int off, int len) throws IOException {
+    @Override
+	public int read(char cbuf[], int off, int len) throws IOException {
         synchronized (lock) {
             ensureOpen();
             if ((off < 0) || (off > cbuf.length) || (len < 0) ||
@@ -362,7 +364,8 @@ public class LongLineBufferedReader extends Reader {
      * @throws IllegalArgumentException If <code>n</code> is negative.
      * @throws IOException              If an I/O error occurs
      */
-    public long skip(long n) throws IOException {
+    @Override
+	public long skip(long n) throws IOException {
         if (n < 0L) {
             throw new IllegalArgumentException("skip value is negative");
         }
@@ -401,7 +404,8 @@ public class LongLineBufferedReader extends Reader {
      *
      * @throws IOException If an I/O error occurs
      */
-    public boolean ready() throws IOException {
+    @Override
+	public boolean ready() throws IOException {
         synchronized (lock) {
             ensureOpen();
 
@@ -429,7 +433,8 @@ public class LongLineBufferedReader extends Reader {
     /**
      * Tells whether this stream supports the mark() operation, which it does.
      */
-    public boolean markSupported() {
+    @Override
+	public boolean markSupported() {
         return true;
     }
 
@@ -448,7 +453,8 @@ public class LongLineBufferedReader extends Reader {
      * @throws IllegalArgumentException If readAheadLimit is < 0
      * @throws IOException              If an I/O error occurs
      */
-    public void mark(int readAheadLimit) throws IOException {
+    @Override
+	public void mark(int readAheadLimit) throws IOException {
         if (readAheadLimit < 0) {
             throw new IllegalArgumentException("Read-ahead limit < 0");
         }
@@ -466,7 +472,8 @@ public class LongLineBufferedReader extends Reader {
      * @throws IOException If the stream has never been marked,
      *                     or if the mark has been invalidated
      */
-    public void reset() throws IOException {
+    @Override
+	public void reset() throws IOException {
         synchronized (lock) {
             ensureOpen();
             if (markedChar < 0)
@@ -478,7 +485,8 @@ public class LongLineBufferedReader extends Reader {
         }
     }
 
-    public void close() throws IOException {
+    @Override
+	public void close() throws IOException {
         synchronized (lock) {
             if (in == null)
                 return;

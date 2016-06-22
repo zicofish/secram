@@ -87,7 +87,8 @@ public class FastaSequenceIndex implements Iterable<FastaSequenceIndexEntry> {
      * @param other Another FastaSequenceIndex to compare
      * @return True if index has the same entries as other instance, in the same order
      */
-    public boolean equals(Object other) {
+    @Override
+	public boolean equals(Object other) {
         if(!(other instanceof FastaSequenceIndex))
             return false;
 
@@ -173,7 +174,8 @@ public class FastaSequenceIndex implements Iterable<FastaSequenceIndexEntry> {
      * Creates an iterator which can iterate through all entries in a fasta index.
      * @return iterator over all fasta index entries.
      */
-    public Iterator<FastaSequenceIndexEntry> iterator() {
+    @Override
+	public Iterator<FastaSequenceIndexEntry> iterator() {
         return sequenceEntries.values().iterator();
     }
 
@@ -278,7 +280,8 @@ class FastaSequenceIndexEntry {
      * For debugging.  Emit the contents of each contig line.
      * @return A string representation of the contig line.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return String.format("contig %s; location %d; size %d; basesPerLine %d; bytesPerLine %d", contig,
                                                                                                   location,
                                                                                                   size,
@@ -291,7 +294,8 @@ class FastaSequenceIndexEntry {
      * @param other another FastaSequenceIndexEntry
      * @return True if each has the same name, location, size, basesPerLine and bytesPerLine
      */
-    public boolean equals(Object other) {
+    @Override
+	public boolean equals(Object other) {
         if(!(other instanceof FastaSequenceIndexEntry))
             return false;
 
@@ -306,7 +310,8 @@ class FastaSequenceIndexEntry {
      * In general, we expect one entry per contig, so compute the hash based only on the contig.
      * @return A unique hash code representing this object.
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return contig.hashCode();
     }
 }

@@ -86,6 +86,7 @@ public class ReadHeader {
 		mNextPosition = (int) nap;
 	}
 			
+	@Override
 	public String toString() {
 		String result = "";
 		result += "RefLen: "+ mReferenceLength +"\n";

@@ -52,6 +52,7 @@ public class PosCigarFeature {
 		this(order, op.charAt(0), length, bases);
 	}
 
+	@Override
 	public String toString() {
 
 		String result = mOrder + "" + mOP.getCharacter();
@@ -82,6 +83,7 @@ public class PosCigarFeature {
 		}
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof PosCigarFeature) {
 			PosCigarFeature that = (PosCigarFeature) o;

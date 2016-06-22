@@ -138,11 +138,13 @@ abstract class IndexingVariantContextWriter implements VariantContextWriter {
 		return name;
 	}
 
+	@Override
 	public abstract void writeHeader(VCFHeader header);
 
 	/**
 	 * attempt to close the VCF file
 	 */
+	@Override
 	public void close() {
 		try {
 			// close the underlying output stream
@@ -180,6 +182,7 @@ abstract class IndexingVariantContextWriter implements VariantContextWriter {
 	 * @param vc
 	 *            the Variant Context object
 	 */
+	@Override
 	public void add(final VariantContext vc) {
 		// if we are doing on the fly indexing, add the record ***before*** we
 		// write any bytes
@@ -230,21 +233,25 @@ final class PositionalOutputStream extends OutputStream implements
 		this.out = out;
 	}
 
+	@Override
 	public final void write(final byte[] bytes) throws IOException {
 		write(bytes, 0, bytes.length);
 	}
 
+	@Override
 	public final void write(final byte[] bytes, final int startIndex,
 			final int numBytes) throws IOException {
 		position += numBytes;
 		out.write(bytes, startIndex, numBytes);
 	}
 
+	@Override
 	public final void write(final int c) throws IOException {
 		position++;
 		out.write(c);
 	}
 
+	@Override
 	public final long getPosition() {
 		return position;
 	}

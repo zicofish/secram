@@ -29,7 +29,8 @@ public class QueryInterval implements Comparable<QueryInterval> {
     }
 
 
-    public int compareTo(final QueryInterval other) {
+    @Override
+	public int compareTo(final QueryInterval other) {
         int comp = this.referenceIndex - other.referenceIndex;
         if (comp != 0) return comp;
         comp = this.start - other.start;

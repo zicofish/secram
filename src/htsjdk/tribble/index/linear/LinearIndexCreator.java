@@ -64,7 +64,8 @@ public class LinearIndexCreator  extends TribbleIndexCreator {
      * @param feature the feature, from which we use the contig, start, and stop
      * @param filePosition the position of the file at the BEGINNING of the current feature
      */
-    public void addFeature(final Feature feature, final long filePosition) {
+    @Override
+	public void addFeature(final Feature feature, final long filePosition) {
         // fi we don't have a chrIndex yet, or if the last one was for the previous contig, create a new one
         if (chrList.size() == 0 || !chrList.getLast().getName().equals(feature.getChr())) {
             // if we're creating a new chrIndex (not the first), make sure to dump the blocks to the old chrIndex
@@ -97,7 +98,8 @@ public class LinearIndexCreator  extends TribbleIndexCreator {
      * @param finalFilePosition the final file position, for indexes that have to close out with the final position
      * @return an Index object
      */
-    public Index finalizeIndex(final long finalFilePosition) {
+    @Override
+	public Index finalizeIndex(final long finalFilePosition) {
         if (finalFilePosition == 0)
             throw new IllegalArgumentException("finalFilePosition != 0, -> " + finalFilePosition);
 

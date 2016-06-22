@@ -94,7 +94,8 @@ public abstract class AbstractBAMFileIndex implements BAMIndex {
     /**
      * Close this index and release any associated resources.
      */
-    public void close() {
+    @Override
+	public void close() {
         mIndexBuffer.close();
     }
 
@@ -176,7 +177,8 @@ public abstract class AbstractBAMFileIndex implements BAMIndex {
      * @return The file offset of the first record in the last linear bin, or -1
      * if there are no elements in linear bins (i.e. no mapped reads).
      */
-    public long getStartOfLastLinearBin() {
+    @Override
+	public long getStartOfLastLinearBin() {
         seek(4);
 
         final int sequenceCount = readInteger();
@@ -212,7 +214,8 @@ public abstract class AbstractBAMFileIndex implements BAMIndex {
      * @param reference the reference of interest
      * @return meta data for the reference
      */
-    public BAMIndexMetaData getMetaData(final int reference) {
+    @Override
+	public BAMIndexMetaData getMetaData(final int reference) {
         seek(4);
 
         final List<Chunk> metaDataChunks = new ArrayList<Chunk>();
@@ -395,7 +398,8 @@ public abstract class AbstractBAMFileIndex implements BAMIndex {
     /**
      * @deprecated Invoke htsjdk.samtools.Chunk#optimizeChunkList(java.util.List<htsjdk.samtools.Chunk>, long) directly.
      */
-    protected List<Chunk> optimizeChunkList(final List<Chunk> chunks, final long minimumOffset) {
+    @Deprecated
+	protected List<Chunk> optimizeChunkList(final List<Chunk> chunks, final long minimumOffset) {
         return Chunk.optimizeChunkList(chunks, minimumOffset);
     }
 

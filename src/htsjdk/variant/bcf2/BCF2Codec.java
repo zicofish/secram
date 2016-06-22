@@ -254,8 +254,8 @@ public final class BCF2Codec extends BinaryFeatureCodec<VariantContext> {
 
         this.pos = decoder.decodeInt(BCF2Type.INT32) + 1; // GATK is one based, BCF2 is zero-based
         final int refLength = decoder.decodeInt(BCF2Type.INT32);
-        builder.start((long)pos);
-        builder.stop((long)(pos + refLength - 1)); // minus one because GATK has closed intervals but BCF2 is open
+        builder.start(pos);
+        builder.stop(pos + refLength - 1); // minus one because GATK has closed intervals but BCF2 is open
     }
 
     /**

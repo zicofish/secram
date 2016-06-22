@@ -334,7 +334,8 @@ public class SortingLongCollection {
 
     private static class PeekFileValueIteratorComparator implements Comparator<PeekFileValueIterator> {
 
-        public int compare(final PeekFileValueIterator it1, final PeekFileValueIterator it2) {
+        @Override
+		public int compare(final PeekFileValueIterator it1, final PeekFileValueIterator it2) {
             if (it1.peek() < it2.peek()) {
                 return -1;
             }

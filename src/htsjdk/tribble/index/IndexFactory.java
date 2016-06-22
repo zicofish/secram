@@ -455,11 +455,13 @@ public class IndexFactory {
             }
         }
 
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             return nextFeature != null;
         }
 
-        public Feature next() {
+        @Override
+		public Feature next() {
             final Feature ret = nextFeature;
             readNextFeature();
             return ret;
@@ -468,7 +470,8 @@ public class IndexFactory {
         /**
          * @throws UnsupportedOperationException
          */
-        public void remove() {
+        @Override
+		public void remove() {
             throw new UnsupportedOperationException("We cannot remove");
         }
 
