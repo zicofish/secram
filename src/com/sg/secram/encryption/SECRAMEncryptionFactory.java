@@ -7,7 +7,7 @@ import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
 
-import com.sg.secram.SECRAMEncryptionMethod;
+import com.sg.secram.encryption.SECRAMEncryptionMethod;
 import com.sg.secram.util.SECRAMUtils;
 
 public class SECRAMEncryptionFactory {

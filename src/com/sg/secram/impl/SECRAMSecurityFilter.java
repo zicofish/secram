@@ -4,7 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sg.secram.SECRAMEncryptionMethod;
+import com.sg.secram.encryption.SECRAMEncryptionMethod;
 import com.sg.secram.encryption.OPE;
 import com.sg.secram.encryption.SECRAMEncryptionFactory;
 

@@ -1,6 +1,6 @@
 package com.sg.secram.encryption;
 
-import com.sg.secram.SECRAMEncryptionMethod;
+import com.sg.secram.encryption.SECRAMEncryptionMethod;
 
 public class DummyCipher<T> implements SECRAMEncryptionMethod<T> {
 

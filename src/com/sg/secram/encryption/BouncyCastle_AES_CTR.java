@@ -6,7 +6,7 @@ import org.bouncycastle.crypto.modes.SICBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-import com.sg.secram.SECRAMEncryptionMethod;
+import com.sg.secram.encryption.SECRAMEncryptionMethod;
 
 /**
  * Implementation of AES in CTR mode
