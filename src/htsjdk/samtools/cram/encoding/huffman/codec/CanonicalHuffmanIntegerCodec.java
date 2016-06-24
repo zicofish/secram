@@ -23,41 +23,43 @@ import htsjdk.samtools.cram.io.BitOutputStream;
 
 import java.io.IOException;
 
-
 class CanonicalHuffmanIntegerCodec extends AbstractBitCodec<Integer> {
-    private final HuffmanIntHelper helper;
+	private final HuffmanIntHelper helper;
 
-    /*
-     * values[]: the alphabet (provided as Integers) bitLengths[]: the number of
-     * bits of symbol's huffman code
-     */
-    public CanonicalHuffmanIntegerCodec(final int[] values, final int[] bitLengths) {
-        helper = new HuffmanIntHelper(values, bitLengths);
-    }
+	/*
+	 * values[]: the alphabet (provided as Integers) bitLengths[]: the number of
+	 * bits of symbol's huffman code
+	 */
+	public CanonicalHuffmanIntegerCodec(final int[] values,
+			final int[] bitLengths) {
+		helper = new HuffmanIntHelper(values, bitLengths);
+	}
 
-    @Override
-    public Integer read(final BitInputStream bitInputStream) throws IOException {
-        return helper.read(bitInputStream);
-    }
+	@Override
+	public Integer read(final BitInputStream bitInputStream) throws IOException {
+		return helper.read(bitInputStream);
+	}
 
-    @Override
-    public long write(final BitOutputStream bitOutputStream, final Integer object) throws IOException {
-        return helper.write(bitOutputStream, object);
-    }
+	@Override
+	public long write(final BitOutputStream bitOutputStream,
+			final Integer object) throws IOException {
+		return helper.write(bitOutputStream, object);
+	}
 
-    @Override
-    public long numberOfBits(final Integer object) {
-        final HuffmanBitCode bitCode;
-        try {
-            bitCode = helper.codes.get(object);
-            return bitCode.bitLength;
-        } catch (final NullPointerException e) {
-            throw new RuntimeException("Value " + object + " not found.", e);
-        }
-    }
+	@Override
+	public long numberOfBits(final Integer object) {
+		final HuffmanBitCode bitCode;
+		try {
+			bitCode = helper.codes.get(object);
+			return bitCode.bitLength;
+		} catch (final NullPointerException e) {
+			throw new RuntimeException("Value " + object + " not found.", e);
+		}
+	}
 
-    @Override
-    public Integer read(final BitInputStream bitInputStream, final int length) throws IOException {
-        throw new RuntimeException("Not implemented");
-    }
+	@Override
+	public Integer read(final BitInputStream bitInputStream, final int length)
+			throws IOException {
+		throw new RuntimeException("Not implemented");
+	}
 }

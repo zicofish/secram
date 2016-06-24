@@ -22,20 +22,20 @@ package htsjdk.samtools.cram.encoding;
  */
 public enum DataSeriesType {
 
-    /**
-     * A single signed byte (256 distinct values)
-     */
-    BYTE,
-    /**
-     * A signed integer ~4 billions of them.
-     */
-    INT,
-    /**
-     * A signed long value, 64 bits, too many to count.
-     */
-    LONG,
-    /**
-     * An array of bytes.
-     */
-    BYTE_ARRAY
+	/**
+	 * A single signed byte (256 distinct values)
+	 */
+	BYTE,
+	/**
+	 * A signed integer ~4 billions of them.
+	 */
+	INT,
+	/**
+	 * A signed long value, 64 bits, too many to count.
+	 */
+	LONG,
+	/**
+	 * An array of bytes.
+	 */
+	BYTE_ARRAY
 }

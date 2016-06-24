@@ -20,59 +20,59 @@ package htsjdk.samtools.cram.encoding.readfeatures;
 import java.io.Serializable;
 
 /**
- * A read feature representing a reference skip similar to {@link htsjdk.samtools.CigarOperator#N}.
+ * A read feature representing a reference skip similar to
+ * {@link htsjdk.samtools.CigarOperator#N}.
  */
 public class RefSkip implements Serializable, ReadFeature {
 
-    private int position;
-    private int length;
-    public static final byte operator = 'N';
+	private int position;
+	private int length;
+	public static final byte operator = 'N';
 
-    public RefSkip() {
-    }
+	public RefSkip() {
+	}
 
-    public RefSkip(final int position, final int length) {
-        this.position = position;
-        this.length = length;
-    }
+	public RefSkip(final int position, final int length) {
+		this.position = position;
+		this.length = length;
+	}
 
+	@Override
+	public byte getOperator() {
+		return operator;
+	}
 
-    @Override
-    public byte getOperator() {
-        return operator;
-    }
-
-    @Override
+	@Override
 	public int getPosition() {
-        return position;
-    }
+		return position;
+	}
 
-    @Override
+	@Override
 	public void setPosition(final int position) {
-        this.position = position;
-    }
+		this.position = position;
+	}
 
-    public int getLength() {
-        return length;
-    }
+	public int getLength() {
+		return length;
+	}
 
-    public void setLength(final int length) {
-        this.length = length;
-    }
+	public void setLength(final int length) {
+		this.length = length;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof RefSkip))
-            return false;
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof RefSkip))
+			return false;
 
-        final RefSkip refSkip = (RefSkip) obj;
+		final RefSkip refSkip = (RefSkip) obj;
 
-        return position == refSkip.position && length == refSkip.length;
+		return position == refSkip.position && length == refSkip.length;
 
-    }
+	}
 
-    @Override
-    public String toString() {
-        return String.valueOf((char) operator) + '@' + position + '+' + length;
-    }
+	@Override
+	public String toString() {
+		return String.valueOf((char) operator) + '@' + position + '+' + length;
+	}
 }

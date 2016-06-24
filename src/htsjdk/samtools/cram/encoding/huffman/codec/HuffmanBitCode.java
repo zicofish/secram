@@ -18,12 +18,14 @@
 package htsjdk.samtools.cram.encoding.huffman.codec;
 
 class HuffmanBitCode {
-    int bitCode;
-    int bitLength;
-    int value;
+	int bitCode;
+	int bitLength;
+	int value;
 
-    @Override
-    public String toString() {
-        return value + ":\t" + Integer.toBinaryString(bitCode).substring(32 - bitLength) + " " + bitCode;
-    }
+	@Override
+	public String toString() {
+		return value + ":\t"
+				+ Integer.toBinaryString(bitCode).substring(32 - bitLength)
+				+ " " + bitCode;
+	}
 }

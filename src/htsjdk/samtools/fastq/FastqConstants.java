@@ -27,6 +27,6 @@ package htsjdk.samtools.fastq;
  * @author alecw@broadinstitute.org
  */
 public class FastqConstants {
-    public static final String SEQUENCE_HEADER = "@" ;
-    public static final String QUALITY_HEADER = "+" ;
+	public static final String SEQUENCE_HEADER = "@";
+	public static final String QUALITY_HEADER = "+";
 }

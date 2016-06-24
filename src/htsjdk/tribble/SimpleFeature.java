@@ -29,34 +29,34 @@ package htsjdk.tribble;
  */
 public class SimpleFeature implements Feature {
 
-    private final String contig;
-    private final int start;
-    private final int end;
+	private final String contig;
+	private final int start;
+	private final int end;
 
-    public SimpleFeature(final String contig, final int start, final int end) {
-        this.contig = contig;
-        this.start = start;
-        this.end = end;
-    }
+	public SimpleFeature(final String contig, final int start, final int end) {
+		this.contig = contig;
+		this.start = start;
+		this.end = end;
+	}
 
-    @Override
+	@Override
 	@Deprecated
-    public String getChr() {
-        return contig;
-    }
+	public String getChr() {
+		return contig;
+	}
 
-    @Override
+	@Override
 	public String getContig() {
-        return contig;
-    }
+		return contig;
+	}
 
-    @Override
+	@Override
 	public int getStart() {
-        return start;
-    }
+		return start;
+	}
 
-    @Override
+	@Override
 	public int getEnd() {
-        return end;
-    }
+		return end;
+	}
 }

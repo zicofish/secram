@@ -22,55 +22,57 @@ import java.util.Arrays;
 
 public class Bases implements Serializable, ReadFeature {
 
-    private int position;
-    private byte[] bases;
+	private int position;
+	private byte[] bases;
 
-    public byte[] getBases() {
-        return bases;
-    }
+	public byte[] getBases() {
+		return bases;
+	}
 
-    public void setBases(final byte[] bases) {
-        this.bases = bases;
-    }
+	public void setBases(final byte[] bases) {
+		this.bases = bases;
+	}
 
-    public Bases() {
-    }
+	public Bases() {
+	}
 
-    public Bases(final int position, final byte[] sequence) {
-        this.position = position;
-        this.bases = sequence;
-    }
+	public Bases(final int position, final byte[] sequence) {
+		this.position = position;
+		this.bases = sequence;
+	}
 
-    public static final byte operator = 'b';
+	public static final byte operator = 'b';
 
-    @Override
-    public byte getOperator() {
-        return operator;
-    }
+	@Override
+	public byte getOperator() {
+		return operator;
+	}
 
-    @Override
-    public int getPosition() {
-        return position;
-    }
+	@Override
+	public int getPosition() {
+		return position;
+	}
 
-    @Override
-    public void setPosition(final int position) {
-        this.position = position;
-    }
+	@Override
+	public void setPosition(final int position) {
+		this.position = position;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof Bases))
-            return false;
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof Bases))
+			return false;
 
-        final Bases bases = (Bases) obj;
+		final Bases bases = (Bases) obj;
 
-        return position == bases.position && !Arrays.equals(this.bases, bases.bases);
+		return position == bases.position
+				&& !Arrays.equals(this.bases, bases.bases);
 
-    }
+	}
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[" + "position=" + position + "; bases=" + new String(bases) + "] ";
-    }
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "[" + "position=" + position
+				+ "; bases=" + new String(bases) + "] ";
+	}
 }

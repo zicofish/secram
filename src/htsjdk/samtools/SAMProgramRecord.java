@@ -33,102 +33,106 @@ import java.util.Set;
  * In-memory representation of @PG SAM header record.
  */
 public class SAMProgramRecord extends AbstractSAMHeaderRecord {
-    public static final String PROGRAM_GROUP_ID_TAG = "ID";
-    public static final String PROGRAM_NAME_TAG = "PN";
-    public static final String PROGRAM_VERSION_TAG = "VN";
-    public static final String COMMAND_LINE_TAG = "CL";
-    public static final String PREVIOUS_PROGRAM_GROUP_ID_TAG = "PP";
-    private String mProgramGroupId;
-    public static final Set<String> STANDARD_TAGS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(PROGRAM_GROUP_ID_TAG,
-                    PROGRAM_NAME_TAG,
-                    PROGRAM_VERSION_TAG,
-                    COMMAND_LINE_TAG,
-                    PREVIOUS_PROGRAM_GROUP_ID_TAG)) );
+	public static final String PROGRAM_GROUP_ID_TAG = "ID";
+	public static final String PROGRAM_NAME_TAG = "PN";
+	public static final String PROGRAM_VERSION_TAG = "VN";
+	public static final String COMMAND_LINE_TAG = "CL";
+	public static final String PREVIOUS_PROGRAM_GROUP_ID_TAG = "PP";
+	private String mProgramGroupId;
+	public static final Set<String> STANDARD_TAGS = Collections
+			.unmodifiableSet(new HashSet<String>(Arrays.asList(
+					PROGRAM_GROUP_ID_TAG, PROGRAM_NAME_TAG,
+					PROGRAM_VERSION_TAG, COMMAND_LINE_TAG,
+					PREVIOUS_PROGRAM_GROUP_ID_TAG)));
 
-    public SAMProgramRecord(final String programGroupId) {
-        this.mProgramGroupId = programGroupId;
-    }
+	public SAMProgramRecord(final String programGroupId) {
+		this.mProgramGroupId = programGroupId;
+	}
 
-    public SAMProgramRecord(final String id, SAMProgramRecord srcProgramRecord) {
-        mProgramGroupId = id;
-        for (final Map.Entry<String, String> entry : srcProgramRecord.getAttributes()) {
-            setAttribute(entry.getKey(), entry.getValue());
-        }
-    }
+	public SAMProgramRecord(final String id, SAMProgramRecord srcProgramRecord) {
+		mProgramGroupId = id;
+		for (final Map.Entry<String, String> entry : srcProgramRecord
+				.getAttributes()) {
+			setAttribute(entry.getKey(), entry.getValue());
+		}
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return getProgramGroupId();
-    }
+		return getProgramGroupId();
+	}
 
-    public String getProgramGroupId() {
-        return mProgramGroupId;
-    }
+	public String getProgramGroupId() {
+		return mProgramGroupId;
+	}
 
-    public String getProgramName() {
-        return getAttribute(PROGRAM_NAME_TAG);
-    }
+	public String getProgramName() {
+		return getAttribute(PROGRAM_NAME_TAG);
+	}
 
-    public void setProgramName(final String name) {
-        setAttribute(PROGRAM_NAME_TAG, name);
-    }
+	public void setProgramName(final String name) {
+		setAttribute(PROGRAM_NAME_TAG, name);
+	}
 
-    public String getProgramVersion() {
-        return getAttribute(PROGRAM_VERSION_TAG);
-    }
+	public String getProgramVersion() {
+		return getAttribute(PROGRAM_VERSION_TAG);
+	}
 
-    public void setProgramVersion(final String version) {
-        setAttribute(PROGRAM_VERSION_TAG, version);
-    }
+	public void setProgramVersion(final String version) {
+		setAttribute(PROGRAM_VERSION_TAG, version);
+	}
 
-    public String getCommandLine() {
-        return getAttribute(COMMAND_LINE_TAG);
-    }
+	public String getCommandLine() {
+		return getAttribute(COMMAND_LINE_TAG);
+	}
 
-    public void setCommandLine(final String commandLine) {
-        setAttribute(COMMAND_LINE_TAG, commandLine);
-    }
+	public void setCommandLine(final String commandLine) {
+		setAttribute(COMMAND_LINE_TAG, commandLine);
+	}
 
-    public String getPreviousProgramGroupId() {
-        return getAttribute(PREVIOUS_PROGRAM_GROUP_ID_TAG);
-    }
+	public String getPreviousProgramGroupId() {
+		return getAttribute(PREVIOUS_PROGRAM_GROUP_ID_TAG);
+	}
 
-    public void setPreviousProgramGroupId(final String id) {
-        setAttribute(PREVIOUS_PROGRAM_GROUP_ID_TAG, id);
-    }
+	public void setPreviousProgramGroupId(final String id) {
+		setAttribute(PREVIOUS_PROGRAM_GROUP_ID_TAG, id);
+	}
 
+	/**
+	 * @return true if this == that except for the program group ID, which is
+	 *         arbitrary
+	 */
+	public boolean equivalent(final SAMProgramRecord that) {
+		return attributesEqual(that);
+	}
 
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-    /**
-     * @return true if this == that except for the program group ID, which is arbitrary
-     */
-    public boolean equivalent(final SAMProgramRecord that) {
-        return attributesEqual(that);
-    }
+		final SAMProgramRecord that = (SAMProgramRecord) o;
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+		if (!attributesEqual(that))
+			return false;
+		if (mProgramGroupId != null ? !mProgramGroupId
+				.equals(that.mProgramGroupId) : that.mProgramGroupId != null)
+			return false;
 
-        final SAMProgramRecord that = (SAMProgramRecord) o;
+		return true;
+	}
 
-        if (!attributesEqual(that)) return false;
-        if (mProgramGroupId != null ? !mProgramGroupId.equals(that.mProgramGroupId) : that.mProgramGroupId != null) return false;
+	@Override
+	public int hashCode() {
+		int result = mProgramGroupId != null ? mProgramGroupId.hashCode() : 0;
+		result = 31 * result + attributesHashCode();
+		return result;
+	}
 
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = mProgramGroupId != null ? mProgramGroupId.hashCode() : 0;
-        result = 31 * result + attributesHashCode();
-        return result;
-    }
-
-    @Override
+	@Override
 	Set<String> getStandardTags() {
-        return STANDARD_TAGS;
-    }
+		return STANDARD_TAGS;
+	}
 }

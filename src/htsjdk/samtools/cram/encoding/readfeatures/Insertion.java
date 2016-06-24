@@ -25,53 +25,55 @@ import java.util.Arrays;
  */
 public class Insertion implements Serializable, ReadFeature {
 
-    private int position;
-    private byte[] sequence;
-    public static final byte operator = 'I';
+	private int position;
+	private byte[] sequence;
+	public static final byte operator = 'I';
 
-    public Insertion() {
-    }
+	public Insertion() {
+	}
 
-    public Insertion(final int position, final byte[] sequence) {
-        this.position = position;
-        this.sequence = sequence;
-    }
+	public Insertion(final int position, final byte[] sequence) {
+		this.position = position;
+		this.sequence = sequence;
+	}
 
-    @Override
-    public byte getOperator() {
-        return operator;
-    }
+	@Override
+	public byte getOperator() {
+		return operator;
+	}
 
-    @Override
+	@Override
 	public int getPosition() {
-        return position;
-    }
+		return position;
+	}
 
-    @Override
+	@Override
 	public void setPosition(final int position) {
-        this.position = position;
-    }
+		this.position = position;
+	}
 
-    public byte[] getSequence() {
-        return sequence;
-    }
+	public byte[] getSequence() {
+		return sequence;
+	}
 
-    public void setSequence(final byte[] sequence) {
-        this.sequence = sequence;
-    }
+	public void setSequence(final byte[] sequence) {
+		this.sequence = sequence;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof Insertion))
-            return false;
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof Insertion))
+			return false;
 
-        final Insertion insertion = (Insertion) obj;
+		final Insertion insertion = (Insertion) obj;
 
-        return position == insertion.position && Arrays.equals(sequence, insertion.sequence);
-    }
+		return position == insertion.position
+				&& Arrays.equals(sequence, insertion.sequence);
+	}
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[" + "position=" + position + "; sequence=" + new String(sequence) + "] ";
-    }
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "[" + "position=" + position
+				+ "; sequence=" + new String(sequence) + "] ";
+	}
 }

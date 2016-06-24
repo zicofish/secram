@@ -35,53 +35,62 @@ import java.util.List;
  */
 public class TagFilter implements SamRecordFilter {
 
-    private final String tag;           // The key of the tag to match
-    private final List<Object> values;  // The list of matching values
+	private final String tag; // The key of the tag to match
+	private final List<Object> values; // The list of matching values
 
-    /**
-     * Constructor for a single value
-     *
-     * @param tag       the key of the tag to match
-     * @param value     the value to match
-     */
-    public TagFilter(String tag, Object value) {
-        this.tag = tag;
-        this.values = Arrays.asList(value);
-    }
+	/**
+	 * Constructor for a single value
+	 *
+	 * @param tag
+	 *            the key of the tag to match
+	 * @param value
+	 *            the value to match
+	 */
+	public TagFilter(String tag, Object value) {
+		this.tag = tag;
+		this.values = Arrays.asList(value);
+	}
 
-    /**
-     * Constructor for multiple values
-     *
-     * @param tag       the key of the tag to match
-     * @param values    the matching values
-     */
-    public TagFilter(String tag, List<Object> values) {
-        this.tag = tag;
-        this.values = values;
-    }
+	/**
+	 * Constructor for multiple values
+	 *
+	 * @param tag
+	 *            the key of the tag to match
+	 * @param values
+	 *            the matching values
+	 */
+	public TagFilter(String tag, List<Object> values) {
+		this.tag = tag;
+		this.values = values;
+	}
 
-    /**
-     * Determines whether a SAMRecord matches this filter
-     *
-     * @param record    the SAMRecord to evaluate
-     * @return  true if the SAMRecord matches the filter, otherwise false
-     */
-    @Override
+	/**
+	 * Determines whether a SAMRecord matches this filter
+	 *
+	 * @param record
+	 *            the SAMRecord to evaluate
+	 * @return true if the SAMRecord matches the filter, otherwise false
+	 */
+	@Override
 	public boolean filterOut(SAMRecord record) {
-        return values.contains(record.getAttribute(tag));
-    }
+		return values.contains(record.getAttribute(tag));
+	}
 
-    /**
-     * Determines whether a paired of SAMRecord matches this filter
-     *
-     * @param first  the first SAMRecord to evaluate
-     * @param second the second SAMRecord to evaluate
-     *
-     * @return true if the SAMRecords matches the filter, otherwise false
-     */
-    @Override
+	/**
+	 * Determines whether a paired of SAMRecord matches this filter
+	 *
+	 * @param first
+	 *            the first SAMRecord to evaluate
+	 * @param second
+	 *            the second SAMRecord to evaluate
+	 *
+	 * @return true if the SAMRecords matches the filter, otherwise false
+	 */
+	@Override
 	public boolean filterOut(final SAMRecord first, final SAMRecord second) {
-        // both first and second must have the tag in order for it to be filtered out
-         return values.contains(first.getAttribute(tag)) && values.contains(second.getAttribute(tag));
-    }
+		// both first and second must have the tag in order for it to be
+		// filtered out
+		return values.contains(first.getAttribute(tag))
+				&& values.contains(second.getAttribute(tag));
+	}
 }

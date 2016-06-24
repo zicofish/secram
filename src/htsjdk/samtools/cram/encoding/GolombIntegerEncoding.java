@@ -27,54 +27,56 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 public class GolombIntegerEncoding implements Encoding<Integer> {
-    private static final EncodingID ENCODING_ID = EncodingID.GOLOMB;
-    private int m;
-    private int offset;
+	private static final EncodingID ENCODING_ID = EncodingID.GOLOMB;
+	private int m;
+	private int offset;
 
-    public GolombIntegerEncoding() {
-    }
+	public GolombIntegerEncoding() {
+	}
 
-    @Override
-    public EncodingID id() {
-        return ENCODING_ID;
-    }
+	@Override
+	public EncodingID id() {
+		return ENCODING_ID;
+	}
 
-    public static EncodingParams toParam(final int m) {
-        final GolombIntegerEncoding golombIntegerEncoding = new GolombIntegerEncoding();
-        golombIntegerEncoding.m = m;
-        golombIntegerEncoding.offset = 0;
-        return new EncodingParams(ENCODING_ID, golombIntegerEncoding.toByteArray());
-    }
+	public static EncodingParams toParam(final int m) {
+		final GolombIntegerEncoding golombIntegerEncoding = new GolombIntegerEncoding();
+		golombIntegerEncoding.m = m;
+		golombIntegerEncoding.offset = 0;
+		return new EncodingParams(ENCODING_ID,
+				golombIntegerEncoding.toByteArray());
+	}
 
-    public static EncodingParams toParam(final int m, final int offset) {
-        final GolombIntegerEncoding e = new GolombIntegerEncoding();
-        e.m = m;
-        e.offset = offset;
-        return new EncodingParams(ENCODING_ID, e.toByteArray());
-    }
+	public static EncodingParams toParam(final int m, final int offset) {
+		final GolombIntegerEncoding e = new GolombIntegerEncoding();
+		e.m = m;
+		e.offset = offset;
+		return new EncodingParams(ENCODING_ID, e.toByteArray());
+	}
 
-    @Override
-    public byte[] toByteArray() {
-        final ByteBuffer buffer = ByteBuffer.allocate(10);
-        ITF8.writeUnsignedITF8(offset, buffer);
-        ITF8.writeUnsignedITF8(m, buffer);
-        buffer.flip();
-        final byte[] array = new byte[buffer.limit()];
-        buffer.get(array);
-        return array;
-    }
+	@Override
+	public byte[] toByteArray() {
+		final ByteBuffer buffer = ByteBuffer.allocate(10);
+		ITF8.writeUnsignedITF8(offset, buffer);
+		ITF8.writeUnsignedITF8(m, buffer);
+		buffer.flip();
+		final byte[] array = new byte[buffer.limit()];
+		buffer.get(array);
+		return array;
+	}
 
-    @Override
-    public void fromByteArray(final byte[] data) {
-        final ByteBuffer buffer = ByteBuffer.wrap(data);
-        offset = ITF8.readUnsignedITF8(buffer);
-        m = ITF8.readUnsignedITF8(buffer);
-    }
+	@Override
+	public void fromByteArray(final byte[] data) {
+		final ByteBuffer buffer = ByteBuffer.wrap(data);
+		offset = ITF8.readUnsignedITF8(buffer);
+		m = ITF8.readUnsignedITF8(buffer);
+	}
 
-    @Override
-    public BitCodec<Integer> buildCodec(final Map<Integer, InputStream> inputMap,
-                                        final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
-        return new GolombIntegerCodec(m, offset);
-    }
+	@Override
+	public BitCodec<Integer> buildCodec(
+			final Map<Integer, InputStream> inputMap,
+			final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
+		return new GolombIntegerCodec(m, offset);
+	}
 
 }

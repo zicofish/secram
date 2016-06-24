@@ -24,21 +24,22 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * An interface to describe how a data series is encoded.
- * It also has methods to serialize/deserialize to/from byte array and a method to construct
- * a {@link htsjdk.samtools.cram.encoding.BitCodec} instance.
+ * An interface to describe how a data series is encoded. It also has methods to
+ * serialize/deserialize to/from byte array and a method to construct a
+ * {@link htsjdk.samtools.cram.encoding.BitCodec} instance.
  *
- * @param <T> data series type
+ * @param <T>
+ *            data series type
  */
 public interface Encoding<T> {
 
-    EncodingID id();
+	EncodingID id();
 
-    byte[] toByteArray();
+	byte[] toByteArray();
 
-    void fromByteArray(byte[] data);
+	void fromByteArray(byte[] data);
 
-    BitCodec<T> buildCodec(Map<Integer, InputStream> inputMap,
-                           Map<Integer, ExposedByteArrayOutputStream> outputMap);
+	BitCodec<T> buildCodec(Map<Integer, InputStream> inputMap,
+			Map<Integer, ExposedByteArrayOutputStream> outputMap);
 
 }

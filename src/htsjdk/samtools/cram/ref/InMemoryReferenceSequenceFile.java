@@ -28,75 +28,83 @@ import java.util.HashMap;
 import java.util.Map;
 
 class InMemoryReferenceSequenceFile implements ReferenceSequenceFile {
-    private Map<Integer, byte[]> sequences = new HashMap<Integer, byte[]>();
-    private SAMSequenceDictionary dictionary = new SAMSequenceDictionary();
-    private int currentIndex = 0;
+	private Map<Integer, byte[]> sequences = new HashMap<Integer, byte[]>();
+	private SAMSequenceDictionary dictionary = new SAMSequenceDictionary();
+	private int currentIndex = 0;
 
-    public void addSequence(final String name, final byte[] bases) {
-        final SAMSequenceRecord r = new SAMSequenceRecord(name, bases.length);
-        dictionary.addSequence(r);
-        final int index = getSequenceDictionary().getSequenceIndex(name);
-        sequences.put(index, bases);
-    }
+	public void addSequence(final String name, final byte[] bases) {
+		final SAMSequenceRecord r = new SAMSequenceRecord(name, bases.length);
+		dictionary.addSequence(r);
+		final int index = getSequenceDictionary().getSequenceIndex(name);
+		sequences.put(index, bases);
+	}
 
-    @Override
-    public ReferenceSequence getSequence(final String name) {
-        final int index = getSequenceDictionary().getSequenceIndex(name);
-        return new ReferenceSequence(name, index, sequences.get(index));
-    }
+	@Override
+	public ReferenceSequence getSequence(final String name) {
+		final int index = getSequenceDictionary().getSequenceIndex(name);
+		return new ReferenceSequence(name, index, sequences.get(index));
+	}
 
-    @Override
-    public SAMSequenceDictionary getSequenceDictionary() {
-        return dictionary;
-    }
+	@Override
+	public SAMSequenceDictionary getSequenceDictionary() {
+		return dictionary;
+	}
 
-    @Override
-    public ReferenceSequence getSubsequenceAt(final String name, final long start, final long stop) {
-        final int index = getSequenceDictionary().getSequenceIndex(name);
-        final byte[] bases = Arrays.copyOfRange(sequences.get(index), (int) start,
-                (int) stop + 1);
-        return new ReferenceSequence(name, index, bases);
-    }
+	@Override
+	public ReferenceSequence getSubsequenceAt(final String name,
+			final long start, final long stop) {
+		final int index = getSequenceDictionary().getSequenceIndex(name);
+		final byte[] bases = Arrays.copyOfRange(sequences.get(index),
+				(int) start, (int) stop + 1);
+		return new ReferenceSequence(name, index, bases);
+	}
 
-    @Override
-    public void close() throws IOException {
-        sequences = null;
-        dictionary = null;
-    }
+	@Override
+	public void close() throws IOException {
+		sequences = null;
+		dictionary = null;
+	}
 
-    /**
-     * Returns a new object representing the requested region on the reference sequence.
-     * @param name name of the reference sequence
-     * @param start inclusive starting position on the reference sequence
-     * @param stop  inclusive end position on the reference sequence
-     * @return a new region object
-     */
-    public ReferenceRegion getRegion(final String name, final long start, final long stop) {
-        final int index = getSequenceDictionary().getSequenceIndex(name);
-        if (!sequences.containsKey(index))
-            throw new RuntimeException("Sequence not found: " + name);
+	/**
+	 * Returns a new object representing the requested region on the reference
+	 * sequence.
+	 * 
+	 * @param name
+	 *            name of the reference sequence
+	 * @param start
+	 *            inclusive starting position on the reference sequence
+	 * @param stop
+	 *            inclusive end position on the reference sequence
+	 * @return a new region object
+	 */
+	public ReferenceRegion getRegion(final String name, final long start,
+			final long stop) {
+		final int index = getSequenceDictionary().getSequenceIndex(name);
+		if (!sequences.containsKey(index))
+			throw new RuntimeException("Sequence not found: " + name);
 
-        return new ReferenceRegion(sequences.get(index),
-                index, name, start, stop);
-    }
+		return new ReferenceRegion(sequences.get(index), index, name, start,
+				stop);
+	}
 
-    @Override
-    public boolean isIndexed() {
-        return true;
-    }
+	@Override
+	public boolean isIndexed() {
+		return true;
+	}
 
-    @Override
-    public ReferenceSequence nextSequence() {
-        if (currentIndex >= dictionary.size())
-            return null;
+	@Override
+	public ReferenceSequence nextSequence() {
+		if (currentIndex >= dictionary.size())
+			return null;
 
-        final SAMSequenceRecord sequence = dictionary.getSequence(currentIndex++);
-        return getSequence(sequence.getSequenceName());
-    }
+		final SAMSequenceRecord sequence = dictionary
+				.getSequence(currentIndex++);
+		return getSequence(sequence.getSequenceName());
+	}
 
-    @Override
-    public void reset() {
-        currentIndex = 0;
-    }
+	@Override
+	public void reset() {
+		currentIndex = 0;
+	}
 
 }

@@ -25,40 +25,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 class ExternalByteCodec extends AbstractBitCodec<Byte> {
-    private final OutputStream outputStream;
-    private final InputStream inputStream;
+	private final OutputStream outputStream;
+	private final InputStream inputStream;
 
-    public ExternalByteCodec(final OutputStream outputStream, final InputStream inputStream) {
-        this.outputStream = outputStream;
-        this.inputStream = inputStream;
-    }
+	public ExternalByteCodec(final OutputStream outputStream,
+			final InputStream inputStream) {
+		this.outputStream = outputStream;
+		this.inputStream = inputStream;
+	}
 
-    @Override
-    public Byte read(final BitInputStream bitInputStream) throws IOException {
-        return (byte) inputStream.read();
-    }
+	@Override
+	public Byte read(final BitInputStream bitInputStream) throws IOException {
+		return (byte) inputStream.read();
+	}
 
-    @Override
-    public long write(final BitOutputStream bitOutputStream, final Byte object) throws IOException {
-        outputStream.write(object);
-        return 8;
-    }
+	@Override
+	public long write(final BitOutputStream bitOutputStream, final Byte object)
+			throws IOException {
+		outputStream.write(object);
+		return 8;
+	}
 
-    @Override
-    public long numberOfBits(final Byte object) {
-        return 8;
-    }
+	@Override
+	public long numberOfBits(final Byte object) {
+		return 8;
+	}
 
-    @Override
-    public Byte read(final BitInputStream bitInputStream, final int length) throws IOException {
-        throw new RuntimeException("Not implemented.");
-    }
+	@Override
+	public Byte read(final BitInputStream bitInputStream, final int length)
+			throws IOException {
+		throw new RuntimeException("Not implemented.");
+	}
 
-    @Override
-    public void readInto(final BitInputStream bitInputStream, final byte[] array, final int offset,
-                         final int valueLen) throws IOException {
-        InputStreamUtils.readFully(inputStream, array, offset, valueLen);
-    }
+	@Override
+	public void readInto(final BitInputStream bitInputStream,
+			final byte[] array, final int offset, final int valueLen)
+			throws IOException {
+		InputStreamUtils.readFully(inputStream, array, offset, valueLen);
+	}
 }

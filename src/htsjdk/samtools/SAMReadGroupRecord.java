@@ -23,7 +23,6 @@
  */
 package htsjdk.samtools;
 
-
 import htsjdk.samtools.util.Iso8601Date;
 
 import java.util.Arrays;
@@ -35,133 +34,204 @@ import java.util.Set;
 /**
  * Header information about a read group.
  */
-public class SAMReadGroupRecord extends AbstractSAMHeaderRecord
-{
-    private String mReadGroupId = null;
-    public static final String READ_GROUP_ID_TAG = "ID";
-    public static final String SEQUENCING_CENTER_TAG = "CN";
-    public static final String DESCRIPTION_TAG = "DS";
-    public static final String DATE_RUN_PRODUCED_TAG = "DT";
-    public static final String FLOW_ORDER_TAG = "FO";
-    public static final String KEY_SEQUENCE_TAG = "KS";
-    public static final String LIBRARY_TAG = "LB";
-    public static final String PROGRAM_GROUP_TAG = "PG";
-    public static final String PREDICTED_MEDIAN_INSERT_SIZE_TAG = "PI";
-    public static final String PLATFORM_TAG = "PL";
-    public static final String PLATFORM_MODEL_TAG = "PM";
-    public static final String PLATFORM_UNIT_TAG = "PU";
-    public static final String READ_GROUP_SAMPLE_TAG = "SM";
+public class SAMReadGroupRecord extends AbstractSAMHeaderRecord {
+	private String mReadGroupId = null;
+	public static final String READ_GROUP_ID_TAG = "ID";
+	public static final String SEQUENCING_CENTER_TAG = "CN";
+	public static final String DESCRIPTION_TAG = "DS";
+	public static final String DATE_RUN_PRODUCED_TAG = "DT";
+	public static final String FLOW_ORDER_TAG = "FO";
+	public static final String KEY_SEQUENCE_TAG = "KS";
+	public static final String LIBRARY_TAG = "LB";
+	public static final String PROGRAM_GROUP_TAG = "PG";
+	public static final String PREDICTED_MEDIAN_INSERT_SIZE_TAG = "PI";
+	public static final String PLATFORM_TAG = "PL";
+	public static final String PLATFORM_MODEL_TAG = "PM";
+	public static final String PLATFORM_UNIT_TAG = "PU";
+	public static final String READ_GROUP_SAMPLE_TAG = "SM";
 
-    /* Platform values for the @RG-PL tag */
-    public enum PlatformValue {
-        CAPILLARY, LS454, ILLUMINA,
-        SOLID, HELICOS, IONTORRENT, 
-        ONT, PACBIO
-    }
+	/* Platform values for the @RG-PL tag */
+	public enum PlatformValue {
+		CAPILLARY, LS454, ILLUMINA, SOLID, HELICOS, IONTORRENT, ONT, PACBIO
+	}
 
-    public static final Set<String> STANDARD_TAGS =
-            new HashSet<String>(Arrays.asList(READ_GROUP_ID_TAG, SEQUENCING_CENTER_TAG, DESCRIPTION_TAG,
-                    DATE_RUN_PRODUCED_TAG, FLOW_ORDER_TAG, KEY_SEQUENCE_TAG, LIBRARY_TAG,
-                    PROGRAM_GROUP_TAG, PREDICTED_MEDIAN_INSERT_SIZE_TAG, PLATFORM_TAG, PLATFORM_MODEL_TAG,
-                    PLATFORM_UNIT_TAG, READ_GROUP_SAMPLE_TAG));
+	public static final Set<String> STANDARD_TAGS = new HashSet<String>(
+			Arrays.asList(READ_GROUP_ID_TAG, SEQUENCING_CENTER_TAG,
+					DESCRIPTION_TAG, DATE_RUN_PRODUCED_TAG, FLOW_ORDER_TAG,
+					KEY_SEQUENCE_TAG, LIBRARY_TAG, PROGRAM_GROUP_TAG,
+					PREDICTED_MEDIAN_INSERT_SIZE_TAG, PLATFORM_TAG,
+					PLATFORM_MODEL_TAG, PLATFORM_UNIT_TAG,
+					READ_GROUP_SAMPLE_TAG));
 
-    public SAMReadGroupRecord(final String id) { mReadGroupId = id; }
+	public SAMReadGroupRecord(final String id) {
+		mReadGroupId = id;
+	}
 
-    public SAMReadGroupRecord(final String id, final SAMReadGroupRecord srcProgramRecord) {
-        mReadGroupId = id;
-        for (final Map.Entry<String, String> entry : srcProgramRecord.getAttributes()) {
-            setAttribute(entry.getKey(), entry.getValue());
-        }
-    }
+	public SAMReadGroupRecord(final String id,
+			final SAMReadGroupRecord srcProgramRecord) {
+		mReadGroupId = id;
+		for (final Map.Entry<String, String> entry : srcProgramRecord
+				.getAttributes()) {
+			setAttribute(entry.getKey(), entry.getValue());
+		}
+	}
 
-    @Override
-	public String getId() { return getReadGroupId();  }
-    public String getReadGroupId() { return mReadGroupId; }
+	@Override
+	public String getId() {
+		return getReadGroupId();
+	}
 
-    public String getSample() { return getAttribute(READ_GROUP_SAMPLE_TAG); }
-    public void setSample(final String value) { setAttribute(READ_GROUP_SAMPLE_TAG, value); }
+	public String getReadGroupId() {
+		return mReadGroupId;
+	}
 
-    public String getLibrary() { return getAttribute(LIBRARY_TAG); }
-    public void setLibrary(final String value) { setAttribute(LIBRARY_TAG, value); }
+	public String getSample() {
+		return getAttribute(READ_GROUP_SAMPLE_TAG);
+	}
 
-    public String getPlatformUnit() { return getAttribute(PLATFORM_UNIT_TAG); }
-    public void setPlatformUnit(final String pu) { setAttribute(PLATFORM_UNIT_TAG, pu); }
+	public void setSample(final String value) {
+		setAttribute(READ_GROUP_SAMPLE_TAG, value);
+	}
 
-    public String getPlatform() { return getAttribute(PLATFORM_TAG); }
-    public void setPlatform(final String platform) { setAttribute(PLATFORM_TAG, platform); }
+	public String getLibrary() {
+		return getAttribute(LIBRARY_TAG);
+	}
 
-    public Date getRunDate() {
-        final String dt = getAttribute(DATE_RUN_PRODUCED_TAG);
-        if (dt == null) return null;
-        else return new Iso8601Date(dt);
-    }
+	public void setLibrary(final String value) {
+		setAttribute(LIBRARY_TAG, value);
+	}
 
-    public String getFlowOrder() { return getAttribute(FLOW_ORDER_TAG); }
-    public void setFlowOrder(final String flowOrder) { setAttribute(FLOW_ORDER_TAG, flowOrder); }
+	public String getPlatformUnit() {
+		return getAttribute(PLATFORM_UNIT_TAG);
+	}
 
-    public String getKeySequence() { return getAttribute(KEY_SEQUENCE_TAG); }
-    public void setKeySequence(final String keySequence) { setAttribute(KEY_SEQUENCE_TAG, keySequence); }
+	public void setPlatformUnit(final String pu) {
+		setAttribute(PLATFORM_UNIT_TAG, pu);
+	}
 
-    /**
-     * Converts to Iso8601Date if not already in that form.
-     */
-    public void setRunDate(Date runDate) {
-        if (runDate != null && !(runDate instanceof Iso8601Date)) {
-            runDate = new Iso8601Date(runDate);
-        }
-        setAttribute(DATE_RUN_PRODUCED_TAG, runDate != null ? runDate.toString() : null);
-    }
+	public String getPlatform() {
+		return getAttribute(PLATFORM_TAG);
+	}
 
-    public String getSequencingCenter() { return getAttribute(SEQUENCING_CENTER_TAG); }
-    public void setSequencingCenter(final String center) { setAttribute(SEQUENCING_CENTER_TAG, center); }
+	public void setPlatform(final String platform) {
+		setAttribute(PLATFORM_TAG, platform);
+	}
 
-    public String getDescription() { return getAttribute(DESCRIPTION_TAG); }
-    public void setDescription(final String description) { setAttribute(DESCRIPTION_TAG, description); }
+	public Date getRunDate() {
+		final String dt = getAttribute(DATE_RUN_PRODUCED_TAG);
+		if (dt == null)
+			return null;
+		else
+			return new Iso8601Date(dt);
+	}
 
-    public Integer getPredictedMedianInsertSize() {
-        final String stringRep = getAttribute(PREDICTED_MEDIAN_INSERT_SIZE_TAG);
-        if (stringRep == null) return null;
-        return Integer.parseInt(stringRep); 
-    }
-    public void setPredictedMedianInsertSize(final Integer predictedMedianInsertSize) {
+	public String getFlowOrder() {
+		return getAttribute(FLOW_ORDER_TAG);
+	}
 
-        setAttribute(PREDICTED_MEDIAN_INSERT_SIZE_TAG, (predictedMedianInsertSize == null? null: predictedMedianInsertSize.toString())); 
-    }
+	public void setFlowOrder(final String flowOrder) {
+		setAttribute(FLOW_ORDER_TAG, flowOrder);
+	}
 
-    public String getProgramGroup() { return getAttribute(PROGRAM_GROUP_TAG); }
-    public void setProgramGroup(final String programGroup) { setAttribute(PROGRAM_GROUP_TAG, programGroup); }
+	public String getKeySequence() {
+		return getAttribute(KEY_SEQUENCE_TAG);
+	}
 
-    public String getPlatformModel() { return getAttribute(PLATFORM_MODEL_TAG); }
-    public void setPlatformModel(final String platformModel) { setAttribute(PLATFORM_MODEL_TAG, platformModel); }
-    
-    /**
-     * @return true if this == that except for the read group ID, which is arbitrary
-     */
-    public boolean equivalent(final SAMReadGroupRecord that) {
-        return attributesEqual(that);
-    }
+	public void setKeySequence(final String keySequence) {
+		setAttribute(KEY_SEQUENCE_TAG, keySequence);
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	/**
+	 * Converts to Iso8601Date if not already in that form.
+	 */
+	public void setRunDate(Date runDate) {
+		if (runDate != null && !(runDate instanceof Iso8601Date)) {
+			runDate = new Iso8601Date(runDate);
+		}
+		setAttribute(DATE_RUN_PRODUCED_TAG,
+				runDate != null ? runDate.toString() : null);
+	}
 
-        final SAMReadGroupRecord that = (SAMReadGroupRecord) o;
+	public String getSequencingCenter() {
+		return getAttribute(SEQUENCING_CENTER_TAG);
+	}
 
-        if (!attributesEqual(that)) return false;
-        if (mReadGroupId != null ? !mReadGroupId.equals(that.mReadGroupId) : that.mReadGroupId != null) return false;
+	public void setSequencingCenter(final String center) {
+		setAttribute(SEQUENCING_CENTER_TAG, center);
+	}
 
-        return true;
-    }
+	public String getDescription() {
+		return getAttribute(DESCRIPTION_TAG);
+	}
 
-    @Override
-    public int hashCode() {
-        return mReadGroupId.hashCode();
-    }
+	public void setDescription(final String description) {
+		setAttribute(DESCRIPTION_TAG, description);
+	}
 
-    @Override
+	public Integer getPredictedMedianInsertSize() {
+		final String stringRep = getAttribute(PREDICTED_MEDIAN_INSERT_SIZE_TAG);
+		if (stringRep == null)
+			return null;
+		return Integer.parseInt(stringRep);
+	}
+
+	public void setPredictedMedianInsertSize(
+			final Integer predictedMedianInsertSize) {
+
+		setAttribute(PREDICTED_MEDIAN_INSERT_SIZE_TAG,
+				(predictedMedianInsertSize == null ? null
+						: predictedMedianInsertSize.toString()));
+	}
+
+	public String getProgramGroup() {
+		return getAttribute(PROGRAM_GROUP_TAG);
+	}
+
+	public void setProgramGroup(final String programGroup) {
+		setAttribute(PROGRAM_GROUP_TAG, programGroup);
+	}
+
+	public String getPlatformModel() {
+		return getAttribute(PLATFORM_MODEL_TAG);
+	}
+
+	public void setPlatformModel(final String platformModel) {
+		setAttribute(PLATFORM_MODEL_TAG, platformModel);
+	}
+
+	/**
+	 * @return true if this == that except for the read group ID, which is
+	 *         arbitrary
+	 */
+	public boolean equivalent(final SAMReadGroupRecord that) {
+		return attributesEqual(that);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		final SAMReadGroupRecord that = (SAMReadGroupRecord) o;
+
+		if (!attributesEqual(that))
+			return false;
+		if (mReadGroupId != null ? !mReadGroupId.equals(that.mReadGroupId)
+				: that.mReadGroupId != null)
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return mReadGroupId.hashCode();
+	}
+
+	@Override
 	Set<String> getStandardTags() {
-        return STANDARD_TAGS;
-    }
+		return STANDARD_TAGS;
+	}
 }
-

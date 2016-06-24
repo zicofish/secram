@@ -30,71 +30,74 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class HuffmanIntegerEncoding implements Encoding<Integer> {
-    private static final EncodingID ENCODING_ID = EncodingID.HUFFMAN;
-    private int[] bitLengths;
-    private int[] values;
-    private static final ByteBuffer buf = ByteBuffer.allocate(1024 * 1000);
+	private static final EncodingID ENCODING_ID = EncodingID.HUFFMAN;
+	private int[] bitLengths;
+	private int[] values;
+	private static final ByteBuffer buf = ByteBuffer.allocate(1024 * 1000);
 
-    public HuffmanIntegerEncoding() {
-    }
+	public HuffmanIntegerEncoding() {
+	}
 
-    @Override
-    public EncodingID id() {
-        return ENCODING_ID;
-    }
+	@Override
+	public EncodingID id() {
+		return ENCODING_ID;
+	}
 
-    @Override
-    public byte[] toByteArray() {
-        buf.clear();
-        ITF8.writeUnsignedITF8(values.length, buf);
-        for (final int value : values)
-            ITF8.writeUnsignedITF8(value, buf);
+	@Override
+	public byte[] toByteArray() {
+		buf.clear();
+		ITF8.writeUnsignedITF8(values.length, buf);
+		for (final int value : values)
+			ITF8.writeUnsignedITF8(value, buf);
 
-        ITF8.writeUnsignedITF8(bitLengths.length, buf);
-        for (final int value : bitLengths)
-            ITF8.writeUnsignedITF8(value, buf);
+		ITF8.writeUnsignedITF8(bitLengths.length, buf);
+		for (final int value : bitLengths)
+			ITF8.writeUnsignedITF8(value, buf);
 
-        buf.flip();
-        final byte[] array = new byte[buf.limit()];
-        buf.get(array);
-        return array;
-    }
+		buf.flip();
+		final byte[] array = new byte[buf.limit()];
+		buf.get(array);
+		return array;
+	}
 
-    @Override
-    public void fromByteArray(final byte[] data) {
-        final ByteBuffer buf = ByteBuffer.wrap(data);
-        int size = ITF8.readUnsignedITF8(buf);
-        values = new int[size];
+	@Override
+	public void fromByteArray(final byte[] data) {
+		final ByteBuffer buf = ByteBuffer.wrap(data);
+		int size = ITF8.readUnsignedITF8(buf);
+		values = new int[size];
 
-        for (int i = 0; i < size; i++)
-            values[i] = ITF8.readUnsignedITF8(buf);
+		for (int i = 0; i < size; i++)
+			values[i] = ITF8.readUnsignedITF8(buf);
 
-        size = ITF8.readUnsignedITF8(buf);
-        bitLengths = new int[size];
-        for (int i = 0; i < size; i++)
-            bitLengths[i] = ITF8.readUnsignedITF8(buf);
-    }
+		size = ITF8.readUnsignedITF8(buf);
+		bitLengths = new int[size];
+		for (int i = 0; i < size; i++)
+			bitLengths[i] = ITF8.readUnsignedITF8(buf);
+	}
 
-    @Override
-    public BitCodec<Integer> buildCodec(final Map<Integer, InputStream> inputMap,
-                                        final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
-        return new CanonicalHuffmanIntegerCodec(values, bitLengths);
-    }
+	@Override
+	public BitCodec<Integer> buildCodec(
+			final Map<Integer, InputStream> inputMap,
+			final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
+		return new CanonicalHuffmanIntegerCodec(values, bitLengths);
+	}
 
-    public static EncodingParams toParam(final int[] bfValues, final int[] bfBitLens) {
-        final HuffmanIntegerEncoding e = new HuffmanIntegerEncoding();
-        e.values = bfValues;
-        e.bitLengths = bfBitLens;
-        return new EncodingParams(ENCODING_ID, e.toByteArray());
-    }
+	public static EncodingParams toParam(final int[] bfValues,
+			final int[] bfBitLens) {
+		final HuffmanIntegerEncoding e = new HuffmanIntegerEncoding();
+		e.values = bfValues;
+		e.bitLengths = bfBitLens;
+		return new EncodingParams(ENCODING_ID, e.toByteArray());
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj instanceof HuffmanIntegerEncoding) {
-            final HuffmanIntegerEncoding foe = (HuffmanIntegerEncoding) obj;
-            return Arrays.equals(bitLengths, foe.bitLengths) && Arrays.equals(values, foe.values);
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj instanceof HuffmanIntegerEncoding) {
+			final HuffmanIntegerEncoding foe = (HuffmanIntegerEncoding) obj;
+			return Arrays.equals(bitLengths, foe.bitLengths)
+					&& Arrays.equals(values, foe.values);
 
-        }
-        return false;
-    }
+		}
+		return false;
+	}
 }

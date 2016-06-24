@@ -18,11 +18,11 @@
 package htsjdk.samtools.cram.encoding.huffman;
 
 class HuffmanLeaf<T> extends HuffmanTree<T> {
-    // user object, attached to the leaf:
-    public final T value;
+	// user object, attached to the leaf:
+	public final T value;
 
-    public HuffmanLeaf(final int freq, final T val) {
-        super(freq);
-        value = val;
-    }
+	public HuffmanLeaf(final int freq, final T val) {
+		super(freq);
+		value = val;
+	}
 }

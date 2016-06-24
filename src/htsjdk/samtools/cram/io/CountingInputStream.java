@@ -24,68 +24,70 @@ import java.io.InputStream;
  * An input stream that counts the bytes read from it.
  */
 public class CountingInputStream extends InputStream {
-    private final InputStream delegate;
-    private long count = 0;
+	private final InputStream delegate;
+	private long count = 0;
 
-    public CountingInputStream(final InputStream inputStream) {
-        delegate = inputStream;
-    }
+	public CountingInputStream(final InputStream inputStream) {
+		delegate = inputStream;
+	}
 
-    @Override
-    public int read() throws IOException {
-        count++;
-        return delegate.read();
-    }
+	@Override
+	public int read() throws IOException {
+		count++;
+		return delegate.read();
+	}
 
-    @Override
-	public int read(@SuppressWarnings("NullableProblems") final byte[] b) throws IOException {
-        final int read = delegate.read(b);
-        count += read;
-        return read;
-    }
+	@Override
+	public int read(@SuppressWarnings("NullableProblems") final byte[] b)
+			throws IOException {
+		final int read = delegate.read(b);
+		count += read;
+		return read;
+	}
 
-    @Override
-	public int read(@SuppressWarnings("NullableProblems") final byte[] b, final int off, final int length) throws IOException {
-        final int read = delegate.read(b, off, length);
-        count += read;
-        return read;
-    }
+	@Override
+	public int read(@SuppressWarnings("NullableProblems") final byte[] b,
+			final int off, final int length) throws IOException {
+		final int read = delegate.read(b, off, length);
+		count += read;
+		return read;
+	}
 
-    @Override
+	@Override
 	public long skip(final long n) throws IOException {
-        final long skipped = delegate.skip(n);
-        count += skipped;
-        return skipped;
-    }
+		final long skipped = delegate.skip(n);
+		count += skipped;
+		return skipped;
+	}
 
-    @Override
+	@Override
 	public int available() throws IOException {
-        return delegate.available();
-    }
+		return delegate.available();
+	}
 
-    @Override
+	@Override
 	public void close() throws IOException {
-        if (delegate != null)
-            delegate.close();
-    }
+		if (delegate != null)
+			delegate.close();
+	}
 
-    @Override
+	@Override
 	public void mark(final int readLimit) {
-        delegate.mark(readLimit);
-    }
+		delegate.mark(readLimit);
+	}
 
-    @Override
+	@Override
 	public void reset() throws IOException {
-        delegate.reset();
-        count = 0;
-    }
+		delegate.reset();
+		count = 0;
+	}
 
-    @Override
+	@Override
 	public boolean markSupported() {
-        return delegate.markSupported();
-    }
+		return delegate.markSupported();
+	}
 
-    public long getCount() {
-        return count;
-    }
+	public long getCount() {
+		return count;
+	}
 }

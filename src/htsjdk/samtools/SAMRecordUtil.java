@@ -31,51 +31,56 @@ import htsjdk.samtools.util.StringUtil;
  */
 public class SAMRecordUtil {
 
-    /** List of String tags that must be reversed if present when a SAMRecord is reverseComplemented */
-    private static final short[] STRING_TAGS_TO_REVERSE = {
-            SAMTagUtil.getSingleton().U2,
-            SAMTagUtil.getSingleton().OQ
-    };
+	/**
+	 * List of String tags that must be reversed if present when a SAMRecord is
+	 * reverseComplemented
+	 */
+	private static final short[] STRING_TAGS_TO_REVERSE = {
+			SAMTagUtil.getSingleton().U2, SAMTagUtil.getSingleton().OQ };
 
-    /**
-     * Reverse-complement all known sequence and base quality attributes of the SAMRecord.
-     */
-    public static void reverseComplement(final SAMRecord rec) {
-        final byte[] readBases = rec.getReadBases();
-        SequenceUtil.reverseComplement(readBases);
-        rec.setReadBases(readBases);
-        final byte qualities[] = rec.getBaseQualities();
-        reverseArray(qualities);
-        rec.setBaseQualities(qualities);
-        final byte[] sqTagValue = (byte[])rec.getAttribute(SAMTagUtil.getSingleton().SQ);
-        if (sqTagValue != null) {
-            SQTagUtil.reverseComplementSqArray(sqTagValue);
-            rec.setAttribute(SAMTagUtil.getSingleton().SQ, sqTagValue);
-        }
-        final String e2TagValue = (String)rec.getAttribute(SAMTagUtil.getSingleton().E2);
-        if (e2TagValue != null) {
-            final byte[] secondaryBases = StringUtil.stringToBytes(e2TagValue);
-            SequenceUtil.reverseComplement(secondaryBases);
-            rec.setAttribute(SAMTagUtil.getSingleton().E2, StringUtil.bytesToString(secondaryBases));
-        }
-        for (final short stringTag : STRING_TAGS_TO_REVERSE) {
-            final String value = (String)rec.getAttribute(stringTag);
-            if (value != null) {
-                rec.setAttribute(stringTag, StringUtil.reverseString(value));
-            }
-        }
-    }
+	/**
+	 * Reverse-complement all known sequence and base quality attributes of the
+	 * SAMRecord.
+	 */
+	public static void reverseComplement(final SAMRecord rec) {
+		final byte[] readBases = rec.getReadBases();
+		SequenceUtil.reverseComplement(readBases);
+		rec.setReadBases(readBases);
+		final byte qualities[] = rec.getBaseQualities();
+		reverseArray(qualities);
+		rec.setBaseQualities(qualities);
+		final byte[] sqTagValue = (byte[]) rec.getAttribute(SAMTagUtil
+				.getSingleton().SQ);
+		if (sqTagValue != null) {
+			SQTagUtil.reverseComplementSqArray(sqTagValue);
+			rec.setAttribute(SAMTagUtil.getSingleton().SQ, sqTagValue);
+		}
+		final String e2TagValue = (String) rec.getAttribute(SAMTagUtil
+				.getSingleton().E2);
+		if (e2TagValue != null) {
+			final byte[] secondaryBases = StringUtil.stringToBytes(e2TagValue);
+			SequenceUtil.reverseComplement(secondaryBases);
+			rec.setAttribute(SAMTagUtil.getSingleton().E2,
+					StringUtil.bytesToString(secondaryBases));
+		}
+		for (final short stringTag : STRING_TAGS_TO_REVERSE) {
+			final String value = (String) rec.getAttribute(stringTag);
+			if (value != null) {
+				rec.setAttribute(stringTag, StringUtil.reverseString(value));
+			}
+		}
+	}
 
-    /**
-     * Reverse the given array in place.
-     */
-    public static void reverseArray(final byte[] array) {
-        final int lastIndex = array.length - 1;
-        int i, j;
-        for (i=0, j=lastIndex; i<j; ++i, --j) {
-            final byte tmp = array[i];
-            array[i] = array[j];
-            array[j] = tmp;
-        }
-    }
+	/**
+	 * Reverse the given array in place.
+	 */
+	public static void reverseArray(final byte[] array) {
+		final int lastIndex = array.length - 1;
+		int i, j;
+		for (i = 0, j = lastIndex; i < j; ++i, --j) {
+			final byte tmp = array[i];
+			array[i] = array[j];
+			array[j] = tmp;
+		}
+	}
 }

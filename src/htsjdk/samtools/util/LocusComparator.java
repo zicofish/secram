@@ -32,9 +32,10 @@ import java.util.Comparator;
  */
 public class LocusComparator<T extends Locus> implements Comparator<T> {
 
-    @Override
+	@Override
 	public int compare(T thing1, T thing2) {
-        int refCompare = thing1.getSequenceIndex() - thing2.getSequenceIndex();
-        return refCompare == 0 ? thing1.getPosition() - thing2.getPosition() : refCompare;
-    }
+		int refCompare = thing1.getSequenceIndex() - thing2.getSequenceIndex();
+		return refCompare == 0 ? thing1.getPosition() - thing2.getPosition()
+				: refCompare;
+	}
 }

@@ -24,68 +24,70 @@ import java.io.Serializable;
  */
 public class ReadBase implements Serializable, ReadFeature {
 
-    private int position;
-    private byte base;
-    private byte qualityScore;
+	private int position;
+	private byte base;
+	private byte qualityScore;
 
-    public static final byte operator = 'B';
+	public static final byte operator = 'B';
 
-    public ReadBase(final int position, final byte base, final byte qualityScore) {
-        this.position = position;
-        this.base = base;
-        this.qualityScore = qualityScore;
-    }
+	public ReadBase(final int position, final byte base, final byte qualityScore) {
+		this.position = position;
+		this.base = base;
+		this.qualityScore = qualityScore;
+	}
 
-    @Override
-    public byte getOperator() {
-        return operator;
-    }
+	@Override
+	public byte getOperator() {
+		return operator;
+	}
 
-    @Override
-    public int getPosition() {
-        return position;
-    }
+	@Override
+	public int getPosition() {
+		return position;
+	}
 
-    @Override
+	@Override
 	public void setPosition(final int position) {
-        this.position = position;
-    }
+		this.position = position;
+	}
 
-    public byte getQualityScore() {
-        return qualityScore;
-    }
+	public byte getQualityScore() {
+		return qualityScore;
+	}
 
-    public void setQualityScore(final byte qualityScore) {
-        this.qualityScore = qualityScore;
-    }
+	public void setQualityScore(final byte qualityScore) {
+		this.qualityScore = qualityScore;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof ReadBase))
-            return false;
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof ReadBase))
+			return false;
 
-        final ReadBase readBase = (ReadBase) obj;
+		final ReadBase readBase = (ReadBase) obj;
 
-        return position == readBase.position && base == readBase.base && qualityScore == readBase.qualityScore;
+		return position == readBase.position && base == readBase.base
+				&& qualityScore == readBase.qualityScore;
 
-    }
+	}
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder(getClass().getSimpleName() + "[");
-        sb.append("position=").append(position);
-        sb.append("; base=").appendCodePoint(base);
-        sb.append("; score=").appendCodePoint(qualityScore);
-        sb.append("] ");
-        return sb.toString();
-    }
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder(getClass().getSimpleName()
+				+ "[");
+		sb.append("position=").append(position);
+		sb.append("; base=").appendCodePoint(base);
+		sb.append("; score=").appendCodePoint(qualityScore);
+		sb.append("] ");
+		return sb.toString();
+	}
 
-    public byte getBase() {
-        return base;
-    }
+	public byte getBase() {
+		return base;
+	}
 
-    public void setBase(final byte base) {
-        this.base = base;
-    }
+	public void setBase(final byte base) {
+		this.base = base;
+	}
 
 }

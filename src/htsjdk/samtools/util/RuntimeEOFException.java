@@ -26,21 +26,22 @@ package htsjdk.samtools.util;
 import htsjdk.samtools.SAMException;
 
 /**
- * Thrown by various codecs to indicate EOF without having to clutter the API with throws clauses
+ * Thrown by various codecs to indicate EOF without having to clutter the API
+ * with throws clauses
  */
 public class RuntimeEOFException extends SAMException {
-    public RuntimeEOFException() {
-    }
+	public RuntimeEOFException() {
+	}
 
-    public RuntimeEOFException(final String s) {
-        super(s);
-    }
+	public RuntimeEOFException(final String s) {
+		super(s);
+	}
 
-    public RuntimeEOFException(final String s, final Throwable throwable) {
-        super(s, throwable);
-    }
+	public RuntimeEOFException(final String s, final Throwable throwable) {
+		super(s, throwable);
+	}
 
-    public RuntimeEOFException(final Throwable throwable) {
-        super(throwable);
-    }
+	public RuntimeEOFException(final Throwable throwable) {
+		super(throwable);
+	}
 }

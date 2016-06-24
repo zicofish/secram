@@ -28,26 +28,27 @@ import java.io.IOException;
 /**
  * Simple basic class providing much of the basic functionality of codecs
  */
-public abstract class AbstractFeatureCodec<FEATURE_TYPE extends Feature, SOURCE> implements FeatureCodec<FEATURE_TYPE, SOURCE> {
-    private final Class<FEATURE_TYPE> myClass;
+public abstract class AbstractFeatureCodec<FEATURE_TYPE extends Feature, SOURCE>
+		implements FeatureCodec<FEATURE_TYPE, SOURCE> {
+	private final Class<FEATURE_TYPE> myClass;
 
-    protected AbstractFeatureCodec(final Class<FEATURE_TYPE> myClass) {
-        this.myClass = myClass;
-    }
-    
-    @Override
-    public Feature decodeLoc(final SOURCE source) throws IOException {
-        return decode(source);
-    }
+	protected AbstractFeatureCodec(final Class<FEATURE_TYPE> myClass) {
+		this.myClass = myClass;
+	}
 
-    @Override
-    public Class<FEATURE_TYPE> getFeatureType() {
-        return myClass;
-    }
+	@Override
+	public Feature decodeLoc(final SOURCE source) throws IOException {
+		return decode(source);
+	}
 
-    @Override
-    public boolean canDecode(final String path) {
-        return false;
-    }
+	@Override
+	public Class<FEATURE_TYPE> getFeatureType() {
+		return myClass;
+	}
+
+	@Override
+	public boolean canDecode(final String path) {
+		return false;
+	}
 
 }

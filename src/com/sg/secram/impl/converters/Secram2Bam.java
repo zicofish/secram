@@ -22,6 +22,7 @@ import com.sg.secram.util.SECRAMUtils;
 import com.sg.secram.util.Timings;
 
 /**
+ * Converter from a SECRAM file to a BAM file.
  * 
  * @author zhicong
  *
@@ -38,12 +39,15 @@ public class Secram2Bam {
 
 	/**
 	 * Reads the input file in the SECRAM format and saves it to the output file
-	 * in the BAM format.
+	 * in the BAM format, using the key for decryption.
 	 * 
 	 * @param input
 	 *            The SECRAM file to read from
 	 * @param output
 	 *            The new BAM file to create
+	 * @param refFileName
+	 *            Path of the reference file
+	 * @param key
 	 * @throws IOException
 	 *             If an {@link IOException} occurs during the operation
 	 */
@@ -145,6 +149,13 @@ public class Secram2Bam {
 		return incompleteReads;
 	}
 
+	/**
+	 * Add information of the next position (secram record) to the list of
+	 * current BAM reads.
+	 * 
+	 * @param record
+	 * @param incompleteReads
+	 */
 	public void addSECRAMRecordToIncompleteBAMRecords(SecramRecord record,
 			List<BAMRecordBuilder> incompleteReads) {
 		int refIndex = record.mReferenceIndex;

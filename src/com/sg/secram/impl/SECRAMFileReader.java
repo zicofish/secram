@@ -51,8 +51,8 @@ public class SECRAMFileReader {
 		return secramIterator;
 	}
 
-	/*
-	 * This method is only used for non-encrypted secram file.
+	/**
+	 * This method is only used for non-encrypted secram file
 	 */
 	public SECRAMIterator query(String ref, int start, int end)
 			throws IOException {

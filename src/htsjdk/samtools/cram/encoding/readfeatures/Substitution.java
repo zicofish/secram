@@ -20,92 +20,99 @@ package htsjdk.samtools.cram.encoding.readfeatures;
 import java.io.Serializable;
 
 /**
- * A substitution event captured in read coordinates. It is characterized by position in read, read base and reference base.
- * The class is also responsible for converting combinations of read base and reference base into a byte value (code).
+ * A substitution event captured in read coordinates. It is characterized by
+ * position in read, read base and reference base. The class is also responsible
+ * for converting combinations of read base and reference base into a byte value
+ * (code).
  */
 public class Substitution implements Serializable, ReadFeature {
 
-    /**
-     * zero-based position in read
-     */
-    private int position;
-    /**
-     * The read base (ACGTN)
-     */
-    private byte base = -1;
-    /**
-     * The reference sequence base matching the position of this substitution.
-     */
-    private byte referenceBase = -1;
-    /**
-     * A byte value denoting combination of the read base and the reference base.
-     */
-    private byte code = -1;
+	/**
+	 * zero-based position in read
+	 */
+	private int position;
+	/**
+	 * The read base (ACGTN)
+	 */
+	private byte base = -1;
+	/**
+	 * The reference sequence base matching the position of this substitution.
+	 */
+	private byte referenceBase = -1;
+	/**
+	 * A byte value denoting combination of the read base and the reference
+	 * base.
+	 */
+	private byte code = -1;
 
-    public byte getCode() {
-        return code;
-    }
+	public byte getCode() {
+		return code;
+	}
 
-    public void setCode(final byte code) {
-        this.code = code;
-    }
+	public void setCode(final byte code) {
+		this.code = code;
+	}
 
-    public static final byte operator = 'X';
+	public static final byte operator = 'X';
 
-    @Override
-    public byte getOperator() {
-        return operator;
-    }
+	@Override
+	public byte getOperator() {
+		return operator;
+	}
 
-    @Override
+	@Override
 	public int getPosition() {
-        return position;
-    }
+		return position;
+	}
 
-    @Override
+	@Override
 	public void setPosition(final int position) {
-        this.position = position;
-    }
+		this.position = position;
+	}
 
-    public byte getBase() {
-        return base;
-    }
+	public byte getBase() {
+		return base;
+	}
 
-    public void setBase(final byte base) {
-        this.base = base;
-    }
+	public void setBase(final byte base) {
+		this.base = base;
+	}
 
-    public byte getReferenceBase() {
-        return referenceBase;
-    }
+	public byte getReferenceBase() {
+		return referenceBase;
+	}
 
-    public void setReferenceBase(final byte referenceBase) {
-        this.referenceBase = referenceBase;
-    }
+	public void setReferenceBase(final byte referenceBase) {
+		this.referenceBase = referenceBase;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof Substitution))
-            return false;
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof Substitution))
+			return false;
 
-        final Substitution substitution = (Substitution) obj;
+		final Substitution substitution = (Substitution) obj;
 
-        if (position != substitution.position)
-            return false;
+		if (position != substitution.position)
+			return false;
 
-        if ((code != substitution.code) & (code == -1 || substitution.code == -1)) {
-            return false;
-        }
+		if ((code != substitution.code)
+				& (code == -1 || substitution.code == -1)) {
+			return false;
+		}
 
-        if (code > -1 && substitution.code > -1) {
-            if (referenceBase != substitution.referenceBase) return false;
-            if (base != substitution.base) return false;
-        }
-        return true;
-    }
+		if (code > -1 && substitution.code > -1) {
+			if (referenceBase != substitution.referenceBase)
+				return false;
+			if (base != substitution.base)
+				return false;
+		}
+		return true;
+	}
 
-    @Override
-    public String toString() {
-        return String.valueOf((char) operator) + '@' + position + '\\' + (char) base + (char) referenceBase;
-    }
+	@Override
+	public String toString() {
+		return String.valueOf((char) operator) + '@' + position + '\\'
+				+ (char) base + (char) referenceBase;
+	}
 }

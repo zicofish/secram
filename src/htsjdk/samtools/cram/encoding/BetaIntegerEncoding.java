@@ -27,52 +27,53 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 public class BetaIntegerEncoding implements Encoding<Integer> {
-    private static final EncodingID ENCODING_ID = EncodingID.BETA;
-    private int offset;
-    private int bitLimit;
+	private static final EncodingID ENCODING_ID = EncodingID.BETA;
+	private int offset;
+	private int bitLimit;
 
-    public BetaIntegerEncoding() {
-    }
+	public BetaIntegerEncoding() {
+	}
 
-    public BetaIntegerEncoding(final int offset, final int bitLimit) {
-        this.offset = offset;
-        this.bitLimit = bitLimit;
-    }
+	public BetaIntegerEncoding(final int offset, final int bitLimit) {
+		this.offset = offset;
+		this.bitLimit = bitLimit;
+	}
 
-    @Override
-    public EncodingID id() {
-        return ENCODING_ID;
-    }
+	@Override
+	public EncodingID id() {
+		return ENCODING_ID;
+	}
 
-    public static EncodingParams toParam(final int offset, final int bitLimit) {
-        final BetaIntegerEncoding encoding = new BetaIntegerEncoding();
-        encoding.offset = offset;
-        encoding.bitLimit = bitLimit;
-        return new EncodingParams(ENCODING_ID, encoding.toByteArray());
-    }
+	public static EncodingParams toParam(final int offset, final int bitLimit) {
+		final BetaIntegerEncoding encoding = new BetaIntegerEncoding();
+		encoding.offset = offset;
+		encoding.bitLimit = bitLimit;
+		return new EncodingParams(ENCODING_ID, encoding.toByteArray());
+	}
 
-    @Override
-    public byte[] toByteArray() {
-        final ByteBuffer buffer = ByteBuffer.allocate(10);
-        ITF8.writeUnsignedITF8(offset, buffer);
-        ITF8.writeUnsignedITF8(bitLimit, buffer);
-        buffer.flip();
-        final byte[] array = new byte[buffer.limit()];
-        buffer.get(array);
-        return array;
-    }
+	@Override
+	public byte[] toByteArray() {
+		final ByteBuffer buffer = ByteBuffer.allocate(10);
+		ITF8.writeUnsignedITF8(offset, buffer);
+		ITF8.writeUnsignedITF8(bitLimit, buffer);
+		buffer.flip();
+		final byte[] array = new byte[buffer.limit()];
+		buffer.get(array);
+		return array;
+	}
 
-    @Override
-    public void fromByteArray(final byte[] data) {
-        final ByteBuffer buffer = ByteBuffer.wrap(data);
-        offset = ITF8.readUnsignedITF8(buffer);
-        bitLimit = ITF8.readUnsignedITF8(buffer);
-    }
+	@Override
+	public void fromByteArray(final byte[] data) {
+		final ByteBuffer buffer = ByteBuffer.wrap(data);
+		offset = ITF8.readUnsignedITF8(buffer);
+		bitLimit = ITF8.readUnsignedITF8(buffer);
+	}
 
-    @Override
-    public BitCodec<Integer> buildCodec(final Map<Integer, InputStream> inputMap,
-                                        final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
-        return new BetaIntegerCodec(offset, bitLimit);
-    }
+	@Override
+	public BitCodec<Integer> buildCodec(
+			final Map<Integer, InputStream> inputMap,
+			final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
+		return new BetaIntegerCodec(offset, bitLimit);
+	}
 
 }

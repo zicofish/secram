@@ -23,71 +23,80 @@ import java.util.Arrays;
  * A class representing a region on a reference sequence.
  */
 class ReferenceRegion {
-    private final int index;
-    private final String name;
-    private long alignmentStart;
-    private int arrayStart;
-    private final byte[] array;
+	private final int index;
+	private final String name;
+	private long alignmentStart;
+	private int arrayStart;
+	private final byte[] array;
 
-    /**
-     * Construct reference sequence region with the given bases.
-     * @param bases the bases for the sequence
-     * @param sequenceIndex index in the {@link htsjdk.samtools.SAMSequenceDictionary}
-     * @param sequenceName name of the reference sequence
-     * @param alignmentStart 1-based inclusive position of the region start on the reference sequence
-     * @param alignmentEnd   1-based inclusive position of the region end on the reference sequence
-     */
-    public ReferenceRegion(final byte[] bases, final int sequenceIndex,
-                           final String sequenceName, final long alignmentStart, long alignmentEnd) {
-        this.array = bases;
-        this.index = sequenceIndex;
-        this.name = sequenceName;
+	/**
+	 * Construct reference sequence region with the given bases.
+	 * 
+	 * @param bases
+	 *            the bases for the sequence
+	 * @param sequenceIndex
+	 *            index in the {@link htsjdk.samtools.SAMSequenceDictionary}
+	 * @param sequenceName
+	 *            name of the reference sequence
+	 * @param alignmentStart
+	 *            1-based inclusive position of the region start on the
+	 *            reference sequence
+	 * @param alignmentEnd
+	 *            1-based inclusive position of the region end on the reference
+	 *            sequence
+	 */
+	public ReferenceRegion(final byte[] bases, final int sequenceIndex,
+			final String sequenceName, final long alignmentStart,
+			long alignmentEnd) {
+		this.array = bases;
+		this.index = sequenceIndex;
+		this.name = sequenceName;
 
-        if (alignmentEnd == -1)
-            alignmentEnd = bases.length;
+		if (alignmentEnd == -1)
+			alignmentEnd = bases.length;
 
-        if (alignmentStart < 1 || alignmentEnd < alignmentStart
-                || alignmentEnd - alignmentStart > bases.length
-                || alignmentEnd - 1 > bases.length)
-            throw new IllegalArgumentException(String.format(
-                    "Invalid reference region: %s, %d, %d.", sequenceName,
-                    alignmentStart, alignmentEnd));
+		if (alignmentStart < 1 || alignmentEnd < alignmentStart
+				|| alignmentEnd - alignmentStart > bases.length
+				|| alignmentEnd - 1 > bases.length)
+			throw new IllegalArgumentException(String.format(
+					"Invalid reference region: %s, %d, %d.", sequenceName,
+					alignmentStart, alignmentEnd));
 
-        this.alignmentStart = alignmentStart;
+		this.alignmentStart = alignmentStart;
 
-        this.arrayStart = (int) (alignmentStart - 1);
-    }
+		this.arrayStart = (int) (alignmentStart - 1);
+	}
 
-    int arrayPosition(final long alignmentPosition) {
-        final int arrayPosition = (int) (arrayStart + (alignmentPosition - alignmentStart));
+	int arrayPosition(final long alignmentPosition) {
+		final int arrayPosition = (int) (arrayStart + (alignmentPosition - alignmentStart));
 
-        if (arrayPosition < 0 || arrayPosition > array.length)
-            throw new IllegalArgumentException(
-                    "The alignment position is out of the region: "
-                            + alignmentPosition);
+		if (arrayPosition < 0 || arrayPosition > array.length)
+			throw new IllegalArgumentException(
+					"The alignment position is out of the region: "
+							+ alignmentPosition);
 
-        return arrayPosition;
-    }
+		return arrayPosition;
+	}
 
-    public byte base(final long alignmentPosition) {
-        return array[arrayPosition(alignmentPosition)];
-    }
+	public byte base(final long alignmentPosition) {
+		return array[arrayPosition(alignmentPosition)];
+	}
 
-    public byte[] copy(final long alignmentStart, final int alignmentSpan) {
-        final int from = arrayPosition(alignmentStart);
-        final int to = arrayPosition(alignmentStart + alignmentSpan);
-        return Arrays.copyOfRange(array, from, to);
-    }
+	public byte[] copy(final long alignmentStart, final int alignmentSpan) {
+		final int from = arrayPosition(alignmentStart);
+		final int to = arrayPosition(alignmentStart + alignmentSpan);
+		return Arrays.copyOfRange(array, from, to);
+	}
 
-    public int getIndex() {
-        return index;
-    }
+	public int getIndex() {
+		return index;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public long getAlignmentStart() {
-        return alignmentStart;
-    }
+	public long getAlignmentStart() {
+		return alignmentStart;
+	}
 }

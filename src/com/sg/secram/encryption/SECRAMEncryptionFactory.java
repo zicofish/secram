@@ -14,6 +14,14 @@ public class SECRAMEncryptionFactory {
 	public static final int BLOCK_CIPHER_KEY_LEN = 24;
 	public static final int OPE_KEY_LEN = 24;
 
+	/**
+	 * Derive a key from the master key and the salt, and use the derived key to
+	 * construct an AES block cipher.
+	 * 
+	 * @param masterKey
+	 * @param salt
+	 * @return An AES block cipher in CTR mode.
+	 */
 	public static SECRAMEncryptionMethod<byte[]> createContainerEM(
 			byte[] masterKey, long salt) {
 		if (null == masterKey)
@@ -23,6 +31,14 @@ public class SECRAMEncryptionFactory {
 		return new BouncyCastle_AES_CTR(derivedKey);
 	}
 
+	/**
+	 * Derive a key from the master key and the salt, and use the derived key to
+	 * construct an OPE cipher.
+	 * 
+	 * @param masterKey
+	 * @param salt
+	 * @return An OPE cipher.
+	 */
 	public static SECRAMEncryptionMethod<Long> createPositionEM(
 			byte[] masterKey, long salt) {
 		if (null == masterKey)
@@ -32,6 +48,16 @@ public class SECRAMEncryptionFactory {
 		return new OPE(derivedKey);
 	}
 
+	/**
+	 * @param ikm
+	 *            Master key
+	 * @param salt
+	 * @param info
+	 *            Some extra (public) information.
+	 * @param outKeyLen
+	 *            The derived key length
+	 * @return A derived key.
+	 */
 	public static byte[] deriveKey(byte[] ikm, byte[] salt, byte[] info,
 			int outKeyLen) {
 		HKDFBytesGenerator kdf = new HKDFBytesGenerator(new SHA1Digest());

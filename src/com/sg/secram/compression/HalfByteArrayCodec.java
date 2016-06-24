@@ -24,35 +24,35 @@ import htsjdk.samtools.cram.io.BitOutputStream;
 import java.io.IOException;
 
 public class HalfByteArrayCodec extends AbstractBitCodec<byte[]> {
-    public HalfByteArrayCodec() {
-    }
+	public HalfByteArrayCodec() {
+	}
 
-    @Override
-    public byte[] read(final BitInputStream bitInputStream) throws IOException {
-    	throw new RuntimeException("Cannot read byte array of unknown length.");
-    }
+	@Override
+	public byte[] read(final BitInputStream bitInputStream) throws IOException {
+		throw new RuntimeException("Cannot read byte array of unknown length.");
+	}
 
 	@Override
 	public byte[] read(BitInputStream bitInputStream, int valueLen)
 			throws IOException {
 		byte[] array = new byte[valueLen];
-		for(int i = 0; i < valueLen; i++)
-			array[i] = (byte)bitInputStream.readBits(4);
+		for (int i = 0; i < valueLen; i++)
+			array[i] = (byte) bitInputStream.readBits(4);
 		return array;
 	}
 
 	@Override
 	public long write(BitOutputStream bitOutputStream, byte[] object)
 			throws IOException {
-		for(int i = 0; i < object.length; i++){
+		for (int i = 0; i < object.length; i++) {
 			bitOutputStream.write(object[i], 4);
 		}
-		return object.length*4;
+		return object.length * 4;
 	}
 
 	@Override
 	public long numberOfBits(byte[] object) {
 		// TODO Auto-generated method stub
-		return object.length*4;
+		return object.length * 4;
 	}
 }

@@ -21,16 +21,17 @@ package htsjdk.samtools.cram.encoding.readfeatures;
  * An interface to capture data in read coordinates.
  */
 public interface ReadFeature {
-    /**
-     * @return zero-based position in the read
-     */
-    int getPosition();
+	/**
+	 * @return zero-based position in the read
+	 */
+	int getPosition();
 
-    void setPosition(int position);
+	void setPosition(int position);
 
-    /**
-     * Read features are distinguished by operator, similar to cigar operator.
-     * @return type of the read feature
-     */
-    byte getOperator();
+	/**
+	 * Read features are distinguished by operator, similar to cigar operator.
+	 * 
+	 * @return type of the read feature
+	 */
+	byte getOperator();
 }

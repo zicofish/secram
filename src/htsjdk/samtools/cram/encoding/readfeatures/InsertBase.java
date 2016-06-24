@@ -24,58 +24,58 @@ import java.io.Serializable;
  */
 public class InsertBase implements Serializable, ReadFeature {
 
-    private int position;
-    private byte base;
-    public static final byte operator = 'i';
+	private int position;
+	private byte base;
+	public static final byte operator = 'i';
 
-    public InsertBase() {
-    }
+	public InsertBase() {
+	}
 
-    public InsertBase(final int position, final byte base) {
-        this.position = position;
-        this.base = base;
-    }
+	public InsertBase(final int position, final byte base) {
+		this.position = position;
+		this.base = base;
+	}
 
+	@Override
+	public byte getOperator() {
+		return operator;
+	}
 
-    @Override
-    public byte getOperator() {
-        return operator;
-    }
-
-    @Override
+	@Override
 	public int getPosition() {
-        return position;
-    }
+		return position;
+	}
 
-    @Override
+	@Override
 	public void setPosition(final int position) {
-        this.position = position;
-    }
+		this.position = position;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof InsertBase))
-            return false;
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof InsertBase))
+			return false;
 
-        final InsertBase insertBase = (InsertBase) obj;
+		final InsertBase insertBase = (InsertBase) obj;
 
-        return position == insertBase.position && base == insertBase.base;
+		return position == insertBase.position && base == insertBase.base;
 
-    }
+	}
 
-    @Override
-    public String toString() {
-        final StringBuilder stringBuilder = new StringBuilder().append((char) operator).append('@');
-        stringBuilder.append(position);
-        stringBuilder.append('\\').appendCodePoint(base);
-        return stringBuilder.toString();
-    }
+	@Override
+	public String toString() {
+		final StringBuilder stringBuilder = new StringBuilder().append(
+				(char) operator).append('@');
+		stringBuilder.append(position);
+		stringBuilder.append('\\').appendCodePoint(base);
+		return stringBuilder.toString();
+	}
 
-    public byte getBase() {
-        return base;
-    }
+	public byte getBase() {
+		return base;
+	}
 
-    public void setBase(final byte base) {
-        this.base = base;
-    }
+	public void setBase(final byte base) {
+		this.base = base;
+	}
 }

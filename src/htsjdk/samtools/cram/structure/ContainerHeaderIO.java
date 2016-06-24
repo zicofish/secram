@@ -29,60 +29,69 @@ import java.io.OutputStream;
 
 class ContainerHeaderIO {
 
-    public boolean readContainerHeader(final Container container, final InputStream inputStream)
-            throws IOException {
-        return readContainerHeader(2, container, inputStream);
-    }
+	public boolean readContainerHeader(final Container container,
+			final InputStream inputStream) throws IOException {
+		return readContainerHeader(2, container, inputStream);
+	}
 
-    public boolean readContainerHeader(final int major, final Container container, final InputStream inputStream)
-            throws IOException {
-        final byte[] peek = new byte[4];
-        int character = inputStream.read();
-        if (character == -1)
-            return false;
+	public boolean readContainerHeader(final int major,
+			final Container container, final InputStream inputStream)
+			throws IOException {
+		final byte[] peek = new byte[4];
+		int character = inputStream.read();
+		if (character == -1)
+			return false;
 
-        peek[0] = (byte) character;
-        for (int i = 1; i < peek.length; i++) {
-            character = inputStream.read();
-            if (character == -1)
-                throw new RuntimeException("Incomplete or broken stream.");
-            peek[i] = (byte) character;
-        }
+		peek[0] = (byte) character;
+		for (int i = 1; i < peek.length; i++) {
+			character = inputStream.read();
+			if (character == -1)
+				throw new RuntimeException("Incomplete or broken stream.");
+			peek[i] = (byte) character;
+		}
 
-        container.containerByteSize = CramInt.int32(peek);
-        container.sequenceId = ITF8.readUnsignedITF8(inputStream);
-        container.alignmentStart = ITF8.readUnsignedITF8(inputStream);
-        container.alignmentSpan = ITF8.readUnsignedITF8(inputStream);
-        container.nofRecords = ITF8.readUnsignedITF8(inputStream);
-        container.globalRecordCounter = LTF8.readUnsignedLTF8(inputStream);
-        container.bases = LTF8.readUnsignedLTF8(inputStream);
-        container.blockCount = ITF8.readUnsignedITF8(inputStream);
-        container.landmarks = CramArray.array(inputStream);
-        if (major >= 3)
-            container.checksum = CramInt.int32(inputStream);
+		container.containerByteSize = CramInt.int32(peek);
+		container.sequenceId = ITF8.readUnsignedITF8(inputStream);
+		container.alignmentStart = ITF8.readUnsignedITF8(inputStream);
+		container.alignmentSpan = ITF8.readUnsignedITF8(inputStream);
+		container.nofRecords = ITF8.readUnsignedITF8(inputStream);
+		container.globalRecordCounter = LTF8.readUnsignedLTF8(inputStream);
+		container.bases = LTF8.readUnsignedLTF8(inputStream);
+		container.blockCount = ITF8.readUnsignedITF8(inputStream);
+		container.landmarks = CramArray.array(inputStream);
+		if (major >= 3)
+			container.checksum = CramInt.int32(inputStream);
 
-        return true;
-    }
+		return true;
+	}
 
-    public int writeContainerHeader(final int major, final Container container, final OutputStream outputStream)
-            throws IOException {
-        final CRC32OutputStream crc32OutputStream = new CRC32OutputStream(outputStream);
+	public int writeContainerHeader(final int major, final Container container,
+			final OutputStream outputStream) throws IOException {
+		final CRC32OutputStream crc32OutputStream = new CRC32OutputStream(
+				outputStream);
 
-        int length = (CramInt.writeInt32(container.containerByteSize, crc32OutputStream) + 7) / 8;
-        length += (ITF8.writeUnsignedITF8(container.sequenceId, crc32OutputStream) + 7) / 8;
-        length += (ITF8.writeUnsignedITF8(container.alignmentStart, crc32OutputStream) + 7) / 8;
-        length += (ITF8.writeUnsignedITF8(container.alignmentSpan, crc32OutputStream) + 7) / 8;
-        length += (ITF8.writeUnsignedITF8(container.nofRecords, crc32OutputStream) + 7) / 8;
-        length += (LTF8.writeUnsignedLTF8(container.globalRecordCounter, crc32OutputStream) + 7) / 8;
-        length += (LTF8.writeUnsignedLTF8(container.bases, crc32OutputStream) + 7) / 8;
-        length += (ITF8.writeUnsignedITF8(container.blockCount, crc32OutputStream) + 7) / 8;
-        length += (CramArray.write(container.landmarks, crc32OutputStream) + 7) / 8;
+		int length = (CramInt.writeInt32(container.containerByteSize,
+				crc32OutputStream) + 7) / 8;
+		length += (ITF8.writeUnsignedITF8(container.sequenceId,
+				crc32OutputStream) + 7) / 8;
+		length += (ITF8.writeUnsignedITF8(container.alignmentStart,
+				crc32OutputStream) + 7) / 8;
+		length += (ITF8.writeUnsignedITF8(container.alignmentSpan,
+				crc32OutputStream) + 7) / 8;
+		length += (ITF8.writeUnsignedITF8(container.nofRecords,
+				crc32OutputStream) + 7) / 8;
+		length += (LTF8.writeUnsignedLTF8(container.globalRecordCounter,
+				crc32OutputStream) + 7) / 8;
+		length += (LTF8.writeUnsignedLTF8(container.bases, crc32OutputStream) + 7) / 8;
+		length += (ITF8.writeUnsignedITF8(container.blockCount,
+				crc32OutputStream) + 7) / 8;
+		length += (CramArray.write(container.landmarks, crc32OutputStream) + 7) / 8;
 
-        if (major >= 3) {
-            outputStream.write(crc32OutputStream.getCrc32_LittleEndian());
-            length += 4 * 8;
-        }
+		if (major >= 3) {
+			outputStream.write(crc32OutputStream.getCrc32_LittleEndian());
+			length += 4 * 8;
+		}
 
-        return length;
-    }
+		return length;
+	}
 }

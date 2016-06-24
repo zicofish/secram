@@ -33,155 +33,181 @@ import static htsjdk.samtools.GenomicIndexUtil.MAX_BINS;
  * Builder for a BinningIndexContent object.
  */
 public class BinningIndexBuilder {
-    private final int referenceSequence;
-    // the bins for the current reference
-    private final Bin[] bins; // made only as big as needed for each reference
-    private int binsSeen = 0;
+	private final int referenceSequence;
+	// the bins for the current reference
+	private final Bin[] bins; // made only as big as needed for each reference
+	private int binsSeen = 0;
 
-    // linear index for the current reference
-    private final long[] index = new long[LinearIndex.MAX_LINEAR_INDEX_SIZE];
-    private int largestIndexSeen = -1;
+	// linear index for the current reference
+	private final long[] index = new long[LinearIndex.MAX_LINEAR_INDEX_SIZE];
+	private int largestIndexSeen = -1;
 
+	/**
+	 *
+	 * @param referenceSequence
+	 * @param sequenceLength
+	 *            0 implies unknown length. Known length will reduce memory use.
+	 */
+	public BinningIndexBuilder(final int referenceSequence,
+			final int sequenceLength) {
+		this.referenceSequence = referenceSequence;
+		final int numBins;
+		if (sequenceLength <= 0)
+			numBins = MAX_BINS + 1;
+		else
+			numBins = AbstractBAMFileIndex
+					.getMaxBinNumberForSequenceLength(sequenceLength) + 1;
+		bins = new Bin[numBins];
+	}
 
-    /**
-     *
-     * @param referenceSequence
-     * @param sequenceLength 0 implies unknown length.  Known length will reduce memory use.
-     */
-    public BinningIndexBuilder(final int referenceSequence, final int sequenceLength) {
-        this.referenceSequence = referenceSequence;
-        final int numBins;
-        if (sequenceLength <= 0) numBins = MAX_BINS + 1;
-        else numBins = AbstractBAMFileIndex.getMaxBinNumberForSequenceLength(sequenceLength) + 1;
-        bins = new Bin[numBins];
-    }
+	public BinningIndexBuilder(final int referenceSequence) {
+		this(referenceSequence, 0);
+	}
 
-    public BinningIndexBuilder(final int referenceSequence) {
-        this(referenceSequence, 0);
-    }
+	/**
+	 * coordinates are 1-based, inclusive
+	 */
+	public interface FeatureToBeIndexed {
+		public int getStart();
 
-    /**
-     * coordinates are 1-based, inclusive
-     */
-    public interface FeatureToBeIndexed {
-        public int getStart();
-        public int getEnd();
-        public Integer getIndexingBin();
-        public Chunk getChunk();
-    }
+		public int getEnd();
 
-    public void processFeature(final FeatureToBeIndexed feature) {
+		public Integer getIndexingBin();
 
-        // process bins
+		public Chunk getChunk();
+	}
 
-        final Integer binNumber = feature.getIndexingBin();
-        final int binNum = binNumber == null ? computeIndexingBin(feature) : binNumber;
+	public void processFeature(final FeatureToBeIndexed feature) {
 
+		// process bins
 
-        // is there a bin already represented for this index?  if not, add one
-        final Bin bin;
-        if (bins[binNum] != null) {
-            bin = bins[binNum];
-        } else {
-            bin = new Bin(referenceSequence, binNum);
-            bins[binNum] = bin;
-            binsSeen++;
-        }
+		final Integer binNumber = feature.getIndexingBin();
+		final int binNum = binNumber == null ? computeIndexingBin(feature)
+				: binNumber;
 
-        // process chunks
+		// is there a bin already represented for this index? if not, add one
+		final Bin bin;
+		if (bins[binNum] != null) {
+			bin = bins[binNum];
+		} else {
+			bin = new Bin(referenceSequence, binNum);
+			bins[binNum] = bin;
+			binsSeen++;
+		}
 
-        final Chunk newChunk = feature.getChunk();
-        final long chunkStart = newChunk.getChunkStart();
-        final long chunkEnd = newChunk.getChunkEnd();
+		// process chunks
 
-        final List<Chunk> oldChunks = bin.getChunkList();
-        if (!bin.containsChunks()) {
-            bin.addInitialChunk(newChunk);
+		final Chunk newChunk = feature.getChunk();
+		final long chunkStart = newChunk.getChunkStart();
+		final long chunkEnd = newChunk.getChunkEnd();
 
-        } else {
-            final Chunk lastChunk = bin.getLastChunk();
+		final List<Chunk> oldChunks = bin.getChunkList();
+		if (!bin.containsChunks()) {
+			bin.addInitialChunk(newChunk);
 
-            // Coalesce chunks that are in the same or adjacent file blocks.
-            // Similar to AbstractBAMFileIndex.optimizeChunkList,
-            // but no need to copy the list, no minimumOffset, and maintain bin.lastChunk
-            if (BlockCompressedFilePointerUtil.areInSameOrAdjacentBlocks(lastChunk.getChunkEnd(), chunkStart)) {
-                lastChunk.setChunkEnd(chunkEnd);  // coalesced
-            } else {
-                oldChunks.add(newChunk);
-                bin.setLastChunk(newChunk);
-            }
-        }
+		} else {
+			final Chunk lastChunk = bin.getLastChunk();
 
-        // process linear index
+			// Coalesce chunks that are in the same or adjacent file blocks.
+			// Similar to AbstractBAMFileIndex.optimizeChunkList,
+			// but no need to copy the list, no minimumOffset, and maintain
+			// bin.lastChunk
+			if (BlockCompressedFilePointerUtil.areInSameOrAdjacentBlocks(
+					lastChunk.getChunkEnd(), chunkStart)) {
+				lastChunk.setChunkEnd(chunkEnd); // coalesced
+			} else {
+				oldChunks.add(newChunk);
+				bin.setLastChunk(newChunk);
+			}
+		}
 
-        // the smallest file offset that appears in the 16k window for this bin
-        final int featureEnd = feature.getEnd();
-        int startWindow = LinearIndex.convertToLinearIndexOffset(feature.getStart()); // the 16k window
-        final int endWindow;
+		// process linear index
 
-        if (featureEnd == GenomicIndexUtil.UNSET_GENOMIC_LOCATION) {   // assume feature uses one position
-            // Next line for C (samtools index) compatibility. Differs only when on a window boundary
-            startWindow = LinearIndex.convertToLinearIndexOffset(feature.getStart() - 1);
-            endWindow = startWindow;
-        } else {
-            endWindow = LinearIndex.convertToLinearIndexOffset(featureEnd);
-        }
+		// the smallest file offset that appears in the 16k window for this bin
+		final int featureEnd = feature.getEnd();
+		int startWindow = LinearIndex.convertToLinearIndexOffset(feature
+				.getStart()); // the 16k window
+		final int endWindow;
 
-        if (endWindow > largestIndexSeen) {
-            largestIndexSeen = endWindow;
-        }
+		if (featureEnd == GenomicIndexUtil.UNSET_GENOMIC_LOCATION) { // assume
+																		// feature
+																		// uses
+																		// one
+																		// position
+			// Next line for C (samtools index) compatibility. Differs only when
+			// on a window boundary
+			startWindow = LinearIndex.convertToLinearIndexOffset(feature
+					.getStart() - 1);
+			endWindow = startWindow;
+		} else {
+			endWindow = LinearIndex.convertToLinearIndexOffset(featureEnd);
+		}
 
-        // set linear index at every 16K window that this feature overlaps
-        for (int win = startWindow; win <= endWindow; win++) {
-            if (index[win] == 0 || chunkStart < index[win]) {
-                index[win] = chunkStart;
-            }
-        }
-    }
+		if (endWindow > largestIndexSeen) {
+			largestIndexSeen = endWindow;
+		}
 
-    /**
-     * Creates the BAMIndexContent for this reference.
-     * Requires all features of the reference have already been processed.
-     */
-    public BinningIndexContent generateIndexContent() {
+		// set linear index at every 16K window that this feature overlaps
+		for (int win = startWindow; win <= endWindow; win++) {
+			if (index[win] == 0 || chunkStart < index[win]) {
+				index[win] = chunkStart;
+			}
+		}
+	}
 
+	/**
+	 * Creates the BAMIndexContent for this reference. Requires all features of
+	 * the reference have already been processed.
+	 */
+	public BinningIndexContent generateIndexContent() {
 
-        // process bins
-        if (binsSeen == 0) return null;  // no bins for this reference
+		// process bins
+		if (binsSeen == 0)
+			return null; // no bins for this reference
 
-        // process chunks
-        // nothing needed
+		// process chunks
+		// nothing needed
 
-        // process linear index
-        // linear index will only be as long as the largest index seen
-        final long[] newIndex = new long[largestIndexSeen + 1]; // in java1.6 Arrays.copyOf(index, largestIndexSeen + 1);
+		// process linear index
+		// linear index will only be as long as the largest index seen
+		final long[] newIndex = new long[largestIndexSeen + 1]; // in java1.6
+																// Arrays.copyOf(index,
+																// largestIndexSeen
+																// + 1);
 
-        // C (samtools index) also fills in intermediate 0's with values.  This seems unnecessary, but safe
-        long lastNonZeroOffset = 0;
-        for (int i = 0; i <= largestIndexSeen; i++) {
-            if (index[i] == 0) {
-                index[i] = lastNonZeroOffset; // not necessary, but C (samtools index) does this
-                // note, if you remove the above line BAMIndexWriterTest.compareTextual and compareBinary will have to change
-            } else {
-                lastNonZeroOffset = index[i];
-            }
-            newIndex[i] = index[i];
-        }
+		// C (samtools index) also fills in intermediate 0's with values. This
+		// seems unnecessary, but safe
+		long lastNonZeroOffset = 0;
+		for (int i = 0; i <= largestIndexSeen; i++) {
+			if (index[i] == 0) {
+				index[i] = lastNonZeroOffset; // not necessary, but C (samtools
+												// index) does this
+				// note, if you remove the above line
+				// BAMIndexWriterTest.compareTextual and compareBinary will have
+				// to change
+			} else {
+				lastNonZeroOffset = index[i];
+			}
+			newIndex[i] = index[i];
+		}
 
-        final LinearIndex linearIndex = new LinearIndex(referenceSequence, 0, newIndex);
+		final LinearIndex linearIndex = new LinearIndex(referenceSequence, 0,
+				newIndex);
 
-        return new BinningIndexContent(referenceSequence, new BinningIndexContent.BinList(bins, binsSeen), linearIndex);
-    }
+		return new BinningIndexContent(referenceSequence,
+				new BinningIndexContent.BinList(bins, binsSeen), linearIndex);
+	}
 
-    private int computeIndexingBin(final FeatureToBeIndexed feature) {
-        // reg2bin has zero-based, half-open API
-        final int start = feature.getStart()-1;
-        int end = feature.getEnd();
-        if (end <= 0) {
-            // If feature end cannot be determined (e.g. because a read is not really aligned),
-            // then treat this as a one base feature for indexing purposes.
-            end = start + 1;
-        }
-        return GenomicIndexUtil.reg2bin(start, end);
-    }
+	private int computeIndexingBin(final FeatureToBeIndexed feature) {
+		// reg2bin has zero-based, half-open API
+		final int start = feature.getStart() - 1;
+		int end = feature.getEnd();
+		if (end <= 0) {
+			// If feature end cannot be determined (e.g. because a read is not
+			// really aligned),
+			// then treat this as a one base feature for indexing purposes.
+			end = start + 1;
+		}
+		return GenomicIndexUtil.reg2bin(start, end);
+	}
 }

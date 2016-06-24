@@ -35,21 +35,24 @@ import java.util.List;
 
 public interface ChrIndex {
 
-    public String getName();
+	public String getName();
 
-    /**
-     * @return all blocks in ChrIndex
-     */
-    List<Block> getBlocks();
+	/**
+	 * @return all blocks in ChrIndex
+	 */
+	List<Block> getBlocks();
 
-    /**
-     * @param start the start position, one based
-     * @param end   the end position, one based
-     * @return a list of blocks that include the region defined from start to stop.  Can never return null
-     */
-    List<Block> getBlocks(int start, int end);
+	/**
+	 * @param start
+	 *            the start position, one based
+	 * @param end
+	 *            the end position, one based
+	 * @return a list of blocks that include the region defined from start to
+	 *         stop. Can never return null
+	 */
+	List<Block> getBlocks(int start, int end);
 
-    void write(LittleEndianOutputStream dos) throws IOException;
+	void write(LittleEndianOutputStream dos) throws IOException;
 
-    void read(LittleEndianInputStream dis) throws IOException;
+	void read(LittleEndianInputStream dis) throws IOException;
 }

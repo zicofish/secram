@@ -7,8 +7,12 @@ import java.io.IOException;
 
 public interface SecramFieldCodec<T> {
 	void setBitInputStream(BitInputStream bitInputStream);
+
 	void setBitOutputStream(BitOutputStream bitOutputStream);
+
 	long writeField(T value) throws IOException;
+
 	T readField() throws IOException;
+
 	T readArrayField(int length) throws IOException;
 }

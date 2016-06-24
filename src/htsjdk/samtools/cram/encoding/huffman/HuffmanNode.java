@@ -18,11 +18,11 @@
 package htsjdk.samtools.cram.encoding.huffman;
 
 class HuffmanNode<T> extends HuffmanTree<T> {
-    public final HuffmanTree<T> left, right;
+	public final HuffmanTree<T> left, right;
 
-    public HuffmanNode(final HuffmanTree<T> left, final HuffmanTree<T> right) {
-        super(left.frequency + right.frequency);
-        this.left = left;
-        this.right = right;
-    }
+	public HuffmanNode(final HuffmanTree<T> left, final HuffmanTree<T> right) {
+		super(left.frequency + right.frequency);
+		this.left = left;
+		this.right = right;
+	}
 }

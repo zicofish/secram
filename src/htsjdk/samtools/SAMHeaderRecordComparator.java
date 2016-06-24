@@ -27,11 +27,13 @@ package htsjdk.samtools;
 import java.util.Comparator;
 
 /**
- * Provides ordering based on SAM header records' attribute values. Provide the list of attributes to use
- * in the comparison to the constructor. Null attribute values (i.e., those attributes not present in the
- * record) sort behind those that have values.
+ * Provides ordering based on SAM header records' attribute values. Provide the
+ * list of attributes to use in the comparison to the constructor. Null
+ * attribute values (i.e., those attributes not present in the record) sort
+ * behind those that have values.
  */
-public class SAMHeaderRecordComparator<T extends AbstractSAMHeaderRecord> implements Comparator<T> {
+public class SAMHeaderRecordComparator<T extends AbstractSAMHeaderRecord>
+		implements Comparator<T> {
 
 	private final String[] attributes;
 
@@ -48,17 +50,21 @@ public class SAMHeaderRecordComparator<T extends AbstractSAMHeaderRecord> implem
 			if (leftValue == null) {
 				// Fastest comparison possible; two empty values are
 				// equivalent, so move along to the next attribute
-				if (rightValue == null) continue;
+				if (rightValue == null)
+					continue;
 
-					// Otherwise left < right, since right has a value
-				else return -1;
+				// Otherwise left < right, since right has a value
+				else
+					return -1;
 			}
 
 			// left is not null; if right is, left > right
-			if (rightValue == null) return 1;
+			if (rightValue == null)
+				return 1;
 
 			final int compare = leftValue.compareTo(rightValue);
-			if (compare != 0) return compare;
+			if (compare != 0)
+				return compare;
 		}
 
 		return 0;

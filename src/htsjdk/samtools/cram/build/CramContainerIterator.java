@@ -13,65 +13,69 @@ import java.util.Iterator;
  * An iterator of CRAM containers read from an {@link java.io.InputStream}.
  */
 public class CramContainerIterator implements Iterator<Container> {
-    private CramHeader cramHeader;
-    private InputStream inputStream;
-    private Container nextContainer;
-    private boolean eof = false;
-    private long offset = 0;
+	private CramHeader cramHeader;
+	private InputStream inputStream;
+	private Container nextContainer;
+	private boolean eof = false;
+	private long offset = 0;
 
-    public CramContainerIterator(final InputStream inputStream) throws IOException {
-        cramHeader = CramIO.readCramHeader(inputStream);
-        this.inputStream = inputStream;
-    }
+	public CramContainerIterator(final InputStream inputStream)
+			throws IOException {
+		cramHeader = CramIO.readCramHeader(inputStream);
+		this.inputStream = inputStream;
+	}
 
-    void readNextContainer() {
-        try {
-            final CountingInputStream cis = new CountingInputStream(inputStream);
-            nextContainer = ContainerIO.readContainer(cramHeader.getVersion(), cis);
-            final long containerSizeInBytes = cis.getCount();
+	void readNextContainer() {
+		try {
+			final CountingInputStream cis = new CountingInputStream(inputStream);
+			nextContainer = ContainerIO.readContainer(cramHeader.getVersion(),
+					cis);
+			final long containerSizeInBytes = cis.getCount();
 
-            nextContainer.offset = offset;
-            offset += containerSizeInBytes;
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+			nextContainer.offset = offset;
+			offset += containerSizeInBytes;
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
 
-        if (nextContainer.isEOF()) {
-            eof = true;
-            nextContainer = null;
-        }
-    }
+		if (nextContainer.isEOF()) {
+			eof = true;
+			nextContainer = null;
+		}
+	}
 
-    @Override
-    public boolean hasNext() {
-        if (eof) return false;
-        if (nextContainer == null) readNextContainer();
-        return !eof;
-    }
+	@Override
+	public boolean hasNext() {
+		if (eof)
+			return false;
+		if (nextContainer == null)
+			readNextContainer();
+		return !eof;
+	}
 
-    @Override
-    public Container next() {
-        final Container result = nextContainer;
-        nextContainer = null;
-        return result;
-    }
+	@Override
+	public Container next() {
+		final Container result = nextContainer;
+		nextContainer = null;
+		return result;
+	}
 
-    @Override
-    public void remove() {
-        throw new RuntimeException("Read only iterator.");
-    }
+	@Override
+	public void remove() {
+		throw new RuntimeException("Read only iterator.");
+	}
 
-    public CramHeader getCramHeader() {
-        return cramHeader;
-    }
+	public CramHeader getCramHeader() {
+		return cramHeader;
+	}
 
-    public void close() {
-        nextContainer = null;
-        cramHeader = null;
-        //noinspection EmptyCatchBlock
-        try {
-            inputStream.close();
-        } catch (final Exception e) {
-        }
-    }
+	public void close() {
+		nextContainer = null;
+		cramHeader = null;
+		// noinspection EmptyCatchBlock
+		try {
+			inputStream.close();
+		} catch (final Exception e) {
+		}
+	}
 }

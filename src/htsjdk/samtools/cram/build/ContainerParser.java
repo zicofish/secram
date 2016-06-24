@@ -40,118 +40,122 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ContainerParser {
-    private static final Log log = Log.getInstance(ContainerParser.class);
+	private static final Log log = Log.getInstance(ContainerParser.class);
 
-    private final SAMFileHeader samFileHeader;
-    private final Map<String, Long> nanosecondsMap = new TreeMap<String, Long>();
+	private final SAMFileHeader samFileHeader;
+	private final Map<String, Long> nanosecondsMap = new TreeMap<String, Long>();
 
-    public ContainerParser(final SAMFileHeader samFileHeader) {
-        this.samFileHeader = samFileHeader;
-    }
+	public ContainerParser(final SAMFileHeader samFileHeader) {
+		this.samFileHeader = samFileHeader;
+	}
 
-    public List<CramCompressionRecord> getRecords(final Container container,
-                                                  ArrayList<CramCompressionRecord> records) throws IllegalArgumentException,
-            IllegalAccessException {
-        final long time1 = System.nanoTime();
-        if (records == null)
-            records = new ArrayList<CramCompressionRecord>(container.nofRecords);
+	public List<CramCompressionRecord> getRecords(final Container container,
+			ArrayList<CramCompressionRecord> records)
+			throws IllegalArgumentException, IllegalAccessException {
+		final long time1 = System.nanoTime();
+		if (records == null)
+			records = new ArrayList<CramCompressionRecord>(container.nofRecords);
 
-        for (final Slice slice : container.slices)
-            records.addAll(getRecords(slice, container.header));
+		for (final Slice slice : container.slices)
+			records.addAll(getRecords(slice, container.header));
 
-        final long time2 = System.nanoTime();
+		final long time2 = System.nanoTime();
 
-        container.parseTime = time2 - time1;
+		container.parseTime = time2 - time1;
 
-        if (log.isEnabled(LogLevel.DEBUG)) {
-            for (final String key : nanosecondsMap.keySet()) {
-                log.debug(String.format("%s: %dms.", key, nanosecondsMap.get(key) / 1000000));
-            }
-        }
+		if (log.isEnabled(LogLevel.DEBUG)) {
+			for (final String key : nanosecondsMap.keySet()) {
+				log.debug(String.format("%s: %dms.", key,
+						nanosecondsMap.get(key) / 1000000));
+			}
+		}
 
-        return records;
-    }
+		return records;
+	}
 
-    ArrayList<CramCompressionRecord> getRecords(ArrayList<CramCompressionRecord> records,
-                                                final Slice slice, final CompressionHeader header) throws IllegalArgumentException,
-            IllegalAccessException {
-        String seqName = SAMRecord.NO_ALIGNMENT_REFERENCE_NAME;
-        switch (slice.sequenceId) {
-            case SAMRecord.NO_ALIGNMENT_REFERENCE_INDEX:
-            case -2:
-                break;
+	ArrayList<CramCompressionRecord> getRecords(
+			ArrayList<CramCompressionRecord> records, final Slice slice,
+			final CompressionHeader header) throws IllegalArgumentException,
+			IllegalAccessException {
+		String seqName = SAMRecord.NO_ALIGNMENT_REFERENCE_NAME;
+		switch (slice.sequenceId) {
+		case SAMRecord.NO_ALIGNMENT_REFERENCE_INDEX:
+		case -2:
+			break;
 
-            default:
-                final SAMSequenceRecord sequence = samFileHeader
-                        .getSequence(slice.sequenceId);
-                seqName = sequence.getSequenceName();
-                break;
-        }
+		default:
+			final SAMSequenceRecord sequence = samFileHeader
+					.getSequence(slice.sequenceId);
+			seqName = sequence.getSequenceName();
+			break;
+		}
 
-        final DataReaderFactory dataReaderFactory = new DataReaderFactory();
-        final Map<Integer, InputStream> inputMap = new HashMap<Integer, InputStream>();
-        for (final Integer exId : slice.external.keySet()) {
-            log.debug("Adding external data: " + exId);
-            inputMap.put(exId, new ByteArrayInputStream(slice.external.get(exId)
-                    .getRawContent()));
-        }
+		final DataReaderFactory dataReaderFactory = new DataReaderFactory();
+		final Map<Integer, InputStream> inputMap = new HashMap<Integer, InputStream>();
+		for (final Integer exId : slice.external.keySet()) {
+			log.debug("Adding external data: " + exId);
+			inputMap.put(exId, new ByteArrayInputStream(slice.external
+					.get(exId).getRawContent()));
+		}
 
-        long time;
-        final CramRecordReader reader = new CramRecordReader();
-        dataReaderFactory.buildReader(reader, new DefaultBitInputStream(
-                        new ByteArrayInputStream(slice.coreBlock.getRawContent())),
-                inputMap, header, slice.sequenceId);
+		long time;
+		final CramRecordReader reader = new CramRecordReader();
+		dataReaderFactory.buildReader(reader, new DefaultBitInputStream(
+				new ByteArrayInputStream(slice.coreBlock.getRawContent())),
+				inputMap, header, slice.sequenceId);
 
-        if (records == null)
-            records = new ArrayList<CramCompressionRecord>(slice.nofRecords);
+		if (records == null)
+			records = new ArrayList<CramCompressionRecord>(slice.nofRecords);
 
-        long readNanos = 0;
-        int prevStart = slice.alignmentStart;
-        for (int i = 0; i < slice.nofRecords; i++) {
-            final CramCompressionRecord record = new CramCompressionRecord();
-            record.sliceIndex = slice.index;
-            record.index = i;
+		long readNanos = 0;
+		int prevStart = slice.alignmentStart;
+		for (int i = 0; i < slice.nofRecords; i++) {
+			final CramCompressionRecord record = new CramCompressionRecord();
+			record.sliceIndex = slice.index;
+			record.index = i;
 
-            time = System.nanoTime();
-            reader.read(record);
-            readNanos += System.nanoTime() - time;
+			time = System.nanoTime();
+			reader.read(record);
+			readNanos += System.nanoTime() - time;
 
-            if (record.sequenceId == slice.sequenceId) {
-                record.sequenceName = seqName;
-                record.sequenceId = slice.sequenceId;
-            } else {
-                if (record.sequenceId == SAMRecord.NO_ALIGNMENT_REFERENCE_INDEX)
-                    record.sequenceName = SAMRecord.NO_ALIGNMENT_REFERENCE_NAME;
-                else {
-                    record.sequenceName = samFileHeader.getSequence(record.sequenceId)
-                            .getSequenceName();
-                }
-            }
+			if (record.sequenceId == slice.sequenceId) {
+				record.sequenceName = seqName;
+				record.sequenceId = slice.sequenceId;
+			} else {
+				if (record.sequenceId == SAMRecord.NO_ALIGNMENT_REFERENCE_INDEX)
+					record.sequenceName = SAMRecord.NO_ALIGNMENT_REFERENCE_NAME;
+				else {
+					record.sequenceName = samFileHeader.getSequence(
+							record.sequenceId).getSequenceName();
+				}
+			}
 
-            records.add(record);
+			records.add(record);
 
-            if (header.APDelta) {
-                prevStart += record.alignmentDelta;
-                record.alignmentStart = prevStart;
-            }
-        }
-        log.debug("Slice records read time: " + readNanos / 1000000);
+			if (header.APDelta) {
+				prevStart += record.alignmentDelta;
+				record.alignmentStart = prevStart;
+			}
+		}
+		log.debug("Slice records read time: " + readNanos / 1000000);
 
-        final Map<String, DataReaderWithStats> statMap = dataReaderFactory.getStats(reader);
-        for (final String key : statMap.keySet()) {
-            final long value;
-            if (!nanosecondsMap.containsKey(key)) {
-                nanosecondsMap.put(key, 0L);
-                value = 0;
-            } else
-                value = nanosecondsMap.get(key);
-            nanosecondsMap.put(key, value + statMap.get(key).nanos);
-        }
-        return records;
-    }
+		final Map<String, DataReaderWithStats> statMap = dataReaderFactory
+				.getStats(reader);
+		for (final String key : statMap.keySet()) {
+			final long value;
+			if (!nanosecondsMap.containsKey(key)) {
+				nanosecondsMap.put(key, 0L);
+				value = 0;
+			} else
+				value = nanosecondsMap.get(key);
+			nanosecondsMap.put(key, value + statMap.get(key).nanos);
+		}
+		return records;
+	}
 
-    List<CramCompressionRecord> getRecords(final Slice slice, final CompressionHeader header)
-            throws IllegalArgumentException, IllegalAccessException {
-        return getRecords(null, slice, header);
-    }
+	List<CramCompressionRecord> getRecords(final Slice slice,
+			final CompressionHeader header) throws IllegalArgumentException,
+			IllegalAccessException {
+		return getRecords(null, slice, header);
+	}
 }

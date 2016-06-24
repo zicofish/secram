@@ -30,72 +30,90 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Factory class for creating ReferenceSequenceFile instances for reading reference
- * sequences store in various formats.
+ * Factory class for creating ReferenceSequenceFile instances for reading
+ * reference sequences store in various formats.
  *
  * @author Tim Fennell
  */
 public class ReferenceSequenceFileFactory {
-    public static final Set<String> FASTA_EXTENSIONS = new HashSet<String>() {{
-        add(".fasta");
-        add(".fasta.gz");
-        add(".fa");
-        add(".fa.gz");
-        add(".fna");
-        add(".fna.gz");
-        add(".txt");
-        add(".txt.gz");
-    }};
+	public static final Set<String> FASTA_EXTENSIONS = new HashSet<String>() {
+		{
+			add(".fasta");
+			add(".fasta.gz");
+			add(".fa");
+			add(".fa.gz");
+			add(".fna");
+			add(".fna.gz");
+			add(".txt");
+			add(".txt.gz");
+		}
+	};
 
-    /**
-     * Attempts to determine the type of the reference file and return an instance
-     * of ReferenceSequenceFile that is appropriate to read it.  Sequence names
-     * will be truncated at first whitespace, if any.
-     *
-     * @param file the reference sequence file on disk
-     */
-    public static ReferenceSequenceFile getReferenceSequenceFile(final File file) {
-        return getReferenceSequenceFile(file, true);
-    }
+	/**
+	 * Attempts to determine the type of the reference file and return an
+	 * instance of ReferenceSequenceFile that is appropriate to read it.
+	 * Sequence names will be truncated at first whitespace, if any.
+	 *
+	 * @param file
+	 *            the reference sequence file on disk
+	 */
+	public static ReferenceSequenceFile getReferenceSequenceFile(final File file) {
+		return getReferenceSequenceFile(file, true);
+	}
 
-    /**
-     * Attempts to determine the type of the reference file and return an instance
-     * of ReferenceSequenceFile that is appropriate to read it.
-     *
-     * @param file the reference sequence file on disk
-     * @param truncateNamesAtWhitespace if true, only include the first word of the sequence name
-     */
-    public static ReferenceSequenceFile getReferenceSequenceFile(final File file, final boolean truncateNamesAtWhitespace) {
-        return getReferenceSequenceFile(file, truncateNamesAtWhitespace, true);
-    }
+	/**
+	 * Attempts to determine the type of the reference file and return an
+	 * instance of ReferenceSequenceFile that is appropriate to read it.
+	 *
+	 * @param file
+	 *            the reference sequence file on disk
+	 * @param truncateNamesAtWhitespace
+	 *            if true, only include the first word of the sequence name
+	 */
+	public static ReferenceSequenceFile getReferenceSequenceFile(
+			final File file, final boolean truncateNamesAtWhitespace) {
+		return getReferenceSequenceFile(file, truncateNamesAtWhitespace, true);
+	}
 
-    /**
-     * Attempts to determine the type of the reference file and return an instance
-     * of ReferenceSequenceFile that is appropriate to read it.
-     *
-     * @param file the reference sequence file on disk
-     * @param truncateNamesAtWhitespace if true, only include the first word of the sequence name
-     * @param preferIndexed if true attempt to return an indexed reader that supports non-linear traversal, else return the non-indexed reader
-     */
-    public static ReferenceSequenceFile getReferenceSequenceFile(final File file, final boolean truncateNamesAtWhitespace, final boolean preferIndexed) {
-        final String name = file.getName();
-        for (final String ext : FASTA_EXTENSIONS) {
-            if (name.endsWith(ext)) {
-                // Using faidx requires truncateNamesAtWhitespace
-                if (truncateNamesAtWhitespace && preferIndexed && IndexedFastaSequenceFile.canCreateIndexedFastaReader(file)) {
-                    try {
-                        return new IndexedFastaSequenceFile(file);
-                    }
-                    catch (final FileNotFoundException e) {
-                        throw new IllegalStateException("Should never happen, because existence of files has been checked.", e);
-                    }
-                }
-                else {
-                    return new FastaSequenceFile(file, truncateNamesAtWhitespace);
-                }
-            }
-        }
+	/**
+	 * Attempts to determine the type of the reference file and return an
+	 * instance of ReferenceSequenceFile that is appropriate to read it.
+	 *
+	 * @param file
+	 *            the reference sequence file on disk
+	 * @param truncateNamesAtWhitespace
+	 *            if true, only include the first word of the sequence name
+	 * @param preferIndexed
+	 *            if true attempt to return an indexed reader that supports
+	 *            non-linear traversal, else return the non-indexed reader
+	 */
+	public static ReferenceSequenceFile getReferenceSequenceFile(
+			final File file, final boolean truncateNamesAtWhitespace,
+			final boolean preferIndexed) {
+		final String name = file.getName();
+		for (final String ext : FASTA_EXTENSIONS) {
+			if (name.endsWith(ext)) {
+				// Using faidx requires truncateNamesAtWhitespace
+				if (truncateNamesAtWhitespace
+						&& preferIndexed
+						&& IndexedFastaSequenceFile
+								.canCreateIndexedFastaReader(file)) {
+					try {
+						return new IndexedFastaSequenceFile(file);
+					} catch (final FileNotFoundException e) {
+						throw new IllegalStateException(
+								"Should never happen, because existence of files has been checked.",
+								e);
+					}
+				} else {
+					return new FastaSequenceFile(file,
+							truncateNamesAtWhitespace);
+				}
+			}
+		}
 
-        throw new IllegalArgumentException("File is not a supported reference file type: " + file.getAbsolutePath());
-    }
+		throw new IllegalArgumentException(
+				"File is not a supported reference file type: "
+						+ file.getAbsolutePath());
+	}
 }

@@ -31,28 +31,31 @@ import java.io.File;
  * Common, tribble wide constants and static functions
  */
 public class Tribble {
-    private Tribble() { } // can't be instantiated
+	private Tribble() {
+	} // can't be instantiated
 
-    public final static String STANDARD_INDEX_EXTENSION = ".idx";
+	public final static String STANDARD_INDEX_EXTENSION = ".idx";
 
-    /**
-     * Return the name of the index file for the provided {@code filename}
-     * Does not actually create an index
-     * @param filename
-     * @return
-     */
-    public static String indexFile(String filename) {
-        return ParsingUtils.appendToPath(filename, STANDARD_INDEX_EXTENSION);
-    }
+	/**
+	 * Return the name of the index file for the provided {@code filename} Does
+	 * not actually create an index
+	 * 
+	 * @param filename
+	 * @return
+	 */
+	public static String indexFile(String filename) {
+		return ParsingUtils.appendToPath(filename, STANDARD_INDEX_EXTENSION);
+	}
 
-    /**
-     * Return the File of the index file for the provided {@code file}
-     * Does not actually create an index
-     * @param file
-     * @return
-     */
-    public static File indexFile(File file) {
-        return new File(file.getAbsoluteFile() + STANDARD_INDEX_EXTENSION);
-    }
+	/**
+	 * Return the File of the index file for the provided {@code file} Does not
+	 * actually create an index
+	 * 
+	 * @param file
+	 * @return
+	 */
+	public static File indexFile(File file) {
+		return new File(file.getAbsoluteFile() + STANDARD_INDEX_EXTENSION);
+	}
 
 }

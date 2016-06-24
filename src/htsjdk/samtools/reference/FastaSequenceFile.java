@@ -40,120 +40,133 @@ import java.io.File;
  */
 public class FastaSequenceFile extends AbstractFastaSequenceFile {
 
-    private final boolean truncateNamesAtWhitespace;
-    private FastLineReader in;
-    private int sequenceIndex = -1;
-    private final byte[] basesBuffer = new byte[Defaults.NON_ZERO_BUFFER_SIZE];
+	private final boolean truncateNamesAtWhitespace;
+	private FastLineReader in;
+	private int sequenceIndex = -1;
+	private final byte[] basesBuffer = new byte[Defaults.NON_ZERO_BUFFER_SIZE];
 
+	/** Constructs a FastaSequenceFile that reads from the specified file. */
+	public FastaSequenceFile(final File file,
+			final boolean truncateNamesAtWhitespace) {
+		super(file);
+		this.truncateNamesAtWhitespace = truncateNamesAtWhitespace;
+		this.in = new FastLineReader(IOUtil.openFileForReading(file));
+	}
 
-    /** Constructs a FastaSequenceFile that reads from the specified file. */
-    public FastaSequenceFile(final File file, final boolean truncateNamesAtWhitespace) {
-        super(file);
-        this.truncateNamesAtWhitespace = truncateNamesAtWhitespace;
-        this.in = new FastLineReader(IOUtil.openFileForReading(file));
-    }
-
-    /**
-     * It's good to call this to free up memory.
-     */
-    @Override
+	/**
+	 * It's good to call this to free up memory.
+	 */
+	@Override
 	public void close() {
-        in.close();
-    }
+		in.close();
+	}
 
-    @Override
+	@Override
 	public ReferenceSequence nextSequence() {
-        this.sequenceIndex += 1;
+		this.sequenceIndex += 1;
 
-        // Read the header line
-        final String name = readSequenceName();
-        if (name == null) {
-            close();
-            return null;
-        }
+		// Read the header line
+		final String name = readSequenceName();
+		if (name == null) {
+			close();
+			return null;
+		}
 
-        // Read the sequence
-        final int knownLength = (this.sequenceDictionary == null) ? -1 : this.sequenceDictionary.getSequence(this.sequenceIndex).getSequenceLength();
-        final byte[] bases = readSequence(knownLength);
+		// Read the sequence
+		final int knownLength = (this.sequenceDictionary == null) ? -1
+				: this.sequenceDictionary.getSequence(this.sequenceIndex)
+						.getSequenceLength();
+		final byte[] bases = readSequence(knownLength);
 
-        return new ReferenceSequence(name, this.sequenceIndex, bases);
-    }
+		return new ReferenceSequence(name, this.sequenceIndex, bases);
+	}
 
-    @Override
+	@Override
 	public void reset() {
-        this.sequenceIndex = -1;
-        this.in.close();
-        this.in = new FastLineReader(IOUtil.openFileForReading(file));
+		this.sequenceIndex = -1;
+		this.in.close();
+		this.in = new FastLineReader(IOUtil.openFileForReading(file));
 
-    }
+	}
 
-    private String readSequenceName() {
-        in.skipNewlines();
-        if (in.eof()) {
-            return null;
-        }
-        final byte b = in.getByte();
-        if (b != '>') {
-            throw new SAMException("Format exception reading FASTA " + file + ".  Expected > but saw chr(" +
-            b + ") at start of sequence with index " + this.sequenceIndex);
-        }
-        final byte[] nameBuffer = new byte[4096];
-        int nameLength = 0;
-        do {
-            if (in.eof()) {
-                break;
-            }
-            nameLength += in.readToEndOfOutputBufferOrEoln(nameBuffer, nameLength);
-            if (nameLength == nameBuffer.length && !in.atEoln()) {
-                throw new SAMException("Sequence name too long in FASTA " + file);
-            }
-        } while (!in.atEoln());
-        if (nameLength == 0) {
-            throw new SAMException("Missing sequence name in FASTA " + file);
-        }
-        String name = StringUtil.bytesToString(nameBuffer, 0, nameLength).trim();
-        if (truncateNamesAtWhitespace) {
-            name = SAMSequenceRecord.truncateSequenceName(name);
-        }
-        return name;
-    }
+	private String readSequenceName() {
+		in.skipNewlines();
+		if (in.eof()) {
+			return null;
+		}
+		final byte b = in.getByte();
+		if (b != '>') {
+			throw new SAMException("Format exception reading FASTA " + file
+					+ ".  Expected > but saw chr(" + b
+					+ ") at start of sequence with index " + this.sequenceIndex);
+		}
+		final byte[] nameBuffer = new byte[4096];
+		int nameLength = 0;
+		do {
+			if (in.eof()) {
+				break;
+			}
+			nameLength += in.readToEndOfOutputBufferOrEoln(nameBuffer,
+					nameLength);
+			if (nameLength == nameBuffer.length && !in.atEoln()) {
+				throw new SAMException("Sequence name too long in FASTA "
+						+ file);
+			}
+		} while (!in.atEoln());
+		if (nameLength == 0) {
+			throw new SAMException("Missing sequence name in FASTA " + file);
+		}
+		String name = StringUtil.bytesToString(nameBuffer, 0, nameLength)
+				.trim();
+		if (truncateNamesAtWhitespace) {
+			name = SAMSequenceRecord.truncateSequenceName(name);
+		}
+		return name;
+	}
 
-    /**
-     * Read bases from input
-     * @param knownLength For performance:: -1 if length is not known, otherwise the length of the sequence.
-     * @return ASCII bases for sequence
-     */
-    private byte[] readSequence(final int knownLength) {
-        byte[] bases = (knownLength == -1) ?  basesBuffer : new byte[knownLength] ;
+	/**
+	 * Read bases from input
+	 * 
+	 * @param knownLength
+	 *            For performance:: -1 if length is not known, otherwise the
+	 *            length of the sequence.
+	 * @return ASCII bases for sequence
+	 */
+	private byte[] readSequence(final int knownLength) {
+		byte[] bases = (knownLength == -1) ? basesBuffer
+				: new byte[knownLength];
 
-        int sequenceLength = 0;
-        while (!in.eof()) {
-            final boolean sawEoln = in.skipNewlines();
-            if (in.eof()) {
-                break;
-            }
-            if (sawEoln && in.peekByte() == '>') {
-                break;
-            }
-            sequenceLength += in.readToEndOfOutputBufferOrEoln(bases, sequenceLength);
-            while (sequenceLength > 0 && Character.isWhitespace(StringUtil.byteToChar(bases[sequenceLength - 1]))) {
-                --sequenceLength;
-            }
-            if (sequenceLength == knownLength) {
-                break;
-            }
-            if (sequenceLength == bases.length) {
-                    final byte[] tmp = new byte[bases.length * 2];
-                    System.arraycopy(bases, 0, tmp, 0, sequenceLength);
-                    bases = tmp;
-            }
-        }
-        // And lastly resize the array down to the right size
-        if (sequenceLength != bases.length || bases == basesBuffer) {
-            final byte[] tmp = new byte[sequenceLength];
-            System.arraycopy(bases, 0, tmp, 0, sequenceLength);
-            bases = tmp;
-        }
-        return bases;
-    }
+		int sequenceLength = 0;
+		while (!in.eof()) {
+			final boolean sawEoln = in.skipNewlines();
+			if (in.eof()) {
+				break;
+			}
+			if (sawEoln && in.peekByte() == '>') {
+				break;
+			}
+			sequenceLength += in.readToEndOfOutputBufferOrEoln(bases,
+					sequenceLength);
+			while (sequenceLength > 0
+					&& Character.isWhitespace(StringUtil
+							.byteToChar(bases[sequenceLength - 1]))) {
+				--sequenceLength;
+			}
+			if (sequenceLength == knownLength) {
+				break;
+			}
+			if (sequenceLength == bases.length) {
+				final byte[] tmp = new byte[bases.length * 2];
+				System.arraycopy(bases, 0, tmp, 0, sequenceLength);
+				bases = tmp;
+			}
+		}
+		// And lastly resize the array down to the right size
+		if (sequenceLength != bases.length || bases == basesBuffer) {
+			final byte[] tmp = new byte[sequenceLength];
+			System.arraycopy(bases, 0, tmp, 0, sequenceLength);
+			bases = tmp;
+		}
+		return bases;
+	}
 }

@@ -20,41 +20,46 @@ public class SecramRecordBuilder {
 	private LinkedList<ReadHeader> mReadHeaders = new LinkedList<ReadHeader>();
 	private byte[] mQualityScores = null;
 	private PosCigar mPosCigar = null;
-	
-	//set to true to parse the M operator values with the reference sequence (when false, all M will be considered matches)
+
+	// set to true to parse the M operator values with the reference sequence
+	// (when false, all M will be considered matches)
 	private final static boolean USE_REF_SEQUENCE = true;
 
 	private LinkedList<byte[]> mTmpScores = new LinkedList<byte[]>();
 	private int mTmpScoreLen = 0;
-	
-	//the value in the reference sequence at this position (not stored in the file)
+
+	// the value in the reference sequence at this position (not stored in the
+	// file)
 	private char mReferenceBase;
-	
-	public SecramRecordBuilder(int referenceIndex, int position, char referenceBase) throws IOException {
+
+	public SecramRecordBuilder(int referenceIndex, int position,
+			char referenceBase) throws IOException {
 		mReferenceIndex = referenceIndex;
 		mPosition = position;
 		mPosCigar = new PosCigar(referenceBase);
 		mReferenceBase = referenceBase;
 	}
-	
-	public char getRefBase(){
+
+	public char getRefBase() {
 		return mReferenceBase;
 	}
-	
-	public int getCoverage(){
+
+	public int getCoverage() {
 		return mPosCigar.mCoverage;
 	}
-	
-	public void addFeaturesToNextRead(List<PosCigarFeature> features){
+
+	public void addFeaturesToNextRead(List<PosCigarFeature> features) {
 		mPosCigar.mCoverage++;
-		if(features.size() > 0)
-			mPosCigar.setNonMatchFeaturesForRead(mPosCigar.mCoverage - 1, features);
+		if (features.size() > 0)
+			mPosCigar.setNonMatchFeaturesForRead(mPosCigar.mCoverage - 1,
+					features);
 	}
-	
+
 	public void addReadHeader(BAMRecord bamRecord) {
 		ReadHeader header = new ReadHeader(bamRecord);
 		mReadHeaders.add(header);
 	}
+
 	public void updateScores(byte[] score, int offset, int len) {
 		if (len > 0) {
 			byte[] tmpArray = new byte[len];
@@ -63,30 +68,27 @@ public class SecramRecordBuilder {
 			mTmpScoreLen += len;
 		}
 	}
+
 	public SecramRecord close() throws IOException {
-		
+
 		mQualityScores = new byte[mTmpScoreLen];
-		int offset=0;
-		for (byte[] array: mTmpScores) {
+		int offset = 0;
+		for (byte[] array : mTmpScores) {
 			System.arraycopy(array, 0, mQualityScores, offset, array.length);
 			offset += array.length;
 		}
 		mTmpScores.clear();
 		mTmpScoreLen = 0;
-		
-		return new SecramRecord(mReferenceIndex,
-				mPosition,
-				mReferenceBase,
-				mReadHeaders,
-				mQualityScores,
-				mPosCigar);
+
+		return new SecramRecord(mReferenceIndex, mPosition, mReferenceBase,
+				mReadHeaders, mQualityScores, mPosCigar);
 	}
-	
+
 	public long getAbsolutePosition() {
 		long result = mReferenceIndex;
 		result <<= 32;
 		result |= mPosition;
-		
+
 		return result;
 	}
 }

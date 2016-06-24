@@ -25,55 +25,57 @@ import java.util.Arrays;
  */
 public class Scores implements Serializable, ReadFeature {
 
-    private int position;
-    private byte[] scores;
+	private int position;
+	private byte[] scores;
 
-    public byte[] getScores() {
-        return scores;
-    }
+	public byte[] getScores() {
+		return scores;
+	}
 
-    public void setScores(final byte[] scores) {
-        this.scores = scores;
-    }
+	public void setScores(final byte[] scores) {
+		this.scores = scores;
+	}
 
-    public Scores() {
-    }
+	public Scores() {
+	}
 
-    public Scores(final int position, final byte[] sequence) {
-        this.position = position;
-        this.scores = sequence;
-    }
+	public Scores(final int position, final byte[] sequence) {
+		this.position = position;
+		this.scores = sequence;
+	}
 
-    public static final byte operator = 'q';
+	public static final byte operator = 'q';
 
-    @Override
-    public byte getOperator() {
-        return operator;
-    }
+	@Override
+	public byte getOperator() {
+		return operator;
+	}
 
-    @Override
-    public int getPosition() {
-        return position;
-    }
+	@Override
+	public int getPosition() {
+		return position;
+	}
 
-    @Override
-    public void setPosition(final int position) {
-        this.position = position;
-    }
+	@Override
+	public void setPosition(final int position) {
+		this.position = position;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof Scores))
-            return false;
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof Scores))
+			return false;
 
-        final Scores scores = (Scores) obj;
+		final Scores scores = (Scores) obj;
 
-        return position == scores.position && !Arrays.equals(this.scores, scores.scores);
+		return position == scores.position
+				&& !Arrays.equals(this.scores, scores.scores);
 
-    }
+	}
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[" + "position=" + position + "; scores=" + new String(scores) + "] ";
-    }
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "[" + "position=" + position
+				+ "; scores=" + new String(scores) + "] ";
+	}
 }

@@ -18,5 +18,5 @@
 package htsjdk.samtools.cram.structure;
 
 public enum BlockCompressionMethod {
-    RAW, GZIP, BZIP2, LZMA, RANS, DEFLATE
+	RAW, GZIP, BZIP2, LZMA, RANS, DEFLATE
 }

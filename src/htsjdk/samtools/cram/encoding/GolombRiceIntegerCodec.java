@@ -22,67 +22,69 @@ import htsjdk.samtools.cram.io.BitOutputStream;
 
 import java.io.IOException;
 
-
 class GolombRiceIntegerCodec extends AbstractBitCodec<Integer> {
-    private final int m;
-    private final int log2m;
-    private final long mask;
-    private boolean quotientBit = false;
-    private int offset = 0;
+	private final int m;
+	private final int log2m;
+	private final long mask;
+	private boolean quotientBit = false;
+	private int offset = 0;
 
-    public GolombRiceIntegerCodec(final int offset, final int log2m) {
-        this.log2m = log2m;
-        m = 1 << log2m;
-        this.quotientBit = true;
-        this.offset = offset;
-        mask = ~(~0 << log2m);
-    }
+	public GolombRiceIntegerCodec(final int offset, final int log2m) {
+		this.log2m = log2m;
+		m = 1 << log2m;
+		this.quotientBit = true;
+		this.offset = offset;
+		mask = ~(~0 << log2m);
+	}
 
-    @Override
-	public final Integer read(final BitInputStream bitInputStream) throws IOException {
+	@Override
+	public final Integer read(final BitInputStream bitInputStream)
+			throws IOException {
 
-        int unary = 0;
-        while (bitInputStream.readBit() == quotientBit)
-            unary++;
+		int unary = 0;
+		while (bitInputStream.readBit() == quotientBit)
+			unary++;
 
-        final int remainder = bitInputStream.readBits(log2m);
+		final int remainder = bitInputStream.readBits(log2m);
 
-        final int result = unary * m + remainder;
-        return result - offset;
-    }
+		final int result = unary * m + remainder;
+		return result - offset;
+	}
 
-    @Override
-    public final long write(final BitOutputStream bitOutputStream, final Integer value) throws IOException {
-        final long newValue = value + offset;
-        final long quotient = newValue >>> log2m;
-        if (quotient > 0x7fffffffL)
-            for (long i = 0; i < quotient; i++)
-                bitOutputStream.write(quotientBit);
+	@Override
+	public final long write(final BitOutputStream bitOutputStream,
+			final Integer value) throws IOException {
+		final long newValue = value + offset;
+		final long quotient = newValue >>> log2m;
+		if (quotient > 0x7fffffffL)
+			for (long i = 0; i < quotient; i++)
+				bitOutputStream.write(quotientBit);
 
-        else if (quotient > 0) {
-            final int qi = (int) quotient;
-            for (int i = 0; i < qi; i++)
-                bitOutputStream.write(quotientBit);
-        }
-        bitOutputStream.write(!quotientBit);
-        final long remainder = newValue & mask;
-        long reminderMask = 1 << (log2m - 1);
-        for (int i = log2m - 1; i >= 0; i--) {
-            final long b = remainder & reminderMask;
-            bitOutputStream.write(b != 0L);
-            reminderMask >>>= 1;
-        }
-        return quotient + 1 + log2m;
-    }
+		else if (quotient > 0) {
+			final int qi = (int) quotient;
+			for (int i = 0; i < qi; i++)
+				bitOutputStream.write(quotientBit);
+		}
+		bitOutputStream.write(!quotientBit);
+		final long remainder = newValue & mask;
+		long reminderMask = 1 << (log2m - 1);
+		for (int i = log2m - 1; i >= 0; i--) {
+			final long b = remainder & reminderMask;
+			bitOutputStream.write(b != 0L);
+			reminderMask >>>= 1;
+		}
+		return quotient + 1 + log2m;
+	}
 
-    @Override
-    public final long numberOfBits(final Integer value) {
-        return (value + offset) / m + 1 + log2m;
-    }
+	@Override
+	public final long numberOfBits(final Integer value) {
+		return (value + offset) / m + 1 + log2m;
+	}
 
-    @Override
-    public Integer read(final BitInputStream bitInputStream, final int length) throws IOException {
-        throw new RuntimeException("Not implemented.");
-    }
+	@Override
+	public Integer read(final BitInputStream bitInputStream, final int length)
+			throws IOException {
+		throw new RuntimeException("Not implemented.");
+	}
 
 }

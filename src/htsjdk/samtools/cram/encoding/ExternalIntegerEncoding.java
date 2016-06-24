@@ -26,39 +26,43 @@ import java.io.InputStream;
 import java.util.Map;
 
 public class ExternalIntegerEncoding implements Encoding<Integer> {
-    private static final EncodingID encodingId = EncodingID.EXTERNAL;
-    private int contentId = -1;
+	private static final EncodingID encodingId = EncodingID.EXTERNAL;
+	private int contentId = -1;
 
-    public ExternalIntegerEncoding() {
-    }
+	public ExternalIntegerEncoding() {
+	}
 
-    public static EncodingParams toParam(final int contentId) {
-        final ExternalIntegerEncoding externalIntegerEncoding = new ExternalIntegerEncoding();
-        externalIntegerEncoding.contentId = contentId;
-        return new EncodingParams(encodingId, externalIntegerEncoding.toByteArray());
-    }
+	public static EncodingParams toParam(final int contentId) {
+		final ExternalIntegerEncoding externalIntegerEncoding = new ExternalIntegerEncoding();
+		externalIntegerEncoding.contentId = contentId;
+		return new EncodingParams(encodingId,
+				externalIntegerEncoding.toByteArray());
+	}
 
-    @Override
+	@Override
 	public byte[] toByteArray() {
-        return ITF8.writeUnsignedITF8(contentId);
-    }
+		return ITF8.writeUnsignedITF8(contentId);
+	}
 
-    @Override
+	@Override
 	public void fromByteArray(final byte[] data) {
-        contentId = ITF8.readUnsignedITF8(data);
-    }
+		contentId = ITF8.readUnsignedITF8(data);
+	}
 
-    @Override
-    public BitCodec<Integer> buildCodec(final Map<Integer, InputStream> inputMap,
-                                        final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
-        final InputStream inputStream = inputMap == null ? null : inputMap.get(contentId);
-        final ExposedByteArrayOutputStream outputStream = outputMap == null ? null : outputMap.get(contentId);
-        return new ExternalIntegerCodec(outputStream, inputStream);
-    }
+	@Override
+	public BitCodec<Integer> buildCodec(
+			final Map<Integer, InputStream> inputMap,
+			final Map<Integer, ExposedByteArrayOutputStream> outputMap) {
+		final InputStream inputStream = inputMap == null ? null : inputMap
+				.get(contentId);
+		final ExposedByteArrayOutputStream outputStream = outputMap == null ? null
+				: outputMap.get(contentId);
+		return new ExternalIntegerCodec(outputStream, inputStream);
+	}
 
-    @Override
-    public EncodingID id() {
-        return encodingId;
-    }
+	@Override
+	public EncodingID id() {
+		return encodingId;
+	}
 
 }

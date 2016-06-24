@@ -18,33 +18,32 @@
 package htsjdk.samtools.cram.lossy;
 
 public class ReadCategory {
-    public final ReadCategoryType type;
-    public final int param;
+	public final ReadCategoryType type;
+	public final int param;
 
-    private ReadCategory(final ReadCategoryType type, final int param) {
-        this.type = type;
-        this.param = param;
-    }
+	private ReadCategory(final ReadCategoryType type, final int param) {
+		this.type = type;
+		this.param = param;
+	}
 
-    public static ReadCategory unplaced() {
-        return new ReadCategory(ReadCategoryType.UNPLACED, -1);
-    }
+	public static ReadCategory unplaced() {
+		return new ReadCategory(ReadCategoryType.UNPLACED, -1);
+	}
 
-    public static ReadCategory higher_than_mapping_score(final int score) {
-        return new ReadCategory(ReadCategoryType.HIGHER_MAPPING_SCORE,
-                score);
-    }
+	public static ReadCategory higher_than_mapping_score(final int score) {
+		return new ReadCategory(ReadCategoryType.HIGHER_MAPPING_SCORE, score);
+	}
 
-    public static ReadCategory lower_than_mapping_score(final int score) {
-        return new ReadCategory(ReadCategoryType.LOWER_MAPPING_SCORE, score);
-    }
+	public static ReadCategory lower_than_mapping_score(final int score) {
+		return new ReadCategory(ReadCategoryType.LOWER_MAPPING_SCORE, score);
+	}
 
-    public static ReadCategory all() {
-        return new ReadCategory(ReadCategoryType.ALL, -1);
-    }
+	public static ReadCategory all() {
+		return new ReadCategory(ReadCategoryType.ALL, -1);
+	}
 
-    @Override
-    public String toString() {
-        return String.format("[%s%d]", type.name(), param);
-    }
+	@Override
+	public String toString() {
+		return String.format("[%s%d]", type.name(), param);
+	}
 }

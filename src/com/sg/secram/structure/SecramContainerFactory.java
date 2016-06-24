@@ -31,81 +31,87 @@ import com.sg.secram.compression.SecramRecordCodecFactory;
 import com.sg.secram.impl.records.SecramRecord;
 
 public class SecramContainerFactory {
-    private final SAMFileHeader samFileHeader;
-    private int recordsPerContainer = SecramContainer.DEFATUL_RECORDS_PER_CONTAINER;
-    private long globalRecordCounter = 0;
-    private int globalContainerCounter = 0;
+	private final SAMFileHeader samFileHeader;
+	private int recordsPerContainer = SecramContainer.DEFATUL_RECORDS_PER_CONTAINER;
+	private long globalRecordCounter = 0;
+	private int globalContainerCounter = 0;
 
-    public SecramContainerFactory(final SAMFileHeader samFileHeader, final int recordsPerContainer) {
-        this.samFileHeader = samFileHeader;
-        this.recordsPerContainer = recordsPerContainer;
-    }
-    
-    public int getGlobalContainerCounter(){
-    	return globalContainerCounter;
-    }
+	public SecramContainerFactory(final SAMFileHeader samFileHeader,
+			final int recordsPerContainer) {
+		this.samFileHeader = samFileHeader;
+		this.recordsPerContainer = recordsPerContainer;
+	}
 
-    public SecramContainer buildContainer(final List<SecramRecord> records, long containerSalt)
-            throws IllegalArgumentException, IllegalAccessException,
-            IOException {
-    	if(records.size() > recordsPerContainer){
-    		throw new IllegalArgumentException("The number of records " + records.size() 
-    				+ " exceeds the predefined threshold recordsPerContaienr: " + recordsPerContainer);
-    	}
-        // get stats, create compression header and slices
-        final long time1 = System.nanoTime();
-        final SecramCompressionHeader compressionHeader = new SecramCompressionHeaderFactory().build(records);
-        final long time2 = System.nanoTime();
+	public int getGlobalContainerCounter() {
+		return globalContainerCounter;
+	}
 
-        final SecramContainer container = new SecramContainer();
-        container.containerID = globalContainerCounter;
-        container.containerSalt = containerSalt;
-        container.absolutePosStart = records.get(0).getAbsolutePosition();
-        container.absolutePosEnd = records.get(records.size() - 1).getAbsolutePosition();
-        container.coverageStart = records.get(0).mPosCigar.mCoverage;
-        container.qualityLenStart = records.get(0).mQualityScores.length;
-        container.compressionHeader = compressionHeader;
-        container.nofRecords = records.size();
-        container.globalRecordCounter = globalRecordCounter;
-        container.blockCount = 0;
+	public SecramContainer buildContainer(final List<SecramRecord> records,
+			long containerSalt) throws IllegalArgumentException,
+			IllegalAccessException, IOException {
+		if (records.size() > recordsPerContainer) {
+			throw new IllegalArgumentException("The number of records "
+					+ records.size()
+					+ " exceeds the predefined threshold recordsPerContaienr: "
+					+ recordsPerContainer);
+		}
+		// get stats, create compression header and slices
+		final long time1 = System.nanoTime();
+		final SecramCompressionHeader compressionHeader = new SecramCompressionHeaderFactory()
+				.build(records);
+		final long time2 = System.nanoTime();
 
-        final long time3 = System.nanoTime();
-        
-        final Map<Integer, ExposedByteArrayOutputStream> map = new HashMap<Integer, ExposedByteArrayOutputStream>();
-        for (final int id : compressionHeader.externalIds) {
-            map.put(id, new ExposedByteArrayOutputStream());
-        }
+		final SecramContainer container = new SecramContainer();
+		container.containerID = globalContainerCounter;
+		container.containerSalt = containerSalt;
+		container.absolutePosStart = records.get(0).getAbsolutePosition();
+		container.absolutePosEnd = records.get(records.size() - 1)
+				.getAbsolutePosition();
+		container.coverageStart = records.get(0).mPosCigar.mCoverage;
+		container.qualityLenStart = records.get(0).mQualityScores.length;
+		container.compressionHeader = compressionHeader;
+		container.nofRecords = records.size();
+		container.globalRecordCounter = globalRecordCounter;
+		container.blockCount = 0;
 
-        final SecramRecordCodecFactory recordCodecFactory = new SecramRecordCodecFactory();
-        final ExposedByteArrayOutputStream bitBAOS = new ExposedByteArrayOutputStream();
-        final DefaultBitOutputStream bitOutputStream = new DefaultBitOutputStream(bitBAOS);
+		final long time3 = System.nanoTime();
 
-        final SecramRecordCodec recordCodec = recordCodecFactory.buildCodec(compressionHeader, null, bitOutputStream, null, map);
-        for (final SecramRecord record : records) {
-        	recordCodec.write(record);
-        }
+		final Map<Integer, ExposedByteArrayOutputStream> map = new HashMap<Integer, ExposedByteArrayOutputStream>();
+		for (final int id : compressionHeader.externalIds) {
+			map.put(id, new ExposedByteArrayOutputStream());
+		}
 
-        bitOutputStream.close();
-        container.coreBlock = SecramBlock.buildNewCore(bitBAOS.toByteArray());
+		final SecramRecordCodecFactory recordCodecFactory = new SecramRecordCodecFactory();
+		final ExposedByteArrayOutputStream bitBAOS = new ExposedByteArrayOutputStream();
+		final DefaultBitOutputStream bitOutputStream = new DefaultBitOutputStream(
+				bitBAOS);
 
-        container.external = new HashMap<Integer, SecramBlock>();
-        for (final Integer key : map.keySet()) {
+		final SecramRecordCodec recordCodec = recordCodecFactory.buildCodec(
+				compressionHeader, null, bitOutputStream, null, map);
+		for (final SecramRecord record : records) {
+			recordCodec.write(record);
+		}
 
-            SecramBlock externalBlock = new SecramBlock(
-            		SecramBlockContentType.EXTERNAL,
-            		key,
-            		compressionHeader.externalCompressors.get(key),
-            		map.get(key).toByteArray());
+		bitOutputStream.close();
+		container.coreBlock = SecramBlock.buildNewCore(bitBAOS.toByteArray());
 
-            container.external.put(key, externalBlock);
-        }
+		container.external = new HashMap<Integer, SecramBlock>();
+		for (final Integer key : map.keySet()) {
 
-        globalContainerCounter++;
-        globalRecordCounter += records.size();
-        return container;
-    }
+			SecramBlock externalBlock = new SecramBlock(
+					SecramBlockContentType.EXTERNAL, key,
+					compressionHeader.externalCompressors.get(key), map
+							.get(key).toByteArray());
 
-    public long getGlobalRecordCounter(){
-    	return globalRecordCounter;
-    }
+			container.external.put(key, externalBlock);
+		}
+
+		globalContainerCounter++;
+		globalRecordCounter += records.size();
+		return container;
+	}
+
+	public long getGlobalRecordCounter() {
+		return globalRecordCounter;
+	}
 }

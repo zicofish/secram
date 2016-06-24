@@ -32,49 +32,54 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * LRU cache of OutputStreams to handle situation in which it is necessary to have more FileOutputStreams
- * than resource limits will allow.  Least-recently-used FileOutputStream is closed when it is pushed out of
- * the cache.  When adding a new element to the cache, the file is opened in append mode.
+ * LRU cache of OutputStreams to handle situation in which it is necessary to
+ * have more FileOutputStreams than resource limits will allow.
+ * Least-recently-used FileOutputStream is closed when it is pushed out of the
+ * cache. When adding a new element to the cache, the file is opened in append
+ * mode.
  *
- * Actual elements in the cache are usually BufferedOutputStreams wrapping the FileOutputStreams, but will
- * be FileOutputStreams if Defaults.BUFFER_SIZE = 0.
+ * Actual elements in the cache are usually BufferedOutputStreams wrapping the
+ * FileOutputStreams, but will be FileOutputStreams if Defaults.BUFFER_SIZE = 0.
  *
  * @author alecw@broadinstitute.org
  */
-public class FileAppendStreamLRUCache extends ResourceLimitedMap<File, OutputStream> {
-    public FileAppendStreamLRUCache(final int cacheSize) {
-        super(cacheSize, new Functor());
-    }
+public class FileAppendStreamLRUCache extends
+		ResourceLimitedMap<File, OutputStream> {
+	public FileAppendStreamLRUCache(final int cacheSize) {
+		super(cacheSize, new Functor());
+	}
 
-    private static class Functor implements ResourceLimitedMapFunctor<File, OutputStream> {
-        @Override
+	private static class Functor implements
+			ResourceLimitedMapFunctor<File, OutputStream> {
+		@Override
 		public OutputStream makeValue(final File file) {
-            try {
-                return IOUtil.maybeBufferOutputStream(new FileOutputStream(file, true));
-            }
-            catch (final FileNotFoundException e) {
-                // In case the file could not be opened because of too many file handles, try to force
-                // file handles to be closed.
-                System.gc();
-                System.runFinalization();
-                try {
-                    return IOUtil.maybeBufferOutputStream(new FileOutputStream(file, true));
-                }
-                catch (final FileNotFoundException e2) {
-                    throw new SAMException(file + "not found", e2);
-                }
-            }
-        }
+			try {
+				return IOUtil.maybeBufferOutputStream(new FileOutputStream(
+						file, true));
+			} catch (final FileNotFoundException e) {
+				// In case the file could not be opened because of too many file
+				// handles, try to force
+				// file handles to be closed.
+				System.gc();
+				System.runFinalization();
+				try {
+					return IOUtil.maybeBufferOutputStream(new FileOutputStream(
+							file, true));
+				} catch (final FileNotFoundException e2) {
+					throw new SAMException(file + "not found", e2);
+				}
+			}
+		}
 
-        @Override
+		@Override
 		public void finalizeValue(final File file, final OutputStream out) {
-            try {
-                out.flush();
-                out.close();
-            }
-            catch (final IOException e) {
-                throw new SAMException("Exception closing FileOutputStream for " + file, e);
-            }
-        }
-    }
+			try {
+				out.flush();
+				out.close();
+			} catch (final IOException e) {
+				throw new SAMException(
+						"Exception closing FileOutputStream for " + file, e);
+			}
+		}
+	}
 }

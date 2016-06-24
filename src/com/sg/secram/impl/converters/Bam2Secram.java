@@ -28,6 +28,7 @@ import com.sg.secram.util.SECRAMUtils;
 import com.sg.secram.util.Timings;
 
 /**
+ * Converter from a bam file to a secram file.
  * 
  * @author zhicong
  *
@@ -49,6 +50,13 @@ public class Bam2Secram {
 		this(samFileHeader, "./data/hs37d5.fa");
 	}
 
+	/**
+	 * @param samFileHeader
+	 *            The SAM file header of the BAM file
+	 * @param referenceInput
+	 *            The path of the reference file.
+	 * @throws IOException
+	 */
 	public Bam2Secram(SAMFileHeader samFileHeader, String referenceInput)
 			throws IOException {
 		this(samFileHeader, ReferenceUtils.findReferenceFile(referenceInput));
@@ -64,7 +72,7 @@ public class Bam2Secram {
 	}
 
 	/**
-	 * Returns the {@link SecramRecordOld} instance corresponding to this
+	 * Returns the {@link SecramRecordBuilder} instance corresponding to this
 	 * position. A new instance is created if the position is accessed for the
 	 * first time.
 	 * 
@@ -72,7 +80,7 @@ public class Bam2Secram {
 	 *            The position we want to access
 	 * @param secramRecords
 	 *            The map to search for the position
-	 * @return the instance of {@link SecramRecordOld} corresponding to this
+	 * @return the instance of {@link SecramRecordBuilder} corresponding to this
 	 *         position
 	 * @throws IOException
 	 */
@@ -90,6 +98,14 @@ public class Bam2Secram {
 		return result;
 	}
 
+	/**
+	 * @param pos
+	 *            The absolute position. Chromosome ID is in the higher 32 bits,
+	 *            and chromosome position is in the lower 32 bits.
+	 * @return The reference base of the position.
+	 * @throws ArrayIndexOutOfBoundsException
+	 * @throws IOException
+	 */
 	public char getReferenceBase(long pos)
 			throws ArrayIndexOutOfBoundsException, IOException {
 		int refID = (int) (pos >> 32);
@@ -113,13 +129,16 @@ public class Bam2Secram {
 
 	/**
 	 * Reads the input file in the BAM format and saves it to the output file in
-	 * the SECRAM format.
+	 * the SECRAM format, using the key for encryption.
 	 * 
 	 * @param input
 	 *            The BAM file to read from. The BAM records *SHOULD* be ordered
 	 *            by their starting positions in the file.
 	 * @param output
 	 *            The new SECRAM file to create
+	 * @param refFileName
+	 *            Path of the reference file
+	 * @param key
 	 * @throws Exception
 	 * @throws {@link IOException} If an {@link IOException} occurs during the
 	 *         operation
@@ -191,6 +210,14 @@ public class Bam2Secram {
 
 	}
 
+	/**
+	 * Create a set of incomplete SECRAM records from a set of BAM records. The
+	 * BAM records should be ordered by their starting positions.
+	 * 
+	 * @param records
+	 * @return
+	 * @throws IOException
+	 */
 	public Map<Long, SecramRecordBuilder> createSECRAMRecords(
 			BAMRecord... records) throws IOException {
 		TreeMap<Long, SecramRecordBuilder> pos2Builder = new TreeMap<Long, SecramRecordBuilder>();
@@ -199,6 +226,14 @@ public class Bam2Secram {
 		return pos2Builder;
 	}
 
+	/**
+	 * Extract information on each position of the BAM record, and add it to the
+	 * corresponding SECRAM record builder.
+	 * 
+	 * @param bamRecord
+	 * @param pos2Builder
+	 * @throws IOException
+	 */
 	public void addBamRecordToSecramRecords(BAMRecord bamRecord,
 			Map<Long, SecramRecordBuilder> pos2Builder) throws IOException {
 

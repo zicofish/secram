@@ -23,44 +23,47 @@
  */
 package htsjdk.tribble.gelitext;
 
-
 /**
  * Class DiploidGenotype
  *
- * Enum describing all possible combinations of diploid genotype variations;
- * AA, AC, etc.
+ * Enum describing all possible combinations of diploid genotype variations; AA,
+ * AC, etc.
  *
  * @author aaron
  */
 @Deprecated
 public enum DiploidGenotype {
-    AA, AC, AG, AT, CC, CG, CT, GG, GT, TT;
+	AA, AC, AG, AT, CC, CG, CT, GG, GT, TT;
 
-    public static DiploidGenotype toDiploidGenotype(String genotype) {
-        if (genotype.length() != 2)
-            throw new DiploidGenotypeException("Genotype string for conversion should be of length 2, we were passed = " + genotype);
-        genotype = genotype.toUpperCase();
-        for (DiploidGenotype g: DiploidGenotype.values())
-            if (g.toString().equals(genotype)) return g;
-        throw new DiploidGenotypeException("Unable to find genotype matching " + genotype);
-    }
+	public static DiploidGenotype toDiploidGenotype(String genotype) {
+		if (genotype.length() != 2)
+			throw new DiploidGenotypeException(
+					"Genotype string for conversion should be of length 2, we were passed = "
+							+ genotype);
+		genotype = genotype.toUpperCase();
+		for (DiploidGenotype g : DiploidGenotype.values())
+			if (g.toString().equals(genotype))
+				return g;
+		throw new DiploidGenotypeException("Unable to find genotype matching "
+				+ genotype);
+	}
 
-    public boolean isHet() {
-        return toString().toCharArray()[0] != toString().toCharArray()[1];
-    }
+	public boolean isHet() {
+		return toString().toCharArray()[0] != toString().toCharArray()[1];
+	}
 
-    public boolean containsBase(char base) {
-        return (toString().charAt(0) == base || toString().charAt(1) == base);
-    }
+	public boolean containsBase(char base) {
+		return (toString().charAt(0) == base || toString().charAt(1) == base);
+	}
 }
 
 @Deprecated
 class DiploidGenotypeException extends RuntimeException {
-    DiploidGenotypeException(String s) {
-        super(s);
-    }
+	DiploidGenotypeException(String s) {
+		super(s);
+	}
 
-    DiploidGenotypeException(String s, Throwable throwable) {
-        super(s, throwable);
-    }
+	DiploidGenotypeException(String s, Throwable throwable) {
+		super(s, throwable);
+	}
 }

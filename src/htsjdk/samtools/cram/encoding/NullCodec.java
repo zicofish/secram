@@ -22,31 +22,32 @@ import htsjdk.samtools.cram.io.BitOutputStream;
 
 import java.io.IOException;
 
-
 class NullCodec<T> extends AbstractBitCodec<T> {
-    private final T defaultValue = null;
+	private final T defaultValue = null;
 
-    public NullCodec() {
-    }
+	public NullCodec() {
+	}
 
-    @Override
-    public T read(final BitInputStream bitInputStream) throws IOException {
-        return defaultValue;
-    }
+	@Override
+	public T read(final BitInputStream bitInputStream) throws IOException {
+		return defaultValue;
+	}
 
-    @Override
-    public T read(final BitInputStream bitInputStream, final int length) throws IOException {
-        return defaultValue;
-    }
+	@Override
+	public T read(final BitInputStream bitInputStream, final int length)
+			throws IOException {
+		return defaultValue;
+	}
 
-    @Override
-    public long write(final BitOutputStream bitOutputStream, final T object) throws IOException {
-        return 0;
-    }
+	@Override
+	public long write(final BitOutputStream bitOutputStream, final T object)
+			throws IOException {
+		return 0;
+	}
 
-    @Override
-    public long numberOfBits(final T object) {
-        return 0;
-    }
+	@Override
+	public long numberOfBits(final T object) {
+		return 0;
+	}
 
 }

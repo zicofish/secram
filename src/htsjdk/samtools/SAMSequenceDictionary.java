@@ -35,136 +35,155 @@ import java.util.Map;
  * Collection of SAMSequenceRecords.
  */
 public class SAMSequenceDictionary implements Serializable {
-    public static final long serialVersionUID = 1L;
+	public static final long serialVersionUID = 1L;
 
-    private List<SAMSequenceRecord> mSequences = new ArrayList<SAMSequenceRecord>();
-    private final Map<String, SAMSequenceRecord> mSequenceMap = new HashMap<String, SAMSequenceRecord>();
+	private List<SAMSequenceRecord> mSequences = new ArrayList<SAMSequenceRecord>();
+	private final Map<String, SAMSequenceRecord> mSequenceMap = new HashMap<String, SAMSequenceRecord>();
 
-    public SAMSequenceDictionary() {
-    }
+	public SAMSequenceDictionary() {
+	}
 
-    public SAMSequenceDictionary(final List<SAMSequenceRecord> list) {
-        this();
-        setSequences(list);
-    }
+	public SAMSequenceDictionary(final List<SAMSequenceRecord> list) {
+		this();
+		setSequences(list);
+	}
 
-    public List<SAMSequenceRecord> getSequences() {
-        return Collections.unmodifiableList(mSequences);
-    }
+	public List<SAMSequenceRecord> getSequences() {
+		return Collections.unmodifiableList(mSequences);
+	}
 
-    public SAMSequenceRecord getSequence(final String name) {
-        return mSequenceMap.get(name);
-    }
+	public SAMSequenceRecord getSequence(final String name) {
+		return mSequenceMap.get(name);
+	}
 
-    /**
-     * Replaces the existing list of SAMSequenceRecords with the given list.
-     *
-     * @param list This value is used directly, rather than being copied.
-     */
-    public void setSequences(final List<SAMSequenceRecord> list) {
-        mSequences = list;
-        mSequenceMap.clear();
-        int index = 0;
-        for (final SAMSequenceRecord record : list) {
-            record.setSequenceIndex(index++);
-            if (mSequenceMap.put(record.getSequenceName(), record) != null) {
-                throw new IllegalArgumentException("Cannot add sequence that already exists in SAMSequenceDictionary: " +
-                        record.getSequenceName());
-            }
-        }
-    }
+	/**
+	 * Replaces the existing list of SAMSequenceRecords with the given list.
+	 *
+	 * @param list
+	 *            This value is used directly, rather than being copied.
+	 */
+	public void setSequences(final List<SAMSequenceRecord> list) {
+		mSequences = list;
+		mSequenceMap.clear();
+		int index = 0;
+		for (final SAMSequenceRecord record : list) {
+			record.setSequenceIndex(index++);
+			if (mSequenceMap.put(record.getSequenceName(), record) != null) {
+				throw new IllegalArgumentException(
+						"Cannot add sequence that already exists in SAMSequenceDictionary: "
+								+ record.getSequenceName());
+			}
+		}
+	}
 
-    public void addSequence(final SAMSequenceRecord sequenceRecord) {
-        if (mSequenceMap.containsKey(sequenceRecord.getSequenceName())) {
-            throw new IllegalArgumentException("Cannot add sequence that already exists in SAMSequenceDictionary: " +
-                    sequenceRecord.getSequenceName());
-        }
-        sequenceRecord.setSequenceIndex(mSequences.size());
-        mSequences.add(sequenceRecord);
-        mSequenceMap.put(sequenceRecord.getSequenceName(), sequenceRecord);
-    }
+	public void addSequence(final SAMSequenceRecord sequenceRecord) {
+		if (mSequenceMap.containsKey(sequenceRecord.getSequenceName())) {
+			throw new IllegalArgumentException(
+					"Cannot add sequence that already exists in SAMSequenceDictionary: "
+							+ sequenceRecord.getSequenceName());
+		}
+		sequenceRecord.setSequenceIndex(mSequences.size());
+		mSequences.add(sequenceRecord);
+		mSequenceMap.put(sequenceRecord.getSequenceName(), sequenceRecord);
+	}
 
-    /**
-     * @return The SAMSequenceRecord with the given index, or null if index is out of range.
-     */
-    public SAMSequenceRecord getSequence(final int sequenceIndex) {
-        if (sequenceIndex < 0 || sequenceIndex >= mSequences.size()) {
-            return null;
-        }
-        return mSequences.get(sequenceIndex);
-    }
+	/**
+	 * @return The SAMSequenceRecord with the given index, or null if index is
+	 *         out of range.
+	 */
+	public SAMSequenceRecord getSequence(final int sequenceIndex) {
+		if (sequenceIndex < 0 || sequenceIndex >= mSequences.size()) {
+			return null;
+		}
+		return mSequences.get(sequenceIndex);
+	}
 
-    /**
-     * @return The index for the given sequence name, or -1 if the name is not found.
-     */
-    public int getSequenceIndex(final String sequenceName) {
-        final SAMSequenceRecord record = mSequenceMap.get(sequenceName);
-        if (record == null) {
-            return -1;
-        }
-        return record.getSequenceIndex();
-    }
+	/**
+	 * @return The index for the given sequence name, or -1 if the name is not
+	 *         found.
+	 */
+	public int getSequenceIndex(final String sequenceName) {
+		final SAMSequenceRecord record = mSequenceMap.get(sequenceName);
+		if (record == null) {
+			return -1;
+		}
+		return record.getSequenceIndex();
+	}
 
-    public int size() {
-        return mSequences.size();
-    }
+	public int size() {
+		return mSequences.size();
+	}
 
-    /**
-     * @return The sum of the lengths of the sequences in this dictionary
-     */
-    public long getReferenceLength() {
-        long len = 0L;
-        for (final SAMSequenceRecord seq : getSequences()) {
-            len += seq.getSequenceLength();
-        }
-        return len;
-    }
+	/**
+	 * @return The sum of the lengths of the sequences in this dictionary
+	 */
+	public long getReferenceLength() {
+		long len = 0L;
+		for (final SAMSequenceRecord seq : getSequences()) {
+			len += seq.getSequenceLength();
+		}
+		return len;
+	}
 
-    public boolean isEmpty() {
-        return mSequences.isEmpty();
-    }
+	public boolean isEmpty() {
+		return mSequences.isEmpty();
+	}
 
-    private static String DICT_MISMATCH_TEMPLATE = "SAM dictionaries are not the same: %s.";
-    /**
-     * Non-comprehensive {@link #equals(Object)}-assertion: instead of calling {@link SAMSequenceRecord#equals(Object)} on constituent
-     * {@link SAMSequenceRecord}s in this dictionary against its pair in the target dictionary, in order,  call 
-     * {@link SAMSequenceRecord#isSameSequence(SAMSequenceRecord)}.
-     *
-     * @throws AssertionError When the dictionaries are not the same, with some human-readable information as to why
-     */
-    public void assertSameDictionary(final SAMSequenceDictionary that) {
-        if (this == that) return;
-        
-        final Iterator<SAMSequenceRecord> thatSequences = that.mSequences.iterator();
-        for (final SAMSequenceRecord thisSequence : mSequences) {
-            if (!thatSequences.hasNext())
-                throw new AssertionError(String.format(DICT_MISMATCH_TEMPLATE, thisSequence + " is present in only one dictionary"));
-            else {
-                final SAMSequenceRecord thatSequence = thatSequences.next();
-                if(!thatSequence.isSameSequence(thisSequence))
-                    throw new AssertionError(
-                            String.format(DICT_MISMATCH_TEMPLATE, thatSequence + " was found when " + thisSequence + " was expected")
-                    );
-            }
-        }
-        if (thatSequences.hasNext())
-            throw new AssertionError(String.format(DICT_MISMATCH_TEMPLATE, thatSequences.next() + " is present in only one dictionary"));
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	private static String DICT_MISMATCH_TEMPLATE = "SAM dictionaries are not the same: %s.";
 
-        SAMSequenceDictionary that = (SAMSequenceDictionary) o;
+	/**
+	 * Non-comprehensive {@link #equals(Object)}-assertion: instead of calling
+	 * {@link SAMSequenceRecord#equals(Object)} on constituent
+	 * {@link SAMSequenceRecord}s in this dictionary against its pair in the
+	 * target dictionary, in order, call
+	 * {@link SAMSequenceRecord#isSameSequence(SAMSequenceRecord)}.
+	 *
+	 * @throws AssertionError
+	 *             When the dictionaries are not the same, with some
+	 *             human-readable information as to why
+	 */
+	public void assertSameDictionary(final SAMSequenceDictionary that) {
+		if (this == that)
+			return;
 
-        if (!mSequences.equals(that.mSequences)) return false;
+		final Iterator<SAMSequenceRecord> thatSequences = that.mSequences
+				.iterator();
+		for (final SAMSequenceRecord thisSequence : mSequences) {
+			if (!thatSequences.hasNext())
+				throw new AssertionError(String.format(DICT_MISMATCH_TEMPLATE,
+						thisSequence + " is present in only one dictionary"));
+			else {
+				final SAMSequenceRecord thatSequence = thatSequences.next();
+				if (!thatSequence.isSameSequence(thisSequence))
+					throw new AssertionError(String.format(
+							DICT_MISMATCH_TEMPLATE, thatSequence
+									+ " was found when " + thisSequence
+									+ " was expected"));
+			}
+		}
+		if (thatSequences.hasNext())
+			throw new AssertionError(
+					String.format(DICT_MISMATCH_TEMPLATE, thatSequences.next()
+							+ " is present in only one dictionary"));
+	}
 
-        return true;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-    @Override
-    public int hashCode() {
-        return mSequences.hashCode();
-    }
+		SAMSequenceDictionary that = (SAMSequenceDictionary) o;
+
+		if (!mSequences.equals(that.mSequences))
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return mSequences.hashCode();
+	}
 }

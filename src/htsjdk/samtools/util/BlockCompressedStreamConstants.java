@@ -109,7 +109,7 @@ public class BlockCompressedStreamConstants {
 			BlockCompressedStreamConstants.BGZF_ID2,
 			BlockCompressedStreamConstants.BGZF_LEN,
 			0, // Little-endian short
-			// Total block size - 1
+				// Total block size - 1
 			BlockCompressedStreamConstants.BLOCK_HEADER_LENGTH
 					+ BlockCompressedStreamConstants.BLOCK_FOOTER_LENGTH - 1
 					+ 2, 0, // Little-endian short

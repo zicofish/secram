@@ -18,13 +18,13 @@
 package htsjdk.samtools.cram.lossy;
 
 public enum BaseCategoryType {
-    MATCH('R'), MISMATCH('N'), FLANKING_DELETION('D'), PILEUP('P'), LOWER_COVERAGE(
-            'X'), INSERTION('I');
+	MATCH('R'), MISMATCH('N'), FLANKING_DELETION('D'), PILEUP('P'), LOWER_COVERAGE(
+			'X'), INSERTION('I');
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private final char code;
+	@SuppressWarnings("FieldCanBeLocal")
+	private final char code;
 
-    BaseCategoryType(final char code) {
-        this.code = code;
-    }
+	BaseCategoryType(final char code) {
+		this.code = code;
+	}
 }

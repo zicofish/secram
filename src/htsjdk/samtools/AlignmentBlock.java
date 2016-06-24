@@ -34,25 +34,40 @@ import java.io.Serializable;
  * @author Tim Fennell
  */
 public class AlignmentBlock implements Serializable {
-    public static final long serialVersionUID = 1L;
+	public static final long serialVersionUID = 1L;
 
-    private int readStart;
-    private int referenceStart;
-    private int length;
+	private int readStart;
+	private int referenceStart;
+	private int length;
 
-    /** Constructs a new alignment block with the supplied read and ref starts and length. */
-    AlignmentBlock(int readStart, int referenceStart, int length) {
-        this.readStart = readStart;
-        this.referenceStart = referenceStart;
-        this.length = length;
-    }
+	/**
+	 * Constructs a new alignment block with the supplied read and ref starts
+	 * and length.
+	 */
+	AlignmentBlock(int readStart, int referenceStart, int length) {
+		this.readStart = readStart;
+		this.referenceStart = referenceStart;
+		this.length = length;
+	}
 
-    /** The first, 1-based, base in the read that is aligned to the reference reference. */
-    public int getReadStart() { return readStart; }
+	/**
+	 * The first, 1-based, base in the read that is aligned to the reference
+	 * reference.
+	 */
+	public int getReadStart() {
+		return readStart;
+	}
 
-    /** The first, 1-based, position in the reference to which the read is aligned. */
-    public int getReferenceStart() { return referenceStart; }
+	/**
+	 * The first, 1-based, position in the reference to which the read is
+	 * aligned.
+	 */
+	public int getReferenceStart() {
+		return referenceStart;
+	}
 
-    /** The number of contiguous bases aligned to the reference. */
-    public int getLength() { return length; }
+	/** The number of contiguous bases aligned to the reference. */
+	public int getLength() {
+		return length;
+	}
 }

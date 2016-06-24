@@ -16,7 +16,14 @@ import java.util.Map;
 
 import com.sg.secram.structure.SecramCompressionHeader;
 
+/**
+ * Builds an appropriate codec for each field of a secram record.
+ * 
+ * @author zhihuang
+ *
+ */
 public class SecramRecordCodecFactory {
+
 	public SecramRecordCodec buildCodec(final SecramCompressionHeader h,
 			BitInputStream bitInputStream, BitOutputStream bitOutputStream,
 			Map<Integer, InputStream> inputMap,

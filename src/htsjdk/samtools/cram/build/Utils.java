@@ -19,34 +19,35 @@ package htsjdk.samtools.cram.build;
 
 class Utils {
 
-    /**
-     * CRAM operates with upper case bases, so both read and ref bases should be
-     * upper-cased and vocab controlled. This method does exactly this: upper
-     * case acgt and replace everything else with N.
-     *
-     * @param base a base to normalize
-     * @return a normalized base
-     */
-    public static byte normalizeBase(final byte base) {
-        switch (base) {
-            case 'a':
-            case 'A':
-                return 'A';
+	/**
+	 * CRAM operates with upper case bases, so both read and ref bases should be
+	 * upper-cased and vocab controlled. This method does exactly this: upper
+	 * case acgt and replace everything else with N.
+	 *
+	 * @param base
+	 *            a base to normalize
+	 * @return a normalized base
+	 */
+	public static byte normalizeBase(final byte base) {
+		switch (base) {
+		case 'a':
+		case 'A':
+			return 'A';
 
-            case 'c':
-            case 'C':
-                return 'C';
+		case 'c':
+		case 'C':
+			return 'C';
 
-            case 'g':
-            case 'G':
-                return 'G';
+		case 'g':
+		case 'G':
+			return 'G';
 
-            case 't':
-            case 'T':
-                return 'T';
+		case 't':
+		case 'T':
+			return 'T';
 
-            default:
-                return 'N';
-        }
-    }
+		default:
+			return 'N';
+		}
+	}
 }

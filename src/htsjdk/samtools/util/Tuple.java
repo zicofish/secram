@@ -6,11 +6,11 @@ package htsjdk.samtools.util;
  * @author mccowan
  */
 public class Tuple<A, B> {
-    public final A a;
-    public final B b;
+	public final A a;
+	public final B b;
 
-    public Tuple(final A a, final B b) {
-        this.a = a;
-        this.b = b;
-    }
+	public Tuple(final A a, final B b) {
+		this.a = a;
+		this.b = b;
+	}
 }

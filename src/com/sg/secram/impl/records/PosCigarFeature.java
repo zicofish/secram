@@ -1,7 +1,7 @@
 package com.sg.secram.impl.records;
 
 /**
- * Represents a single element of a {@link PosCigarOld}.
+ * Represents a single element in a {@link PosCigar}.
  * 
  * @author Fabien Jolidon
  *
@@ -65,7 +65,9 @@ public class PosCigarFeature {
 		return result;
 	}
 
-	// how many bases of the read sequence are covered by this element
+	/**
+	 * @return Number of bases contained in this feature.
+	 */
 	public int getNbRead() {
 		switch (mOP) {
 		case I:

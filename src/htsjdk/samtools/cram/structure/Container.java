@@ -18,62 +18,62 @@
 package htsjdk.samtools.cram.structure;
 
 public class Container {
-    // container header as defined in the specs:
-    /**
-     * Byte size of the content excluding header.
-     */
-    public int containerByteSize;
-    public int sequenceId = -1;
-    public int alignmentStart = -1;
-    public int alignmentSpan = -1;
-    public int nofRecords = -1;
-    public long globalRecordCounter = -1;
+	// container header as defined in the specs:
+	/**
+	 * Byte size of the content excluding header.
+	 */
+	public int containerByteSize;
+	public int sequenceId = -1;
+	public int alignmentStart = -1;
+	public int alignmentSpan = -1;
+	public int nofRecords = -1;
+	public long globalRecordCounter = -1;
 
-    public long bases = 0;
-    public int blockCount = -1;
-    public int[] landmarks;
-    public int checksum = 0;
+	public long bases = 0;
+	public int blockCount = -1;
+	public int[] landmarks;
+	public int checksum = 0;
 
-    /**
-     * Container data
-     */
-    public Block[] blocks;
+	/**
+	 * Container data
+	 */
+	public Block[] blocks;
 
-    public CompressionHeader header;
+	public CompressionHeader header;
 
-    // slices found in the container:
-    public Slice[] slices;
+	// slices found in the container:
+	public Slice[] slices;
 
-    // for performance measurement:
-    public long buildHeaderTime;
-    public long buildSlicesTime;
-    public long writeTime;
-    public long parseTime;
-    public long readTime;
+	// for performance measurement:
+	public long buildHeaderTime;
+	public long buildSlicesTime;
+	public long writeTime;
+	public long parseTime;
+	public long readTime;
 
-    // for indexing:
-    /**
-     * Container start in the stream.
-     */
-    public long offset;
+	// for indexing:
+	/**
+	 * Container start in the stream.
+	 */
+	public long offset;
 
-    @Override
-    public String toString() {
-        return String
-                .format("seqID=%d, start=%d, span=%d, records=%d, slices=%d, blocks=%d.",
-                        sequenceId, alignmentStart, alignmentSpan, nofRecords,
-                        slices == null ? -1 : slices.length, blockCount);
-    }
+	@Override
+	public String toString() {
+		return String
+				.format("seqID=%d, start=%d, span=%d, records=%d, slices=%d, blocks=%d.",
+						sequenceId, alignmentStart, alignmentSpan, nofRecords,
+						slices == null ? -1 : slices.length, blockCount);
+	}
 
-    public boolean isEOF() {
-        final boolean v3 = containerByteSize == 15 && sequenceId == -1
-                && alignmentStart == 4542278 && blockCount == 1
-                && nofRecords == 0 && (slices == null || slices.length == 0);
+	public boolean isEOF() {
+		final boolean v3 = containerByteSize == 15 && sequenceId == -1
+				&& alignmentStart == 4542278 && blockCount == 1
+				&& nofRecords == 0 && (slices == null || slices.length == 0);
 
-        final boolean v2 = containerByteSize == 11 && sequenceId == -1
-                && alignmentStart == 4542278 && blockCount == 1
-                && nofRecords == 0 && (slices == null || slices.length == 0);
+		final boolean v2 = containerByteSize == 11 && sequenceId == -1
+				&& alignmentStart == 4542278 && blockCount == 1
+				&& nofRecords == 0 && (slices == null || slices.length == 0);
 
-        return v3 || v2;
-    }
+		return v3 || v2;
+	}
 }
