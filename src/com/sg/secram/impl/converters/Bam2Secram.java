@@ -180,12 +180,8 @@ public class Bam2Secram {
 				while (!pos2Builder.isEmpty()
 						&& (pos = pos2Builder.firstKey()) < startPosition) {
 					SecramRecordBuilder builder = pos2Builder.remove(pos);
-					SecramRecord completedRecord = builder.close(); // removes
-																	// the
-																	// position
-																	// from the
-																	// list, and
-																	// saves it
+					// removes the position from the list, and saves it
+					SecramRecord completedRecord = builder.close(); 
 					secramFileWriter.appendRecord(completedRecord);
 				}
 			}
@@ -278,9 +274,7 @@ public class Bam2Secram {
 			case S:
 			case EQ:
 			case X:
-				subSeq = seq.substring(0, opLength); // retrieve the sub
-														// sequence for this
-														// operator
+				subSeq = seq.substring(0, opLength); // retrieve the sub sequence for this operator
 				seq = seq.substring(opLength); // updates remaining string
 				break;
 			default:

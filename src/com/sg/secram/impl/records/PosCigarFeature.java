@@ -3,7 +3,7 @@ package com.sg.secram.impl.records;
 /**
  * Represents a single element in a {@link PosCigar}.
  * 
- * @author Fabien Jolidon
+ * @author zhihuang
  *
  */
 public class PosCigarFeature {

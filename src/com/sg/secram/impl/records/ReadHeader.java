@@ -3,10 +3,10 @@ package com.sg.secram.impl.records;
 import htsjdk.samtools.BAMRecord;
 
 /**
+ * Information related to the whole read, but not individual positions,
+ * hence it doesn't include read bases and quality scores.
  * @author zhihuang
  *
- *         Information related to the whole read, but not individual positions,
- *         hence it doesn't include read bases and quality scores.
  */
 public class ReadHeader {
 

@@ -12,61 +12,16 @@ import java.util.HashMap;
  */
 public enum PosCigarFeatureCode {
 	// features that attach before a position
-	F('F', 'I', "Insertion before position", true, true, false), // only if
-																	// there is
-																	// insertion
-																	// before
-																	// the start
-																	// of a read
-	R('R', 'S', "Soft clipping before position", true, true, false), // only if
-																		// there
-																		// is
-																		// soft
-																		// clipping
-																		// before
-																		// the
-																		// start
-																		// of a
-																		// read
-	G('G', 'H', "Hard clipping before position", true, false, false), // only if
-																		// there
-																		// is
-																		// hard
-																		// clipping
-																		// before
-																		// the
-																		// start
-																		// of a
-																		// read
-	O('O', 'P', "Padding before position", false, false, false), // only if
-																	// there is
-																	// padding
-																	// before
-																	// the start
-																	// of a read
+	F('F', 'I', "Insertion before position", true, true, false), // only if there is insertion before the start of a read
+	R('R', 'S', "Soft clipping before position", true, true, false), // only if there is soft clipping before the start of a read
+	G('G', 'H', "Hard clipping before position", true, false, false), // only if there is hard clipping before the start of a read
+	O('O', 'P', "Padding before position", false, false, false), // only if there is padding before the start of a read
 
 	// features on a position
-	X('X', 'M', "Single base substitution", false, true, true), D('D', 'D',
-			"Deletion", false, false, true), N('N', 'N', "Skipping position",
-			false, false, true), M('M', 'M', "Match", false, true, true), // this
-																			// is
-																			// never
-																			// used
-																			// when
-																			// writing
-																			// a
-																			// file,
-																			// it
-																			// is
-																			// only
-																			// used
-																			// as
-																			// a
-																			// convenience
-																			// to
-																			// represent
-																			// a
-																			// match
+	X('X', 'M', "Single base substitution", false, true, true), 
+	D('D', 'D', "Deletion", false, false, true), 
+	N('N', 'N', "Skipping position", false, false, true), 
+	M('M', 'M', "Match", false, true, true), // this is never used when writing a file, it is only used as a convenience to represent a match
 
 	// features that attach after a position
 	I('I', 'I', "Insertion after position", true, true, false), S('S', 'S',
