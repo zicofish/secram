@@ -93,30 +93,7 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 	public long encrypt(long plainNum) throws IOException, HGDException,
 			NoSuchAlgorithmException {
 		if (plainNum < MIN_PLAINTEXT || plainNum > MAX_PLAINTEXT) {
-			if (plainNum < MIN_CIPHERTEXT || plainNum > MAX_CIPHERTEXT) { // try
-																			// to
-																			// skip
-																			// the
-																			// exception
-																			// if
-																			// the
-																			// number
-																			// is
-																			// also
-																			// out
-																			// of
-																			// the
-																			// ciphertext
-																			// range,
-																			// so
-																			// that
-																			// no
-																			// one
-																			// would
-																			// misuse
-																			// it
-																			// for
-																			// decryption
+			if (plainNum < MIN_CIPHERTEXT || plainNum > MAX_CIPHERTEXT) { 
 				if (DEBUG)
 					log.debug("OPE cannot encrypt number "
 							+ plainNum
