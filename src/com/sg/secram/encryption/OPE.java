@@ -21,6 +21,8 @@ import com.sg.secram.encryption.SECRAMEncryptionMethod;
  * paper "Order-preserving symmetric encryption" by Boldyreva et Al., 2009.
  * <p>
  * This OPE implementation works for 40-bit plaintext integer.
+ * <p>
+ * Order-preseving property: If x <= y, then OPE(x) <= OPE(y).
  * 
  * @author zhicong
  */
