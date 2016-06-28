@@ -12,7 +12,6 @@ import htsjdk.samtools.cram.encoding.NullEncoding;
 import htsjdk.samtools.cram.encoding.huffman.codec.HuffmanByteEncoding;
 import htsjdk.samtools.cram.encoding.huffman.codec.HuffmanIntegerEncoding;
 import htsjdk.samtools.cram.structure.EncodingParams;
-import htsjdk.samtools.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +24,6 @@ import com.sg.secram.impl.records.SecramRecord;
 
 public class SecramCompressionHeaderFactory {
 	public static int SENSITIVE_FIELD_EXTERNAL_ID = 0;
-
-	private static final Log log = Log
-			.getInstance(SecramCompressionHeaderFactory.class);
 
 	public SecramCompressionHeader build(List<SecramRecord> records) {
 		final SecramCompressionHeader header = new SecramCompressionHeader();

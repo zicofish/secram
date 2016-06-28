@@ -149,9 +149,8 @@ public class SecramContainerIO {
 	}
 
 	/**
-	 * Writes a complete {@link Container} with it's header to a
-	 * {@link OutputStream}. The method is aware of file header containers and
-	 * is suitable for general purpose use: basically any container is allowed.
+	 * Writes a complete {@link SecramContainer} with its header to a
+	 * {@link OutputStream}.
 	 *
 	 * @param container
 	 *            the container to write
@@ -167,16 +166,12 @@ public class SecramContainerIO {
 		final long time1 = System.nanoTime();
 		final ExposedByteArrayOutputStream byteArrayOutputStream = new ExposedByteArrayOutputStream();
 
+		/* Write compression header block */
 		final SecramBlock block = new SecramBlock();
 		block.setContentType(SecramBlockContentType.COMPRESSION_HEADER);
 		block.setContentId(0);
 		block.setMethod(BlockCompressionMethod.RAW);
-		final byte[] bytes;
-		try {
-			bytes = container.compressionHeader.toByteArray();
-		} catch (final IOException e) {
-			throw new RuntimeException("This should have never happened.");
-		}
+		final byte[] bytes = container.compressionHeader.toByteArray();
 		block.setRawContent(bytes);
 		block.write(byteArrayOutputStream);
 		compressionHeaderSize += bytes.length;
@@ -185,7 +180,7 @@ public class SecramContainerIO {
 		container.coreBlock.write(byteArrayOutputStream);
 		coreBlockSize += container.coreBlock.getCompressedContentSize();
 		container.blockCount++;
-		for (final Entry entry : container.external.entrySet()) {
+		for (final Entry<Integer, SecramBlock> entry : container.external.entrySet()) {
 			((SecramBlock) entry.getValue()).write(byteArrayOutputStream);
 			externalSizes[(int) entry.getKey()] += ((SecramBlock) entry
 					.getValue()).getCompressedContentSize();

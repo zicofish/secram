@@ -31,14 +31,12 @@ import com.sg.secram.compression.SecramRecordCodecFactory;
 import com.sg.secram.impl.records.SecramRecord;
 
 public class SecramContainerFactory {
-	private final SAMFileHeader samFileHeader;
 	private int recordsPerContainer = SecramContainer.DEFATUL_RECORDS_PER_CONTAINER;
 	private long globalRecordCounter = 0;
 	private int globalContainerCounter = 0;
 
 	public SecramContainerFactory(final SAMFileHeader samFileHeader,
 			final int recordsPerContainer) {
-		this.samFileHeader = samFileHeader;
 		this.recordsPerContainer = recordsPerContainer;
 	}
 
@@ -56,10 +54,8 @@ public class SecramContainerFactory {
 					+ recordsPerContainer);
 		}
 		// get stats, create compression header and slices
-		final long time1 = System.nanoTime();
 		final SecramCompressionHeader compressionHeader = new SecramCompressionHeaderFactory()
 				.build(records);
-		final long time2 = System.nanoTime();
 
 		final SecramContainer container = new SecramContainer();
 		container.containerID = globalContainerCounter;
@@ -73,8 +69,6 @@ public class SecramContainerFactory {
 		container.nofRecords = records.size();
 		container.globalRecordCounter = globalRecordCounter;
 		container.blockCount = 0;
-
-		final long time3 = System.nanoTime();
 
 		final Map<Integer, ExposedByteArrayOutputStream> map = new HashMap<Integer, ExposedByteArrayOutputStream>();
 		for (final int id : compressionHeader.externalIds) {

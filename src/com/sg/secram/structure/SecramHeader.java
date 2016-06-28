@@ -68,7 +68,6 @@ public final class SecramHeader {
 	 * 
 	 * @return a complete copy of the header
 	 */
-	@SuppressWarnings("CloneDoesntCallSuperClone")
 	@Override
 	public SecramHeader clone() {
 		final SecramHeader clone = new SecramHeader();

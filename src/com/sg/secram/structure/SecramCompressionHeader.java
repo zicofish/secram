@@ -33,19 +33,19 @@ public class SecramCompressionHeader {
 
 	private static Log log = Log.getInstance(SecramCompressionHeader.class);
 
-	public SecramCompressionHeader() {
-	}
-
-	public SecramCompressionHeader(final InputStream inputStream) {
-	}
-
-	public byte[] toByteArray() throws IOException {
+	public byte[] toByteArray() {
 		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		write(byteArrayOutputStream);
+		try{
+			write(byteArrayOutputStream);
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			System.exit(1);
+		}
 		return byteArrayOutputStream.toByteArray();
 	}
 
-	void write(final OutputStream outputStream) throws IOException {
+	private void write(final OutputStream outputStream) throws IOException {
 
 		{ // encoding map:
 			int size = 0;
@@ -82,11 +82,12 @@ public class SecramCompressionHeader {
 		try {
 			read(new ByteArrayInputStream(data));
 		} catch (final IOException e) {
-			throw new RuntimeException("This should have never happened.");
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
-	void read(final InputStream inputStream) throws IOException {
+	private void read(final InputStream inputStream) throws IOException {
 		{ // encoding map
 			int byteSize = ITF8.readUnsignedITF8(inputStream);
 			byte[] bytes = new byte[byteSize];

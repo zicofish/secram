@@ -1,7 +1,6 @@
 package com.sg.secram.impl;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -24,7 +23,6 @@ import com.sg.secram.structure.SecramIO;
 import com.sg.secram.util.Timings;
 
 public class SECRAMFileWriter {
-	private Log log = Log.getInstance(SECRAMFileWriter.class);
 
 	private File secramFile;
 	private int recordsPerContainer = SecramContainer.DEFATUL_RECORDS_PER_CONTAINER;

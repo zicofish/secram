@@ -11,7 +11,7 @@ public class PosCigar {
 	/** Number of reads that overlap this position */
 	public int mCoverage = 0;
 
-	private Map<Integer, List<PosCigarFeature>> mReadFeaturesMap = new TreeMap();
+	private Map<Integer, List<PosCigarFeature>> mReadFeaturesMap = new TreeMap<>();
 	private char mRefBase;
 
 	// when writing a file

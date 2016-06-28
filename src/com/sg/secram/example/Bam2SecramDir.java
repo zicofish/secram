@@ -4,22 +4,19 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 public class Bam2SecramDir {
-	public static void main(String[] args) throws Exception {
-		String refFileName = args[0];
-		byte[] key = "SECRET_1SECRET_2SECRET_3".getBytes();
-		convertDirectory(args[1], refFileName, key);
-		// String refFileName =
-		// "/Users/zhihuang/work/LCA1/CTI_Project/tools/data/references/NC_008253_14K.fa";
-		// convertDirectory(new
-		// File("/Users/zhihuang/work/LCA1/CTI_Project/tools/data/simulated/single/"),
-		// refFileName);
-		// convertDirectory(new
-		// File("/Users/zhihuang/work/LCA1/CTI_Project/tools/data/simulated/paired/"),
-		// refFileName);
-	}
 
+	/**
+	 * Convert all BAM files (.bam) in a directory to corresponding SECRAM files (.secram), by referring 
+	 * to a reference genome file, and using an encryption key.
+	 * @param dirName
+	 * 				Directory name.
+	 * @param refName
+	 * 				Reference file name.
+	 * @param key
+	 * 				Encryption key.
+	 */
 	public static void convertDirectory(String dirName, String refName,
-			byte[] key) throws Exception {
+			byte[] key) {
 		File dir = new File(dirName);
 		File[] bamFiles = dir.listFiles(new BamNameFilter());
 		for (File bam : bamFiles) {

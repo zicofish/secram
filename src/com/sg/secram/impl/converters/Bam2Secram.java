@@ -237,9 +237,6 @@ public class Bam2Secram {
 				bamRecord.getAlignmentStart() - 1,
 				bamRecord.getReferenceIndex());
 
-		long endPosition = startPosition
-				+ (bamRecord.getCigar().getReferenceLength() - 1);
-
 		long pos = startPosition;
 
 		SecramRecordBuilder curBuilder = getBuilder(pos, pos2Builder);

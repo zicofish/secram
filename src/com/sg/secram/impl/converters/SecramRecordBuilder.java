@@ -10,8 +10,8 @@ import com.sg.secram.impl.records.PosCigarFeature;
 import com.sg.secram.impl.records.ReadHeader;
 import com.sg.secram.impl.records.SecramRecord;
 
-/*
- * SECRAM record
+/**
+ * Build a SECRAM record when traversing reads that cover this position.
  */
 public class SecramRecordBuilder {
 
@@ -21,19 +21,24 @@ public class SecramRecordBuilder {
 	private byte[] mQualityScores = null;
 	private PosCigar mPosCigar = null;
 
-	// set to true to parse the M operator values with the reference sequence
-	// (when false, all M will be considered matches)
-	private final static boolean USE_REF_SEQUENCE = true;
-
 	private LinkedList<byte[]> mTmpScores = new LinkedList<byte[]>();
 	private int mTmpScoreLen = 0;
 
-	// the value in the reference sequence at this position (not stored in the
-	// file)
+	/** The value in the reference sequence at this position */
 	private char mReferenceBase;
 
+	/**
+	 * Construct a builder with the necessary information: reference index, position, and reference base.
+	 * @param referenceIndex 
+	 * 				Index of the reference sequence (in the SAM/BAM header).
+	 * @param position 
+	 * 				The position for which this builder is collecting information.
+	 * @param referenceBase
+	 * 				The base on the reference sequence.
+	 * @throws IOException
+	 */
 	public SecramRecordBuilder(int referenceIndex, int position,
-			char referenceBase) throws IOException {
+			char referenceBase) {
 		mReferenceIndex = referenceIndex;
 		mPosition = position;
 		mPosCigar = new PosCigar(referenceBase);

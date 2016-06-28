@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bouncycastle.util.encoders.Base64;
 
@@ -18,6 +20,8 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 public class Main {
+	private static final Logger logger = Logger.getLogger(Main.class.getName());
+	
 	public static void main(String[] args) throws Exception {
 		ArgumentParser parser = ArgumentParsers
 				.newArgumentParser("Main")
@@ -60,6 +64,10 @@ public class Main {
 					keyFileName));
 			key = Base64.decode(reader.readLine());
 			reader.close();
+		}
+		else{
+			logger.log(Level.WARNING, "You are converting to a SECRAM file WITHOUT encryption. "
+					+ "Please protect your data by specifying a key with the option --keyfile.");
 		}
 		if (ns.getString("executable").equals("keygen")) {
 			key = SECRAMEncryptionFactory.generateSecret(24);

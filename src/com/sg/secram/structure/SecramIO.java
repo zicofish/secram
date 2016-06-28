@@ -7,7 +7,6 @@ import htsjdk.samtools.cram.io.LTF8;
 import htsjdk.samtools.seekablestream.SeekableFileStream;
 import htsjdk.samtools.seekablestream.SeekableStream;
 import htsjdk.samtools.util.BufferedLineReader;
-import htsjdk.samtools.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,19 +26,6 @@ import java.nio.ByteOrder;
 public class SecramIO {
 
 	private static final int DEFINITION_LENGTH = SecramHeader.MAGIC.length + 20;
-	private static final Log log = Log.getInstance(SecramIO.class);
-
-	private static byte[] bytesFromHex(final String string) {
-		final String clean = string.replaceAll("[^0-9a-fA-F]", "");
-		if (clean.length() % 2 != 0)
-			throw new RuntimeException("Not a hex string: " + string);
-		final byte[] data = new byte[clean.length() / 2];
-		for (int i = 0; i < clean.length(); i += 2) {
-			data[i / 2] = (Integer.decode("0x" + clean.charAt(i)
-					+ clean.charAt(i + 1))).byteValue();
-		}
-		return data;
-	}
 
 	/**
 	 * Check if the file contains proper SECRAM header

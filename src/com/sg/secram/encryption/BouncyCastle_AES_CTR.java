@@ -16,27 +16,24 @@ import com.sg.secram.encryption.SECRAMEncryptionMethod;
  */
 
 public class BouncyCastle_AES_CTR implements SECRAMEncryptionMethod<byte[]> {
-	SICBlockCipher encryptCipher = null;
-	SICBlockCipher decryptCipher = null;
+	private SICBlockCipher encryptCipher = null;
+	private SICBlockCipher decryptCipher = null;
 
 	/** The AES key */
-	byte[] key = null;
+	private byte[] key = null;
 
 	/** The initialization vector needed by the CTR mode */
-	byte[] IV = null;
+	private byte[] IV = null;
 
-	// The default block size
-	public static int blockSize = 16;
-
-	public BouncyCastle_AES_CTR() {
-		// default 192 bit key
-		this("SECRET_1SECRET_2SECRET_3".getBytes());
-	}
+	/** The default block size is 16 bytes */
+	private static final int blockSize = 16;
 
 	/**
 	 * This constructor uses zero IV. It is up to the user to make sure that he
 	 * never uses the same key "keyBytes" to construct this cipher and then
 	 * encrypts different messages.
+	 * @param keyBytes
+	 * 				AES key.
 	 */
 	public BouncyCastle_AES_CTR(byte[] keyBytes) {
 		// default IV vector with all bytes to 0
@@ -55,6 +52,9 @@ public class BouncyCastle_AES_CTR implements SECRAMEncryptionMethod<byte[]> {
 		initCiphers();
 	}
 
+	/**
+	 * @return AES key.
+	 */
 	public byte[] getKey() {
 		return key;
 	}

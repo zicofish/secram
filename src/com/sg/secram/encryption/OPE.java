@@ -24,22 +24,22 @@ import com.sg.secram.encryption.SECRAMEncryptionMethod;
  * <p>
  * Order-preseving property: If x <= y, then OPE(x) <= OPE(y).
  * 
- * @author zhicong
+ * @author zhihuang
  */
 
 public class OPE implements SECRAMEncryptionMethod<Long> {
 	private static final int BitsForRCoins = 64;
 	private static final int BitsForHGDCoins = 128;
 
-	// secret key used for OPE algorithm
+	/** secret key used for OPE algorithm */
 	private byte[] key = null;
 
-	// We constrain the plaintextspace to be 40 bits
+	/** The supported plaintext space is 40 bits */
 	private static final int plainTextSpace = 40;
 	public static final long MIN_PLAINTEXT = 0;
 	public static final long MAX_PLAINTEXT = (1l << plainTextSpace) - 1;
 
-	// ciphertextspace is 48 bits
+	/** The ciphertext space is 48 bits */
 	private static final int cipherTextSpace = 48;
 	public static final long MIN_CIPHERTEXT = 0;
 	public static final long MAX_CIPHERTEXT = (1l << cipherTextSpace) - 10;
@@ -51,10 +51,6 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 
 	private Log log = Log.getInstance(OPE.class);
 	private boolean DEBUG = false;
-
-	public OPE() {
-		this("SECRET_1SECRET_2SECRET_3".getBytes());
-	}
 
 	public OPE(byte[] keyBytes) {
 		// get the key
@@ -227,7 +223,7 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 	}
 
 	/**
-	 * Generate a specific num of peudorandom bits
+	 * Generate a specific num of pseudorandom bits
 	 */
 	public byte[] TapeGen(long lowD, long highD, long lowR, long highR, long m,
 			int numOfBits) throws IOException, NoSuchAlgorithmException {

@@ -196,7 +196,7 @@ public class SecramRecordCodec {
 			featureCodeCodec.setBitInputStream(bitInputStream);
 			featureLengthCodec.setBitInputStream(bitInputStream);
 
-			List<PosCigarFeature> features = null;
+			List<PosCigarFeature> features = new LinkedList<PosCigarFeature>();;
 			int currentOrder = -1;
 			for (int i = 0; i < numberOfFeatures; i++) {
 				int order = featureOrderCodec.readField();
@@ -240,9 +240,10 @@ public class SecramRecordCodec {
 				}
 
 				if (order != currentOrder) {
-					if (currentOrder >= 0)
+					if (currentOrder >= 0){
 						record.mPosCigar.setNonMatchFeaturesForRead(
 								currentOrder, features);
+					}
 					features = new LinkedList<PosCigarFeature>();
 					currentOrder = order;
 				}
@@ -250,7 +251,7 @@ public class SecramRecordCodec {
 						length, bases);
 				features.add(pcf);
 			}
-			if (null != features)
+			if (! features.isEmpty())
 				record.mPosCigar.setNonMatchFeaturesForRead(currentOrder,
 						features);
 
