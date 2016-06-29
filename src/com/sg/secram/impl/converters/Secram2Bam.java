@@ -24,7 +24,7 @@ import com.sg.secram.util.Timings;
 /**
  * Converter from a SECRAM file to a BAM file.
  * 
- * @author zhicong
+ * @author zhihuang
  *
  */
 public class Secram2Bam {
@@ -176,7 +176,8 @@ public class Secram2Bam {
 																// need to store
 																// it now
 							0, // cigarLen
-							header.mFlags, 0, // readLen
+							header.mFlags, 
+							0, // readLen
 							header.mNextReferenceIndex, // mateReferenceSequenceIndex
 							header.mNextPosition + 1, // mateAlignmentStart
 							header.mTemplateLength, header.mTags);

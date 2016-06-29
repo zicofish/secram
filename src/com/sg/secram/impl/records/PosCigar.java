@@ -6,6 +6,23 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+/**
+ * Maintain the base information of a position compared to that on the reference sequence.
+ * For example, if reference base on this position is 'A', while the base of a read on this 
+ * position is 'C', then a feature that indicates such substitution information is maintained
+ * by an instance of this class for the position.
+ * <p>
+ * Therefore, PosCigar keeps track of such "difference" information w.r.t the reference for all
+ * the reads that overlap this position.
+ * <p>
+ * See also:
+ * <ul>
+ * <li>{@link PosCigarFeature} for definition of a feature.</li>
+ * <li>{@link PosCigarFeatureCode} for the list of defined features.</li>
+ * </ul>
+ * @author zhihuang
+ *
+ */
 public class PosCigar {
 
 	/** Number of reads that overlap this position */
@@ -14,7 +31,9 @@ public class PosCigar {
 	private Map<Integer, List<PosCigarFeature>> mReadFeaturesMap = new TreeMap<>();
 	private char mRefBase;
 
-	// when writing a file
+	/**
+	 * Construct by specifying a reference base.
+	 */
 	public PosCigar(char refBase) {
 		mRefBase = refBase;
 	}

@@ -1,9 +1,12 @@
 package com.sg.secram.compression;
 
+/**
+ * Rescale the quality score from [0, 63] to [0, 15]. Any quality score that is bigger
+ * than 63 will be rescaled to 15. After rescaling, we only need 4 bits to represent a score.
+ * @author zhihuang
+ *
+ */
 public class LossyQualityScore {
-	// rescale the quality score from [0, 63] (any quality score that is bigger
-	// than 63 will be treated like 63)
-	// to [0, 15]
 
 	/**
 	 * @param scores
@@ -55,6 +58,12 @@ public class LossyQualityScore {
 		return originalResolutionScores;
 	}
 
+	/**
+	 * @param compactScores
+	 *            Array of compact scores. Each compact score is 4 bits.
+	 * @return Array of 8-bit scores in the original resolution. A 4-bit compact
+	 *         score is multiplied by 4 in order to convert to a 8-bit score.
+	 */
 	public static byte[] unpackQS(byte[] compactScores) {
 		return unpackQS(compactScores, compactScores.length * 2);
 	}

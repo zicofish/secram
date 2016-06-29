@@ -10,6 +10,11 @@ import org.bouncycastle.crypto.params.HKDFParameters;
 import com.sg.secram.encryption.SECRAMEncryptionMethod;
 import com.sg.secram.util.SECRAMUtils;
 
+/**
+ * Factory for creating block cipher and OPE cipher, and generating key. 
+ * @author zhihuang
+ *
+ */
 public class SECRAMEncryptionFactory {
 	public static final int BLOCK_CIPHER_KEY_LEN = 24;
 	public static final int OPE_KEY_LEN = 24;
@@ -67,6 +72,10 @@ public class SECRAMEncryptionFactory {
 		return outKey;
 	}
 
+	/**
+	 * Generate random bytes.
+	 * @param keyLen Lenght of random bytes to be generated.
+	 */
 	public static byte[] generateSecret(int keyLen) {
 		try {
 			byte[] key = new byte[keyLen];

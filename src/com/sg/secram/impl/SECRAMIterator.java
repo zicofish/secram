@@ -41,6 +41,12 @@ public class SECRAMIterator implements Iterator<SecramRecord> {
 	private long encPosition = -1;
 	private int offset = -1;
 
+	/**
+	 * @param header SECRAM file header
+	 * @param inputStream The input stream where we read SECRAM records.
+	 * @param referenceFile Reference sequence file.
+	 * @param filter Security filter for decryption.
+	 */
 	public SECRAMIterator(SecramHeader header, InputStream inputStream,
 			ReferenceSequenceFile referenceFile, SECRAMSecurityFilter filter) {
 		this.secramHeader = header;
@@ -115,7 +121,7 @@ public class SECRAMIterator implements Iterator<SecramRecord> {
 		return null;
 	}
 
-	public char getReferenceBase(long pos)
+	private char getReferenceBase(long pos)
 			throws ArrayIndexOutOfBoundsException, IOException {
 		int refID = (int) (pos >> 32);
 		if (refID == cachedRefID) {

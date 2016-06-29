@@ -12,6 +12,7 @@ import com.sg.secram.impl.records.SecramRecord;
 
 /**
  * Build a SECRAM record when traversing reads that cover this position.
+ * @author zhihuang
  */
 public class SecramRecordBuilder {
 
@@ -49,6 +50,9 @@ public class SecramRecordBuilder {
 		return mReferenceBase;
 	}
 
+	/**
+	 * @return The number of reads that overlap this position
+	 */
 	public int getCoverage() {
 		return mPosCigar.mCoverage;
 	}
@@ -65,6 +69,12 @@ public class SecramRecordBuilder {
 		mReadHeaders.add(header);
 	}
 
+	/**
+	 * Add "len" quality scores from the specified array at "offset" to the SECRAM record.
+	 * @param score An array of quality scores.
+	 * @param offset The offset to start adding scores. 
+	 * @param len Number of scores to be added.
+	 */
 	public void updateScores(byte[] score, int offset, int len) {
 		if (len > 0) {
 			byte[] tmpArray = new byte[len];
@@ -74,6 +84,9 @@ public class SecramRecordBuilder {
 		}
 	}
 
+	/**
+	 * Close this builder when all reads that cover this position are processed.
+	 */
 	public SecramRecord close() throws IOException {
 
 		mQualityScores = new byte[mTmpScoreLen];

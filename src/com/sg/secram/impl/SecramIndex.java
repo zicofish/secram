@@ -21,17 +21,32 @@ import java.util.TreeMap;
 public class SecramIndex {
 	private TreeMap<Long, Long> index = new TreeMap<Long, Long>();
 
+	/**
+	 * Construct a SECRAM index from an existing index file.
+	 * @throws IOException
+	 */
 	SecramIndex(File indexFile) throws IOException {
 		readIndexFromFile(indexFile);
 	}
 
+	/**
+	 * Create an empty SECRAM index (used when writing a SECRAM file). 
+	 */
 	SecramIndex() {
 	};
 
+	/**
+	 * Add an index record (position, offset).
+	 */
 	public void addTuple(long position, long offset) {
 		index.put(position, offset);
 	}
 
+	/**
+	 * Get the container which contains a position.
+	 * @param position The position to be queried.
+	 * @return Container offset in the SECRAM file.
+	 */
 	public long getContainerOffset(long position) {
 		Map.Entry<Long, Long> entry = index.floorEntry(position);
 		if (null == entry)
@@ -50,6 +65,9 @@ public class SecramIndex {
 		bufReader.close();
 	}
 
+	/**
+	 * Write out the index to a file.
+	 */
 	public void writeIndexToFile(File indexFile) throws IOException {
 		BufferedWriter bufWriter = new BufferedWriter(new FileWriter(indexFile));
 		Set<Entry<Long, Long>> entries = index.entrySet();

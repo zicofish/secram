@@ -19,6 +19,21 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
+/**
+ * Define entry points for some functionalities of this library:
+ * <ul>
+ * <li>Generate a key</li>
+ * <li>Convert a BAM file to a SECRAM file</li>
+ * <li>
+ * Convert a SECRAM file to a BAM file</li>
+ * <li>
+ * Convert all BAM files in a directory to SECRAM files.</li>
+ * </ul>
+ * Run this class with option '--help' to see the help menu.
+ * 
+ * @author zhihuang
+ *
+ */
 public class Main {
 	private static final Logger logger = Logger.getLogger(Main.class.getName());
 	

@@ -50,15 +50,32 @@ public class SecramBlock {
 	 */
 	private byte[] rawContent, compressedContent;
 
+	/**
+	 * Construct an empty block.
+	 */
 	public SecramBlock() {
 	}
 
+	/**
+	 * Construct a block that will be compressed with the specified method.
+	 * @param contentType Content type of this block.
+	 * @param contentId External block id.  
+	 * @param method Block compression method.
+	 * @param rawContent Block content.
+	 */
 	public SecramBlock(SecramBlockContentType contentType, int contentId,
 			BlockCompressionMethod method, byte[] rawContent) {
 		this(contentType, contentId, ExternalCompressor
 				.createExternalCompressor(method), rawContent);
 	}
 
+	/**
+	 * Construct a block that will be compressed with the specified compressor.
+	 * @param contentType Content type of this block.
+	 * @param contentId External block id.  
+	 * @param compressor Block compressor.
+	 * @param rawContent Block content.
+	 */
 	public SecramBlock(SecramBlockContentType contentType, int contentId,
 			ExternalCompressor compressor, byte[] rawContent) {
 		this.contentType = contentType;
@@ -67,6 +84,11 @@ public class SecramBlock {
 		setRawContent(rawContent);
 	}
 
+	/**
+	 * Construct a block that is not compressed.
+	 * @param contentType Content type of this block.
+	 * @param rawContent Block content.
+	 */
 	private SecramBlock(final SecramBlockContentType contentType,
 			final byte[] rawContent) {
 		this(contentType, 0, ExternalCompressor.createRAW(), rawContent);

@@ -30,6 +30,11 @@ import com.sg.secram.compression.SecramRecordCodec;
 import com.sg.secram.compression.SecramRecordCodecFactory;
 import com.sg.secram.impl.records.SecramRecord;
 
+/**
+ * Factory for building a container of SECRAM records.
+ * @author zhihuang
+ *
+ */
 public class SecramContainerFactory {
 	private int recordsPerContainer = SecramContainer.DEFATUL_RECORDS_PER_CONTAINER;
 	private long globalRecordCounter = 0;
@@ -44,6 +49,14 @@ public class SecramContainerFactory {
 		return globalContainerCounter;
 	}
 
+	/**
+	 * Build a container for the list of SECRAM records.
+	 * @param records SECRAM records
+	 * @param containerSalt Random salt for the encryption
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws IOException
+	 */
 	public SecramContainer buildContainer(final List<SecramRecord> records,
 			long containerSalt) throws IllegalArgumentException,
 			IllegalAccessException, IOException {

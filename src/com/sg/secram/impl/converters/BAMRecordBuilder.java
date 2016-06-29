@@ -7,6 +7,11 @@ import java.util.LinkedList;
 
 import com.sg.secram.impl.records.PosCigarFeature;
 
+/**
+ * Builder for constructing a BAM record when collecting information from SECRAM records.
+ * @author zhihuang
+ *
+ */
 public class BAMRecordBuilder {
 	private BAMRecord record;
 	private int alignmentEnd;
@@ -18,6 +23,12 @@ public class BAMRecordBuilder {
 
 	private int expectedNext = -1;
 
+	/**
+	 * Construct a builder with an incomplete BAM record.
+	 * @param record An incomplete BAM record.
+	 * @param alignmentStart Alignment start of the record.
+	 * @param alignmentEnd Alignment end of the record.
+	 */
 	public BAMRecordBuilder(BAMRecord record, int alignmentStart,
 			int alignmentEnd) {
 		this.record = record;
@@ -26,6 +37,13 @@ public class BAMRecordBuilder {
 		expectedNext = alignmentStart;
 	}
 
+	/**
+	 * Add "len" quality scores from the specified array at "offset" to the BAM record.
+	 * @param b An array of quality scores.
+	 * @param off The offset to start adding scores. 
+	 * @param len Number of scores to be added.
+	 * @param position The position which the quality scores belong to.
+	 */
 	public void addScores(byte[] b, int off, int len, int position) {
 		check(position);
 		try {
@@ -44,6 +62,7 @@ public class BAMRecordBuilder {
 	}
 
 	/**
+	 * Advance the position by 1 because the current position is completed.
 	 * Must call this method after all information of one position has been
 	 * added to this BAM record.
 	 */
@@ -51,27 +70,42 @@ public class BAMRecordBuilder {
 		expectedNext++;
 	}
 
+	/**
+	 * Whether all positions of the BAM record are complete.
+	 */
 	public boolean isComplete() {
 		return expectedNext > alignmentEnd;
 	}
 
-	public void check(int position) {
+	/**
+	 * Check whether the specified position is the expected one. 
+	 */
+	private void check(int position) {
 		if (expectedNext != position) {
 			throw new IllegalArgumentException("Expect position: "
 					+ expectedNext + ", but encounter psotion " + position);
 		}
 	}
 
+	/**
+	 * Add a PosCigar feature to the position.
+	 */
 	public void addElement(PosCigarFeature element, int position) {
 		check(position);
 		cigar.add(element);
 	}
 
+	/**
+	 * Add read bases to the position.
+	 */
 	public void addReadElement(String readStr, int position) {
 		check(position);
 		readString += readStr;
 	}
 
+	/**
+	 * Close this builder, and return a complete BAM record.
+	 */
 	public BAMRecord close() {
 		record.setBaseQualities(qualityScores.toByteArray());
 		record.setReadString(readString);

@@ -9,13 +9,14 @@ import com.sg.secram.encryption.SECRAMEncryptionMethod;
 
 /**
  * Implementation of AES in CTR mode using bouncy castle lightweight api.
- * 
+ * <p>
  * Note: Don't use the same (key, IV) pair to encrypt different messages.
  * 
- * @author zhicong
+ * @author zhihuang
  */
 
 public class BouncyCastle_AES_CTR implements SECRAMEncryptionMethod<byte[]> {
+
 	private SICBlockCipher encryptCipher = null;
 	private SICBlockCipher decryptCipher = null;
 
@@ -74,13 +75,6 @@ public class BouncyCastle_AES_CTR implements SECRAMEncryptionMethod<byte[]> {
 
 		encryptCipher.init(true, parameterIV);
 		decryptCipher.init(false, parameterIV);
-	}
-
-	public void ResetCiphers() {
-		if (encryptCipher != null)
-			encryptCipher.reset();
-		if (decryptCipher != null)
-			decryptCipher.reset();
 	}
 
 	/**

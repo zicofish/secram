@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * SECRAM record on a position.
+ * SECRAM record of a position.
  * @author zhihuang 
  */
 public class SecramRecord {
@@ -20,16 +20,26 @@ public class SecramRecord {
 	public int qualityLenDelta;
 
 	/**
-	 * The value in the reference sequence at this position (not stored in the
-	 * file)
+	 * The base in the reference sequence at this position.
 	 */
 	private char mReferenceBase = '*';
 
+	/**
+	 * Construct an empty SECRAM record.
+	 */
 	public SecramRecord() {
 		mQualityScores = new byte[0];
 		mPosCigar = new PosCigar('*');
 	}
 
+	/**
+	 * @param referenceIndex Reference index.
+	 * @param position Relative position on the reference.
+	 * @param referenceBase Reference base.
+	 * @param readHeaders Headers of the reads that start at this position.
+	 * @param qualityScores Quality scores of the bases on this position.
+	 * @param posCigar {@link PosCigar} on this position.
+	 */
 	public SecramRecord(int referenceIndex, int position, char referenceBase,
 			List<ReadHeader> readHeaders, byte[] qualityScores,
 			PosCigar posCigar) {
@@ -41,6 +51,10 @@ public class SecramRecord {
 		mReferenceBase = referenceBase;
 	}
 
+	/**
+	 * Get the absolute position of this record. Chromosome ID is in the higher 32 bits,
+	 * and chromosome position is in the lower 32 bits.
+	 */
 	public long getAbsolutePosition() {
 		long result = mReferenceIndex;
 		result <<= 32;
@@ -49,6 +63,10 @@ public class SecramRecord {
 		return result;
 	}
 
+	/**
+	 * Set the absolute position of this record. Chromosome ID is in the higher 32 bits,
+	 * and chromosome position is in the lower 32 bits.
+	 */
 	public void setAbsolutionPosition(long ap) {
 		mReferenceIndex = (int) (ap >> 32);
 		mPosition = (int) ap;

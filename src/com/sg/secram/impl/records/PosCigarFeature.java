@@ -13,6 +13,12 @@ public class PosCigarFeature {
 	public int mLength = 0;
 	public String mBases = "";
 
+	/**
+	 * @param order Order that specifies a read on this position.
+	 * @param op Operation code.
+	 * @param length Number of bases that are related to this feature.
+	 * @param bases Bases, if any, that belong to this feature. Some features don't have bases, e.g., deletion.
+	 */
 	public PosCigarFeature(int order, PosCigarFeatureCode op, int length,
 			String bases) {
 		mOrder = order;
@@ -23,14 +29,13 @@ public class PosCigarFeature {
 
 	/**
 	 * @param order
-	 *            The order of this element.
+	 *            Order that specifies a read on this position.
 	 * @param op
-	 *            Operator
+	 *            Operation code.
 	 * @param length
-	 *            Length (this field is only necessary for some operators)
+	 *            Number of bases that are related to this feature.
 	 * @param bases
-	 *            A string containing one or more bases (this field is only
-	 *            necessary for some operators)
+	 *            Bases, if any, that belong to this feature. Some features don't have bases, e.g., deletion.
 	 */
 	public PosCigarFeature(int order, char op, int length, String bases) {
 		this(order, PosCigarFeatureCode.getOperator(op), length, bases);
@@ -39,14 +44,13 @@ public class PosCigarFeature {
 	/**
 	 * 
 	 * @param order
-	 *            The order of this element.
+	 *            Order that specifies a read on this position.
 	 * @param op
-	 *            Operator
+	 *            Operation code.
 	 * @param length
-	 *            Length (this field is only necessary for some operators)
+	 *            Number of bases that are related to this feature.
 	 * @param bases
-	 *            A string containing one or more bases (this field is only
-	 *            necessary for some operators)
+	 *            Bases, if any, that belong to this feature. Some features don't have bases, e.g., deletion.
 	 */
 	public PosCigarFeature(int order, String op, int length, String bases) {
 		this(order, op.charAt(0), length, bases);
@@ -66,7 +70,7 @@ public class PosCigarFeature {
 	}
 
 	/**
-	 * @return Number of bases contained in this feature.
+	 * Get the number of bases contained in this feature.
 	 */
 	public int getNbRead() {
 		switch (mOP) {

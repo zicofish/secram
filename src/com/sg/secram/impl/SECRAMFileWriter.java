@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.sg.secram.impl.records.ReadHeader;
 import com.sg.secram.impl.records.SecramRecord;
 import com.sg.secram.structure.SecramBlock;
@@ -22,6 +23,11 @@ import com.sg.secram.structure.SecramHeader;
 import com.sg.secram.structure.SecramIO;
 import com.sg.secram.util.Timings;
 
+/**
+ * Write SECRAM records to disk.
+ * @author zhihuang
+ *
+ */
 public class SECRAMFileWriter {
 
 	private File secramFile;
@@ -37,6 +43,10 @@ public class SECRAMFileWriter {
 
 	private List<SecramRecord> secramRecords = new ArrayList<SecramRecord>();
 
+	/**
+	 * Construct the writer by specifying an output file, an original SAM file header, and an encryption key.
+	 * @throws IOException
+	 */
 	public SECRAMFileWriter(final File output, final SAMFileHeader header,
 			final byte[] key) throws IOException {
 		this.secramFile = output;
@@ -78,14 +88,29 @@ public class SECRAMFileWriter {
 		return secramRecords.size() >= recordsPerContainer;
 	}
 
-	public void appendRecord(SecramRecord record) throws Exception {
+	/**
+	 * Append a record to the output file.
+	 */
+	public void appendRecord(SecramRecord record) {
 		if (shouldFlushContainer(record)) {
-			flushContainer();
+			try {
+				flushContainer();
+			} catch (IllegalArgumentException | IllegalAccessException
+					| IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
 		}
 		secramRecords.add(record);
 	}
 
-	public void flushContainer() throws IllegalArgumentException,
+	/**
+	 * Write a container to the output file.
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws IOException
+	 */
+	private void flushContainer() throws IllegalArgumentException,
 			IllegalAccessException, IOException {
 		// encrypt the positions
 		long prevOrgPosition = secramRecords.get(0).getAbsolutePosition();
@@ -157,6 +182,10 @@ public class SECRAMFileWriter {
 		secramRecords.clear();
 	}
 
+	/**
+	 * Write out the SECRAM file header.
+	 * @throws IOException
+	 */
 	private void writeHeader() throws IOException {
 		// initialize the order-preserving encryption (ope) for the whole file
 		long opeSalt = 0;

@@ -18,12 +18,28 @@ import com.sg.secram.structure.SecramCompressionHeader;
 
 /**
  * Builds an appropriate codec for each field of a secram record.
+ * <p>
+ * See also:
+ * <ul>
+ * <li>{@link SecramRecordCodec} for definitions of different field codecs.</li>
+ * </ul>
  * 
  * @author zhihuang
  *
  */
 public class SecramRecordCodecFactory {
 
+	/**
+	 * Creates the codec for each {@link SecramFieldCodec} in {@link SecramRecordCodec}.
+	 * @param h A header defining the specific encoding method for each field.
+	 * @param bitInputStream Input stream used for a non-external codec.
+	 * @param bitOutputStream Output stream used for a non-external codec.
+	 * @param inputMap Map from external block IDs to its input streams, for external codecs. 
+	 * @param outputMap Map from external block IDs to its output streams, for external codecs.
+	 * @return A codec for serializing / deserializing SECRAM records.
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
 	public SecramRecordCodec buildCodec(final SecramCompressionHeader h,
 			BitInputStream bitInputStream, BitOutputStream bitOutputStream,
 			Map<Integer, InputStream> inputMap,
@@ -40,7 +56,6 @@ public class SecramRecordCodecFactory {
 				case FO_FeatureOrder:
 				case FC_FeatureCode:
 				case FL_FeatureLength:
-				case FB_FeatureBase:
 					f.set(recordCodec,
 							createFieldCodec(type, h.encodingMap.get(key),
 									null, null, inputMap, outputMap));

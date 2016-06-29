@@ -6,6 +6,11 @@ import java.io.IOException;
 import com.sg.secram.impl.converters.Secram2Bam;
 import com.sg.secram.util.SECRAMUtils;
 
+/**
+ * Example use for converting a SECRAM file to a BAM file.
+ * @author zhihuang
+ *
+ */
 public class Secram2BamFile {
 
 	/**

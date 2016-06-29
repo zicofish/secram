@@ -14,7 +14,7 @@ import htsjdk.samtools.cram.encoding.DataSeriesType;
  * {@link com.sg.secram.compression.SecramEncodingKey} for SECRAM) and it's data
  * type, like {@link java.lang.Integer}or {@link java.lang.String}. Annotating
  * fields in a class with this annotation allows for automated discovery of such
- * column (data series) and attaching specific codec to serialise/deserialize
+ * column (data series) and attaching specific codec to serialize/deserialize
  * data.
  */
 @Target(ElementType.FIELD)

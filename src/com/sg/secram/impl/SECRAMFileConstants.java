@@ -1,7 +1,8 @@
 package com.sg.secram.impl;
 
 /**
- * Constants used in reading & writing SECRAM files
+ * Constants used in reading & writing SECRAM files.
+ * @author zhihuang
  */
 public class SECRAMFileConstants {
 

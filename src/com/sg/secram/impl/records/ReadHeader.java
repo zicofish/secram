@@ -19,9 +19,15 @@ public class ReadHeader {
 	public int mNextPosition = -1;
 	public byte[] mTags;
 
+	/**
+	 * Construct an empty read header.
+	 */
 	public ReadHeader() {
 	}
 
+	/**
+	 * Construct a read header by extracting information fro a BAM record.
+	 */
 	public ReadHeader(BAMRecord bamRecord) {
 		mReferenceLength = bamRecord.getCigar().getReferenceLength();
 		mMappingQuality = bamRecord.getMappingQuality();
@@ -53,7 +59,7 @@ public class ReadHeader {
 	}
 
 	/**
-	 * @return Absolute starting position of the paired read.
+	 * Get the absolute starting position of the paired read.
 	 */
 	public long getNextAbsolutePosition() {
 		long result = mNextReferenceIndex;
@@ -62,6 +68,9 @@ public class ReadHeader {
 		return result;
 	}
 
+	/**
+	 * Set the absolute starting position of the paired read.
+	 */
 	public void setNextAbsolutionPosition(long nap) {
 		mNextReferenceIndex = (int) (nap >> 32);
 		mNextPosition = (int) nap;

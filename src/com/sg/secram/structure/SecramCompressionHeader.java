@@ -22,6 +22,12 @@ import java.util.TreeMap;
 
 import com.sg.secram.compression.SecramEncodingKey;
 
+/**
+ * Header that maintains the compression information of a container, e.g., the block compression method
+ * for an external block.
+ * @author zhihuang
+ *
+ */
 public class SecramCompressionHeader {
 	public Map<SecramEncodingKey, EncodingParams> encodingMap;
 	public final Map<Integer, ExternalCompressor> externalCompressors = new HashMap<Integer, ExternalCompressor>();
@@ -45,6 +51,10 @@ public class SecramCompressionHeader {
 		return byteArrayOutputStream.toByteArray();
 	}
 
+	/**
+	 * Write the header to the output stream.
+	 * @throws IOException
+	 */
 	private void write(final OutputStream outputStream) throws IOException {
 
 		{ // encoding map:
@@ -78,6 +88,9 @@ public class SecramCompressionHeader {
 		}
 	}
 
+	/**
+	 * Read a header from the byte array.
+	 */
 	public void read(final byte[] data) {
 		try {
 			read(new ByteArrayInputStream(data));
@@ -87,6 +100,10 @@ public class SecramCompressionHeader {
 		}
 	}
 
+	/**
+	 * Read a header from the input stream
+	 * @throws IOException
+	 */
 	private void read(final InputStream inputStream) throws IOException {
 		{ // encoding map
 			int byteSize = ITF8.readUnsignedITF8(inputStream);

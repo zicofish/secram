@@ -46,12 +46,16 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 
 	private Mac VIL_PRF;
 
-	public Hashtable<Long, Long> cache;
+	private Hashtable<Long, Long> cache;
 	private static final int maxCacheSize = 4000000;
 
 	private Log log = Log.getInstance(OPE.class);
 	private boolean DEBUG = false;
 
+	/**
+	 * Construct OPE with a key
+	 * @param keyBytes Key bytes.
+	 */
 	public OPE(byte[] keyBytes) {
 		// get the key
 		key = new byte[keyBytes.length];
@@ -61,16 +65,6 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 		VIL_PRF.init(new KeyParameter(key));
 
 		this.cache = new Hashtable<Long, Long>(maxCacheSize);
-	}
-
-	public int getUsedCache() {
-		return cache.size();
-	}
-
-	public void fillCache() {
-		for (int i = 0; i < 10000000; i++) {
-			cache.put((long) i, (long) i + 1);
-		}
 	}
 
 	/**
@@ -110,8 +104,14 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 	}
 
 	/**
-	 * Main encryption function in the paper
-	 * 
+	 * Encrypt a number in a plaintext domain to another number in a ciphertex range.
+	 * @param lowD Lower bound of the plaintext domain.
+	 * @param highD Upper bound of the plaintext domain.
+	 * @param lowR Lower bound of the ciphertext range.
+	 * @param highR Upper bound of the ciphertext range.
+	 * @param m The plaintext number.
+	 * @return The ciphertext number.
+	 * @throws IOException
 	 * @throws HGDException
 	 * @throws NoSuchAlgorithmException
 	 */
@@ -172,8 +172,17 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 		return result;
 	}
 
-	/*
-	 * almost symmetric with EncK
+	/**
+	 * Decrypt a number in a ciphertext range to its plaintext number.
+	 * @param lowD Lower bound of the plaintext domain.
+	 * @param highD Upper bound of the plaintext domain.
+	 * @param lowR Lower bound of the ciphertext range.
+	 * @param highR Upper bound of the ciphertext range.
+	 * @param c The ciphertext number.
+	 * @return The plaintext number.
+	 * @throws IOException
+	 * @throws HGDException
+	 * @throws NoSuchAlgorithmException
 	 */
 	private long DecK(long lowD, long highD, long lowR, long highR, long c)
 			throws IOException, HGDException, NoSuchAlgorithmException {
@@ -223,9 +232,10 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 	}
 
 	/**
-	 * Generate a specific num of pseudorandom bits
+	 * Generate a specific number of pseudorandom bits.
+	 * @param numOfBits Number of random bits to be generated.
 	 */
-	public byte[] TapeGen(long lowD, long highD, long lowR, long highR, long m,
+	private byte[] TapeGen(long lowD, long highD, long lowR, long highR, long m,
 			int numOfBits) throws IOException, NoSuchAlgorithmException {
 		int numOfBytes = (numOfBits + 7) / 8;
 
@@ -252,7 +262,11 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 	 * Generation of HyperGeometric random variate An implementation of:
 	 * Computer Generation of Hypergeometric Random Variates.
 	 * J.Stat.Comput.Simul.22(1985), 127-145
-	 * 
+	 * @param KK Number of balls to randomly pick without putting back.
+	 * @param NN1 Number of available white balls.
+	 * @param NN2 Number of available black balls.
+	 * @param coins Seed used for randomness.
+	 * @return Number of white balls in the balls that we pick.
 	 * @throws HGDException
 	 * @throws NoSuchAlgorithmException
 	 */
@@ -526,13 +540,11 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 	}
 
 	/**
-	 * Evaluate logarithm of the factorial I if(I > 7) use stirling's
-	 * approximation otherwise, use table lookup
+	 * Evaluate logarithm of the factorial I. If(I > 7) use stirling's
+	 * approximation, otherwise, use table lookup
 	 * 
-	 * @param n
-	 * @return
 	 */
-	public double AFC(double I) {
+	private double AFC(double I) {
 		double[] AL = new double[] { 0.0, 0.0, 0.6931471806, 1.791759469,
 				3.178053830, 4.787491743, 6.579251212, 8.525161361 };
 
@@ -544,10 +556,10 @@ public class OPE implements SECRAMEncryptionMethod<Long> {
 		}
 	}
 
-	/*
-	 * transform a long array to a byte array
+	/**
+	 * Transform a long array to a byte array
 	 */
-	public byte[] longsToBytes(long[] values) throws IOException {
+	private byte[] longsToBytes(long[] values) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(baos);
 		for (int i = 0; i < values.length; ++i) {

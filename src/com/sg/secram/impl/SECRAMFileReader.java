@@ -12,6 +12,11 @@ import com.sg.secram.util.ReferenceUtils;
 import com.sg.secram.util.SECRAMUtils;
 import com.sg.secram.util.Timings;
 
+/**
+ * Reader of a SECRAM file. It supports sequential access and random access.
+ * @author zhihuang
+ *
+ */
 public class SECRAMFileReader {
 	private SeekableStream inputStream;
 	private File secramFile;
@@ -20,6 +25,13 @@ public class SECRAMFileReader {
 	private SecramIndex secramIndex;
 	private SECRAMSecurityFilter filter;
 
+	/**
+	 * Construct the reader by specifying the SECRAM file name, the reference file name, and the decryption key.
+	 * @param input SECRAM file name.
+	 * @param referenceInput Reference file name.
+	 * @param key Decryption key.
+	 * @throws IOException
+	 */
 	public SECRAMFileReader(String input, String referenceInput, byte[] key)
 			throws IOException {
 		secramFile = new File(input);
@@ -32,7 +44,7 @@ public class SECRAMFileReader {
 		readHeader();
 	}
 
-	public void readHeader() throws IOException {
+	private void readHeader() throws IOException {
 		secramHeader = SecramIO.readSecramHeader(inputStream);
 	}
 
@@ -52,7 +64,12 @@ public class SECRAMFileReader {
 	}
 
 	/**
-	 * This method is only used for non-encrypted secram file
+	 * Query for a range of positions on the reference.
+	 * <p>
+	 * NOTE: This method is only used for non-encrypted secram file
+	 * @param ref Reference name.
+	 * @param start Starting position of the query on the reference.
+	 * @param end Ending position of the query on the reference (inclusive).
 	 */
 	public SECRAMIterator query(String ref, int start, int end)
 			throws IOException {
@@ -63,10 +80,11 @@ public class SECRAMFileReader {
 	}
 
 	/**
+	 * Query for a range of positions on the reference.
 	 * @param start
 	 *            The OPE-encrypted absolute start position
 	 * @param end
-	 *            The OPE-encrypted absolute end position
+	 *            The OPE-encrypted absolute end position (inclusive)
 	 * @return An iterator over the positions in [start, end]
 	 * @throws IOException
 	 */

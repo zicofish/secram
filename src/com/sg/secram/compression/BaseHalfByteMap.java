@@ -2,6 +2,18 @@ package com.sg.secram.compression;
 
 import java.util.HashMap;
 
+/**
+ * A utility class defining the conversion between a base character and its integer encoding in 4 bits, for example:
+ * <ul>
+ * <li>'A' <-> 1</li>
+ * <li>'C' <-> 2</li>
+ * <li>'G' <-> 4</li>
+ * <li>'T' <-> 8</li>
+ * </ul>
+ * There are some other rarely-used characters in BAM files. They are also preserved in SECRAM.
+ * @author zhihuang
+ *
+ */
 public class BaseHalfByteMap {
 	public static HashMap<Byte, Byte> base2HalfByteMap = new HashMap<Byte, Byte>();
 	static {

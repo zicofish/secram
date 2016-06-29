@@ -17,6 +17,18 @@
  */
 package com.sg.secram.structure;
 
+/**
+ * The supported block content types are:
+ * <ul>
+ * <li>FILE_HEADER, for header of a SECRAM file</li>
+ * <li>CONTAINER_HEADER, for header of a container</li>
+ * <li>COMPRESSION_HEADER, for compression information of a container</li>
+ * <li>EXTERNAL, for an external block that stores the same type of information in SECRAM records</li>
+ * <li>CORE, for a block that stores any non-external information of SECRAM records. Each container has only one CORE block.</li>
+ * </ul>
+ * @author zhihuang
+ *
+ */
 public enum SecramBlockContentType {
 	FILE_HEADER, CONTAINER_HEADER, COMPRESSION_HEADER, EXTERNAL, CORE
 }

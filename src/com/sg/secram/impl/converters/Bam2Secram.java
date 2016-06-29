@@ -30,25 +30,18 @@ import com.sg.secram.util.Timings;
 /**
  * Converter from a bam file to a secram file.
  * 
- * @author zhicong
- *
+ * @author zhihuang
  */
 public class Bam2Secram {
 
 	// TODO handle unaligned reads
-	// private int mNbUnalignedRead = 0;
-
+	
 	private ReferenceSequenceFile mRsf;
 
 	private byte[] cachedRefSequence = null;
 	private int cachedRefID = -1;
 
 	private SAMFileHeader mSAMFileHeader;
-
-	// For my local test invocation
-	public Bam2Secram(SAMFileHeader samFileHeader) throws IOException {
-		this(samFileHeader, "./data/hs37d5.fa");
-	}
 
 	/**
 	 * @param samFileHeader
@@ -62,7 +55,14 @@ public class Bam2Secram {
 		this(samFileHeader, ReferenceUtils.findReferenceFile(referenceInput));
 	}
 
-	private Bam2Secram(SAMFileHeader samFileHeader, ReferenceSequenceFile rsf) {
+	/**
+	 * @param samFileHeader
+	 *            The SAM file header of the BAM file
+	 * @param rsf
+	 *            The reference sequence file.
+	 * @throws IOException
+	 */
+	public Bam2Secram(SAMFileHeader samFileHeader, ReferenceSequenceFile rsf) {
 		mSAMFileHeader = samFileHeader;
 		mRsf = rsf;
 	}
@@ -99,14 +99,14 @@ public class Bam2Secram {
 	}
 
 	/**
+	 * Get the reference base of the position.
 	 * @param pos
 	 *            The absolute position. Chromosome ID is in the higher 32 bits,
 	 *            and chromosome position is in the lower 32 bits.
-	 * @return The reference base of the position.
 	 * @throws ArrayIndexOutOfBoundsException
 	 * @throws IOException
 	 */
-	public char getReferenceBase(long pos)
+	private char getReferenceBase(long pos)
 			throws ArrayIndexOutOfBoundsException, IOException {
 		int refID = (int) (pos >> 32);
 		if (refID == cachedRefID) {
@@ -138,13 +138,11 @@ public class Bam2Secram {
 	 *            The new SECRAM file to create
 	 * @param refFileName
 	 *            Path of the reference file
-	 * @param key
-	 * @throws Exception
-	 * @throws {@link IOException} If an {@link IOException} occurs during the
-	 *         operation
+	 * @param key Encryption key.
+	 * @throws IOException
 	 */
 	public static void convertFile(File input, File output, String refFileName,
-			byte[] key) throws Exception {
+			byte[] key) throws IOException {
 		SamReader reader = SamReaderFactory.makeDefault()
 				.validationStringency(ValidationStringency.SILENT).open(input);
 
@@ -210,8 +208,6 @@ public class Bam2Secram {
 	 * Create a set of incomplete SECRAM records from a set of BAM records. The
 	 * BAM records should be ordered by their starting positions.
 	 * 
-	 * @param records
-	 * @return
 	 * @throws IOException
 	 */
 	public Map<Long, SecramRecordBuilder> createSECRAMRecords(
@@ -226,8 +222,9 @@ public class Bam2Secram {
 	 * Extract information on each position of the BAM record, and add it to the
 	 * corresponding SECRAM record builder.
 	 * 
-	 * @param bamRecord
-	 * @param pos2Builder
+	 * @param bamRecord The BAM record to be processed.
+	 * @param pos2Builder Map from positions to their SECRAM record builders. If a position is not found in the map
+	 * during processing, new entry of this position will be inserted into the map.
 	 * @throws IOException
 	 */
 	public void addBamRecordToSecramRecords(BAMRecord bamRecord,

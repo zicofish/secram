@@ -3,6 +3,11 @@ package com.sg.secram.example;
 import java.io.File;
 import java.io.FilenameFilter;
 
+/**
+ * Example use for converting BAM files in a directory to SECRAM files. 
+ * @author zhihuang
+ *
+ */
 public class Bam2SecramDir {
 
 	/**

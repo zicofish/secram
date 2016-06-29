@@ -181,47 +181,4 @@ public class SecramIO {
 		final SAMTextHeaderCodec codec = new SAMTextHeaderCodec();
 		return codec.decode(bufferedLineReader, id);
 	}
-	//
-	// /**
-	// * Attempt to replace the SAM file header in the CRAM file. This will
-	// succeed only if there is sufficient space reserved in the existing
-	// * CRAM header. The implementation re-writes the first FILE_HEADER block
-	// in the first container of the CRAM file using random file
-	// * access.
-	// *
-	// * @param file the CRAM file
-	// * @param newHeader the new CramHeader container a new SAM file header
-	// * @return true if successfully replaced the header, false otherwise
-	// * @throws IOException as per java IO contract
-	// */
-	// public static boolean replaceCramHeader(final File file, final
-	// SecramHeader newHeader) throws IOException {
-	//
-	// final CountingInputStream countingInputStream = new
-	// CountingInputStream(new FileInputStream(file));
-	//
-	// final SecramHeader header = readFormatDefinition(countingInputStream);
-	// final Container c =
-	// ContainerIO.readContainerHeader(header.getVersion().major,
-	// countingInputStream);
-	// final long pos = countingInputStream.getCount();
-	// countingInputStream.close();
-	//
-	// final Block block =
-	// Block.buildNewFileHeaderBlock(toByteArray(newHeader.getSamFileHeader()));
-	// final ExposedByteArrayOutputStream byteArrayOutputStream = new
-	// ExposedByteArrayOutputStream();
-	// block.write(newHeader.getVersion().major, byteArrayOutputStream);
-	// if (byteArrayOutputStream.size() > c.containerByteSize) {
-	// log.error("Failed to replace CRAM header because the new header does not fit.");
-	// return false;
-	// }
-	// final RandomAccessFile randomAccessFile = new RandomAccessFile(file,
-	// "rw");
-	// randomAccessFile.seek(pos);
-	// randomAccessFile.write(byteArrayOutputStream.getBuffer(), 0,
-	// byteArrayOutputStream.size());
-	// randomAccessFile.close();
-	// return true;
-	// }
 }

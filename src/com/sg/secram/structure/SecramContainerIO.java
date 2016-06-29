@@ -69,6 +69,9 @@ public class SecramContainerIO {
 		return true;
 	}
 
+	/**
+	 * Read a container from the input stream.
+	 */
 	public static SecramContainer readContainer(final InputStream inputStream)
 			throws IOException {
 
@@ -112,10 +115,7 @@ public class SecramContainerIO {
 	}
 
 	/**
-	 * Writes a {@link Container} header information to a {@link OutputStream}.
-	 *
-	 * @param major
-	 *            the CRAM version to assume
+	 * Writes a {@link SecramContainer} header information to a {@link OutputStream}.
 	 * @param container
 	 *            the container holding the header to write
 	 * @param outputStream

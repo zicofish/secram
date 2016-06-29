@@ -16,13 +16,20 @@ import com.sg.secram.compression.SecramRecordCodecFactory;
 import com.sg.secram.impl.SECRAMSecurityFilter;
 import com.sg.secram.impl.records.SecramRecord;
 
+/**
+ * Parser that translates the compressed and encrypted information of a container into SECRAM records. 
+ * @author zhihuang
+ *
+ */
 public class SecramContainerParser {
 	private static final Log log = Log.getInstance(SecramContainerIO.class);
 
-	public SecramContainerParser() {
-
-	}
-
+	/**
+	 * Get SECRAM records in a container.
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws IOException
+	 */
 	public List<SecramRecord> getRecords(SecramContainer container,
 			SECRAMSecurityFilter filter) throws IllegalArgumentException,
 			IllegalAccessException, IOException {

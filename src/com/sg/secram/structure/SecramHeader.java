@@ -6,8 +6,13 @@ import java.util.Arrays;
 
 /**
  * A starting object when dealing with SECRAM files. A {@link SecramHeader}
- * holds 3 things: 1. File format definition, including content id 2. A 64-bit
- * random salt for order-preserving encryption 3. SAM file header
+ * holds 3 things: 
+ * <ol>
+ * <li>File format definition, including content id</li>
+ * <li>A 64-bit random salt for order-preserving encryption</li>
+ * <li>SAM file header</li>
+ * </ol>
+ * @author zhihuang
  */
 public final class SecramHeader {
 	public static final byte[] MAGIC = "SECRAM".getBytes();

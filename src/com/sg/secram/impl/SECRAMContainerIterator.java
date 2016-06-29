@@ -22,6 +22,9 @@ public class SECRAMContainerIterator implements Iterator<SecramContainer> {
 	private SecramContainer nextContainer = null;
 	private boolean eof = false;
 
+	/**
+	 * Constructs the iterator over an input stream, with a security filter for decryption. 
+	 */
 	public SECRAMContainerIterator(InputStream inputStream,
 			SECRAMSecurityFilter filter) {
 		this.inputStream = inputStream;

@@ -2,6 +2,18 @@ package com.sg.secram.structure;
 
 import java.util.Map;
 
+/**
+ * Container of a set of SECRAM records. It is organized into several blocks:
+ * <ul>
+ * <li>Container header (this is not a {@link SecramBlock}), that contains several pieces of general information
+ * about this container, e.g., container size</li>
+ * <li>Compression header</li>
+ * <li>Core block</li>
+ * <li>A list of external blocks</li>
+ * </ul> 
+ * @author zhihuang
+ *
+ */
 public class SecramContainer {
 	public static int DEFATUL_RECORDS_PER_CONTAINER = 100000;
 	/**
