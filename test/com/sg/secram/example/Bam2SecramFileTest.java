@@ -1,7 +1,6 @@
 package com.sg.secram.example;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
